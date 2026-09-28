@@ -1,0 +1,97 @@
+min_version = "2026.9.0"
+
+[settings]
+lockfile = true
+task.run_auto_install = true
+
+[tools]
+uv = "0.12.10"
+gitleaks = "8.30.1"
+"aqua:orhun/git-cliff" = "2.14.1"
+
+[env]
+_.file = ".env"
+_.python.venv = { path = ".venv", create = false }
+
+[hooks]
+postinstall = "uv sync --locked && uv run --script scripts/project.py hook install"   # the git gates (specs/README.md#gates)
+
+[tasks.start]
+description = "Run the app; args after --"
+run = "uv run --locked tipcalc"
+
+[tasks.fmt]
+description = "Format and autofix"
+run = ["uv run --locked ruff format .", "uv run --locked ruff check --fix ."]
+
+[tasks.test]
+description = "Tests; args after --, e.g. -- --spec cli.no-args"
+run = "uv run --locked pytest"
+
+[tasks.verify]
+description = "The local gate; CI runs it too (specs/README.md#gates)"
+depends = ["lint", "types", "secrets", "spec-check"]
+run = "echo verify: green"
+
+[tasks.lint]
+hide = true
+description = "Lint + format check"
+run = ["uv run --locked ruff check .", "uv run --locked ruff format --check ."]
+
+[tasks.types]
+hide = true
+description = "Type check"
+run = "uv run --locked ty check"
+
+[tasks.secrets]
+hide = true
+description = "Secret + leak scan of history"
+run = "gitleaks git --redact --no-banner ."
+
+[tasks.spec-check]
+hide = true
+description = "Scenario <-> test trace + lane rules"
+depends = ["test"]
+run = "uv run --script scripts/project.py check"
+
+[tasks.status]
+description = "Where this branch stands and what comes next"
+run = "uv run --script scripts/project.py status"
+
+[tasks.change]
+description = "Start a change: -- <slug> --lane <lane>"
+run = "uv run --script scripts/project.py change"
+
+[tasks.backlog]
+description = "Park an idea: -- <topic> [--spike]"
+run = "uv run --script scripts/project.py backlog"
+
+[tasks.tdd]
+description = "Red and green proof per scenario: -- red|green <ids>"
+run = "uv run --script scripts/project.py tdd"
+
+[tasks.doctor]
+description = "Check this machine and the repo setup"
+run = "uv run --script scripts/project.py doctor"
+
+[tasks.approve]
+description = "HUMAN: approve the open change's spec"
+run = "uv run --script scripts/project.py approve"
+
+[tasks.merge]
+description = "HUMAN: merge the branch after the Definition of Done"
+run = "uv run --script scripts/project.py merge"
+
+[tasks.abandon]
+description = "HUMAN: abandon the open change: -- \"why\""
+run = "uv run --script scripts/project.py abandon"
+
+[tasks.prove-red]
+hide = true
+description = "Prove new and changed scenarios fail on the old code"
+run = "uv run --script scripts/project.py prove-red"
+
+[tasks.selftest]
+hide = true
+description = "Every gate bypass must fail"
+run = "uv run --script scripts/project.py selftest"

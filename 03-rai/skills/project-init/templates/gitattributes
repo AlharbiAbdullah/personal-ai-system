@@ -1,0 +1,11 @@
+# project-init standard: lessons are append-only, so a merge keeps both sides' entries.
+project_memory/lessons.md merge=union
+# proof/ media is binary, so diffs and blame skip it; README.md and the text captures (.txt,
+# .json, .csv, .tape) stay diffable.
+proof/**/*.png binary -diff
+proof/**/*.jpg binary -diff
+proof/**/*.jpeg binary -diff
+proof/**/*.gif binary -diff
+proof/**/*.webm binary -diff
+proof/**/*.mp4 binary -diff
+proof/**/*.pdf binary -diff

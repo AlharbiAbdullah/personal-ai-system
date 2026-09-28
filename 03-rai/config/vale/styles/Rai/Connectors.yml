@@ -1,0 +1,14 @@
+extends: existence
+message: "AI-corporate connector '%s'. Delete it or say 'but', 'so', 'because', 'then'."
+level: error
+ignorecase: true
+tokens:
+  - it's worth noting
+  - it is worth noting
+  - in essence
+  - at its core
+  - ultimately
+  - when it comes to
+  - in today's fast-paced world
+  - in conclusion
+  - that said

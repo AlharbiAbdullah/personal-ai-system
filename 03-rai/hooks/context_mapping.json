@@ -1,0 +1,10 @@
+{
+  "~/helm/03-rai": "memory-system",
+  "~/helm/05-projects": "projects",
+  "~/helm/10-knowledge": "knowledge-vault",
+  "~/helm/09-ideas": "ideas",
+  "~/helm/06-learning": "learning",
+  "~/helm/04-work": "work",
+  "~/helm": "helm-vault",
+  "~/projects/*": "auto-detect"
+}

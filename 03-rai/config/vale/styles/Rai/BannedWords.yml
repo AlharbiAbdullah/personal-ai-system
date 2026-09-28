@@ -1,0 +1,58 @@
+extends: existence
+message: "Banned word '%s' (response-format.md hard ban)."
+level: error
+ignorecase: true
+tokens:
+  - leverage
+  - leverages
+  - leveraged
+  - leveraging
+  - utilize
+  - utilizes
+  - utilized
+  - utilizing
+  - streamline
+  - streamlines
+  - streamlined
+  - streamlining
+  - robust
+  - comprehensive
+  - seamless
+  - seamlessly
+  - holistic
+  - cutting-edge
+  - facilitate
+  - facilitates
+  - facilitated
+  - facilitating
+  - empower
+  - empowers
+  - empowered
+  - empowering
+  - enhance
+  - enhances
+  - enhanced
+  - enhancing
+  - furthermore
+  - moreover
+  - additionally
+  - delve
+  - delves
+  - delved
+  - delving
+  - dive into
+  - dives into
+  - diving into
+  - ensure
+  - ensures
+  - ensured
+  - ensuring
+  - enable
+  - enables
+  - enabled
+  - enabling
+  - vast
+  - foster
+  - fosters
+  - fostered
+  - fostering

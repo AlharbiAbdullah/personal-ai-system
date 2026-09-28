@@ -1,0 +1,16 @@
+{
+  "extracted_date": "2026-01-01",
+  "sources": {
+    "subscriptions": 1,
+    "following": 0,
+    "deduplicated_total": 1
+  },
+  "feeds": [
+    {
+      "name": "Example Publication",
+      "domain": "example.substack.com",
+      "feed": "https://example.substack.com/feed",
+      "source": "subscription"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+# Secret and leak rules for this repo (I14). Written by project-init; a gate file.
+# pre-commit scans the staged diff, `mise run verify` and CI scan the history. Never `gitleaks dir .`:
+# it reads the gitignored .venv and .env. Findings that predate adoption are fingerprinted in
+# .gitleaksignore (rotate those secrets).
+
+[extend]
+useDefault = true                         # gitleaks' own secret rules (keys, tokens, private keys)
+
+# Personal vault paths in docs and agent files: a repo is shared, a home folder is not. ~/helm,
+# ~user/helm, $HOME/helm and ${HOME}/helm are one path; helm/0N- is a vault folder, but not after
+# a / or a word character, so k8s/helm/01-base stays valid.
+[[rules]]
+id = "personal-path"
+description = "Personal vault path in a tracked doc"
+regex = '''((?:~[A-Za-z0-9._-]*|\$HOME|\$\{HOME\})/helm\b|(^|[^/\w])helm/0[0-9]-)'''
+path = '''(\.md$|^\.claude/|^\.agents/|^AGENTS\.md$)'''
+
+# Home folders, Linux and macOS. The default global allowlist passes any secret that looks
+# like /home/... or /Users/..., so this rule reports the path without its leading / (the
+# secretGroup), which that allowlist does not know. The name may end the phrase ("in
+# /home/someone."); a /home/ or /Users/ inside a URL or a relative path is no home folder.
+[[rules]]
+id = "personal-home-path"
+description = "Home folder path in a tracked doc"
+regex = '''(?:^|[^\w.-])/((?:home|Users)/[A-Za-z][A-Za-z0-9._-]*)(?:/|\b)'''
+secretGroup = 1
+path = '''(\.md$|^\.claude/|^\.agents/|^AGENTS\.md$)'''
+
+[[rules]]
+id = "wiki-link"
+description = "Obsidian wiki-link in a tracked doc"
+regex = '''\[\[[^\]\n]+\]\]'''
+path = '''\.md$'''
+
+# A TOML array-of-tables header with a dotted name, alone on its line, is config in a code fence
+# ([[tool.uv.index]]), not a link. [[bin]] alone on a line still counts: it reads as a link too.
+[[rules.allowlists]]
+description = "TOML array-of-tables header"
+regexTarget = "line"
+regexes = ['''^\s*\[\[[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)+\]\]\s*$''']
+
+[allowlist]
+paths = ['''^\.gitleaks\.toml$''']

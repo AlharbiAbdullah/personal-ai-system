@@ -1,0 +1,217 @@
+{
+  "env": {},
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(git *)",
+      "Bash(uv *)",
+      "Bash(uv run python *)",
+      "Bash(uv run pytest *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(pytest *)",
+      "Bash(ruff *)",
+      "Bash(mypy *)",
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(pip *)",
+      "Bash(npm *)",
+      "Bash(node *)",
+      "Bash(npx *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(mkdir *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(touch *)",
+      "Bash(chmod *)",
+      "Bash(which *)",
+      "Bash(pwd)",
+      "Bash(env *)",
+      "Bash(export *)",
+      "Bash(echo *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(gh *)",
+      "Bash(dagster *)",
+      "Bash(dbt *)",
+      "Bash(psql *)",
+      "Bash(duckdb *)",
+      "Bash(source *)",
+      "Bash(. *)",
+      "Bash(sleep *)",
+      "Bash(pacman *)",
+      "Bash(sudo pacman *)",
+      "Bash(yay *)",
+      "Bash(mise *)",
+      "Bash(systemctl *)",
+      "Bash(sudo systemctl *)",
+      "Bash(journalctl *)",
+      "Bash(sudo journalctl *)",
+      "WebFetch",
+      "WebSearch",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__tabs_create_mcp",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__get_page_text",
+      "mcp__claude-in-chrome__read_page",
+      "mcp__claude-in-chrome__javascript_tool",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__find",
+      "mcp__claude-in-chrome__form_input",
+      "mcp__claude-in-chrome__gif_creator",
+      "mcp__claude-in-chrome__read_console_messages",
+      "mcp__claude-in-chrome__read_network_requests",
+      "mcp__claude-in-chrome__resize_window",
+      "mcp__claude-in-chrome__shortcuts_execute",
+      "mcp__claude-in-chrome__shortcuts_list",
+      "mcp__claude-in-chrome__switch_browser",
+      "mcp__claude-in-chrome__upload_image",
+      "mcp__claude-in-chrome__update_plan"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/session-start.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/helm/03-rai/semantic-memory/scripts/py-chroma.sh $HOME/helm/03-rai/hooks/memory-injection.py || true"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/session-auto-name.py || true"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/update-tab-title.py || true"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/response-format-reminder.py || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/set-question-tab.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/question-answered.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/stop-orchestrator.py"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/turn-capture.py"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/session-summary.py"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $HOME/helm/03-rai/hooks/update-counts.py"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'plugin_dir=$(ls -d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | awk -F/ '\"'\"'{ print $(NF-1) \"\\t\" $(0) }'\"'\"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec \"$(command -v node)\" \"${plugin_dir}dist/index.js\"'"
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "claude-hud@claude-hud": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark-ansi",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "allow": [
+      "$defaults"
+    ]
+  },
+  "tui": "fullscreen"
+}

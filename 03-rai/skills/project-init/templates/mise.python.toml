@@ -1,0 +1,113 @@
+# mise is the one manager for {NAME}: tools, env, setup and every command.
+# `mise install` is the whole setup. `mise tasks ls` lists the commands; the process is specs/README.md.
+min_version = "2026.9.0"
+
+[settings]
+lockfile = true
+task.run_auto_install = true
+
+[tools]                                   # no python here: uv owns it (.python-version + uv.lock)
+uv = "0.12.10"
+gitleaks = "8.30.1"
+"aqua:orhun/git-cliff" = "2.14.1"
+
+[env]
+_.file = ".env"                           # knobs + op:// pointers; a missing file is ignored
+_.python.venv = { path = ".venv", create = false }
+
+[hooks]
+postinstall = "uv sync --locked && uv run --script scripts/project.py hook install"   # the git gates (specs/README.md#gates)
+
+# Visible tasks. Arguments go after `--`, e.g. `mise run test -- --spec <scenario-id>`.
+
+[tasks.start]
+description = "Run the app; args after --"
+run = "{OP_RUN}uv run --locked {ENTRY}"
+
+[tasks.fmt]
+description = "Format and autofix"
+run = ["uv run --locked ruff format .", "uv run --locked ruff check --fix ."]
+
+[tasks.test]
+description = "Tests; args after --, e.g. -- --spec <scenario-id>"
+run = "uv run --locked pytest"
+
+[tasks.verify]
+description = "The local gate; CI runs it too (specs/README.md#gates)"
+depends = ["lint", "types", "secrets", "spec-check"]
+run = "echo verify: green"
+
+[tasks.status]
+description = "Where things stand; -- --change (spec diff), --merge (Definition of Done preview), --audit"
+run = "uv run --script scripts/project.py status"
+
+[tasks.change]
+description = "Start a change: -- <slug> --lane feat|chg|fix|chore|refactor|plan [--hotfix]"
+run = "uv run --script scripts/project.py change"
+
+[tasks.backlog]
+description = "Park an idea for later: -- <topic> [--spike]"
+run = "uv run --script scripts/project.py backlog"
+
+[tasks.tdd]
+description = "Test-first evidence: -- red <ids> (must fail for the right reason) | green <ids>"
+run = "uv run --script scripts/project.py tdd"
+
+[tasks.proof]
+description = "Proof for the reviewer: -- run|log|http|shot|video|tape|attach <id> ..., confidence, tests, show, setup web|terminal"
+run = "uv run --script scripts/project.py proof"
+
+[tasks.doctor]
+description = "Check this machine and repo: tools, hooks, env contract, audit"
+run = "uv run --script scripts/project.py doctor"
+
+# Human gates. Agents never run these; a person types them (specs/README.md#lifecycle).
+
+[tasks.approve]
+description = "HUMAN: approve the open change's spec (G2)"
+run = "uv run --script scripts/project.py approve"
+
+[tasks.merge]
+description = "HUMAN: check the Definition of Done and land the branch; -- --attest, --branch <b>, --gate-change"
+run = "uv run --script scripts/project.py merge"
+
+[tasks.abandon]
+description = "HUMAN: drop the open change: -- \"<why>\""
+run = "uv run --script scripts/project.py abandon"
+
+[tasks.release]                                                              # {IF_RELEASE}
+description = "HUMAN: cut a release: -- patch|minor|major [--dry-run]"       # {IF_RELEASE}
+run = "uv run --script scripts/project.py release"                          # {IF_RELEASE}
+
+# Hidden tasks: unlisted, still runnable. verify and CI call them.
+
+[tasks.lint]
+hide = true
+description = "Lint + format check"
+run = ["uv run --locked ruff check .", "uv run --locked ruff format --check ."]
+
+[tasks.types]
+hide = true
+description = "Type check"
+run = "uv run --locked ty check"
+
+[tasks.secrets]
+hide = true
+description = "Secret + leak scan of history (.gitleaks.toml)"
+run = "gitleaks git --redact --no-banner ."
+
+[tasks.spec-check]
+hide = true
+description = "Scenario <-> test trace + lane rules"
+depends = ["test"]
+run = "uv run --script scripts/project.py check"
+
+[tasks.prove-red]
+hide = true
+description = "New and changed scenarios' tests must fail on the old code; -- --base <ref>"
+run = "uv run --script scripts/project.py prove-red"
+
+[tasks.selftest]
+hide = true
+description = "Bypass matrix: every gate-evasion case must be refused"
+run = "uv run --script scripts/project.py selftest"

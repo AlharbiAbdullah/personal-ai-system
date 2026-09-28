@@ -1,0 +1,387 @@
+# news-digest config
+# Edit identity, sources, caps, scoring weights, and context loads here.
+# Skill workflow lives in SKILL.md. Observer JS in chrome_snippets/.
+
+# ---------------------------------------------------------------
+# Scheduled mode (systemd runs) — deadline contract, SKILL.md §Scheduled Mode
+# The runner's watchdog kills the session at run_budget_min. Collection must
+# stop at run_budget_min - synthesis_reserve_min; no cooldown may cross that
+# line. Keep run_budget_min in sync with the DEADLINE in run-news-ubuntu.sh.
+# ---------------------------------------------------------------
+scheduled_mode:
+  run_budget_min: 120        # watchdog cap in run-news-ubuntu.sh (7200s)
+  synthesis_reserve_min: 35  # reserved for synthesis + post-fill + grep checks
+
+user:
+  x_handle: "@johndoe"
+  substack_handle: "@johndoe"
+  medium_auth: "google_sso"
+
+# ---------------------------------------------------------------
+# Source collection targets + scroll tuning
+# ---------------------------------------------------------------
+sources:
+  x_foryou:
+    target: 2000                     # Interactive single-session target via `_collect_x_headless.py`: @johndoe is X Premium (read cap ~10k/day), 2000 = ~20% of that cap. CANARY: if a run throttles to a trickle, 2000 is too hot — dial back toward 1200. Scheduled runs use the 3-pass schedule instead (see SKILL.md "X 3-pass schedule"), not this target.
+    scroll_delta: 800
+    scroll_interval_ms: 700
+    batch_size: 50
+    plateau_tolerance_s: 120          # 2 min of zero growth before declaring plateau (was 60s); avoids bailing early on natural mid-scroll lulls
+    success_threshold: 540            # calibrated to the scheduled-mode 3-pass yield (typically ~900-1500), not 90% of the interactive `target` above — declare success and stop ladder
+    # ----------------------------------------------------------------
+    # Adaptive burn-recovery ladder (v5.1 — 2026-05-08).
+    # Standard 3-window/15-min ladder works for warm sessions. When the
+    # @johndoe session is BURNED (heavy tweet pulls earlier in the
+    # day on the same account), 15-min cooldowns are insufficient. The
+    # extended ladder adds W4-W6 with progressively longer waits, plus
+    # adaptive jump-to-long-wait when an early burn is detected.
+    # User opt-in: time is acceptable; correctness > speed.
+    # ----------------------------------------------------------------
+    ladder:
+      - { name: W1, cooldown_min: 0,   tab: fresh,           notes: "First attempt. Default tuning." }
+      - { name: W2, cooldown_min: 15,  tab: fresh,           notes: "Standard cooldown." }
+      - { name: W3, cooldown_min: 15,  tab: fresh,           notes: "Standard cooldown." }
+      - { name: W4, cooldown_min: 45,  tab: fresh,           notes: "First long wait. Restores ~60% capacity for moderately-burned sessions." }
+      - { name: W5, cooldown_min: 90,  tab: fresh,           notes: "Second long wait. Allows X per-account budget reset for heavier burn." }
+      - { name: W6, cooldown_min: 180, tab: fresh-profile,   notes: "Final escape: 3-hour cool + fresh Chrome profile (re-login may be required). If this fails, account is severely throttled — abort and resume next day." }
+    burn_detection:
+      early_burn_yield: 150            # if W1 collects < 150, suspect pre-existing burn; skip W2/W3 quick retries
+      confirmed_burn_yield: 60         # if any window yields < 60, burn is confirmed
+      declining_yield_ratio: 0.5       # if W_n < 0.5 × W_{n-1}, declining → escalate cooldown
+    on_early_burn:
+      skip_to: W4                      # jump straight to first long wait (45 min)
+    on_burn_confirmed:
+      escalate_next_cooldown_to_min: 90  # bump next cooldown floor to 90 min
+    max_total_wall_min: 180            # hard cap: 3 hours. A warm session hits 600+ in one ~5-min window; 3h covers the full W1-W6 worst case.
+    state_file: ".runs/{date}/x_foryou_state.json"  # persists between attempts so a long wait can be resumed
+  x_following:
+    target: 500                       # 2026-06-14 (John): raised 180→500 on Premium. Following is ACTIVITY-BOUNDED (reverse-chron of accounts you follow) — it may plateau below 500 if your follows haven't posted that much in the window; the headless collector ships whatever it reaches via reload-recovery rather than spinning.
+    scroll_delta: 800
+    scroll_interval_ms: 700
+    batch_size: 50
+    entry_url: "https://x.com/home"
+    requires_tab_click: "Following"
+  substack:
+    collector: _collect_web_headless.py  # v5.9 headless CDP primary; MCP = interactive fallback
+    target: 200                       # revised 2026-05-06 from 500; reachable via /inbox + click-Load-more loop (~250 ceiling)
+    scroll_delta: 1000
+    scroll_interval_ms: 500
+    batch_size: 20
+    entry_url: "https://substack.com/inbox"
+    pagination: click_load_more       # button text "Load more"; ~20 cards per click; stop at no_button or target
+  medium:
+    collector: _collect_web_headless.py  # v5.9 headless CDP primary; MCP = interactive fallback
+    target: 30                        # revised 2026-05-06 from 50; /me/following-feed/all + selector fix yields 25, +5 from one More click
+    scroll_delta: 1000
+    scroll_interval_ms: 500
+    batch_size: 5
+    entry_url: "https://medium.com/me/following-feed/all"
+    pagination: click_more_once       # button text "More"; one click adds ~5; button vanishes after
+  hacker_news:
+    target: 100
+    fetch_comments_threshold: 100    # fetch top 2 comments when descendants >= this
+  reddit:
+    target_per_sub: 50
+    fetch_comments_threshold: 50
+  github_trending:
+    target: 20
+    readme_top_n: 10
+
+# ---------------------------------------------------------------
+# Reddit subreddit list (grouped for readability; order doesn't matter)
+# ---------------------------------------------------------------
+reddit_subs:
+  core_tools:
+    - dataengineering
+    - devops
+    - ClaudeCode
+    - LocalLLM
+    - ollama
+    - mcp
+  ai_ml:
+    - AI_Agents
+    - aiagents
+    - MachineLearning
+    - mlops
+    - PromptEngineering
+    - Rag
+    - learnmachinelearning
+  data:
+    - dataops
+    - datascience
+  architecture:
+    - softwarearchitecture
+  experience:
+    - artificial
+    - ExperiencedDevs
+
+# ---------------------------------------------------------------
+# Retry ladder (per source) — HARD RULE: 10 attempts. No skipping.
+# Attempts 1-3 same Chrome tab; 4-6 fresh Chrome session; 7-10 Playwright.
+# ---------------------------------------------------------------
+retry:
+  shortfall_threshold_pct: 10      # retry if collected < target * (1 - 0.10)
+  max_attempts: 10                  # was 4; bumped per hard-rule "no AI-decided skip"
+  no_skip: true                    # AI does NOT decide to skip a source. Only the user does.
+  one_tab_per_source: true         # X For You, X Following, Substack, Medium each get a fresh dedicated tab
+  wall_clock_ceilings_min:         # informational — retries run regardless
+    x_total: 60                    # foryou + following combined (worst case across 10 attempts)
+    substack: 35
+    medium: 25
+  x_strict: true                   # X is dealbreaker: abort entire run if For You OR Following fails after all 10 attempts
+  x_abort_marker: "~/helm/08-bawaba/.news-failed-{date}.md"
+  partial_dump_on_each_attempt: true  # save partial-attemptN.json so data is never lost between attempts
+
+  # Strategies tried at each attempt (browser sources: x_foryou, x_following, substack, medium)
+  # v5.9 (2026-08-24): this ladder is the INTERACTIVE fallback only. The primary
+  # path for ALL browser sources is now headless CDP (_collect_x_headless.py for
+  # X, _collect_web_headless.py for Substack+Medium) — no MCP, no pairing.
+  # Scheduled runs never reach this ladder: no paired browser exists at 03:00.
+  strategies:
+    attempt_1:
+      tool: claude-in-chrome
+      tab: fresh
+      notes: primary strategy (current defaults). Dedicated tab.
+    attempt_2:
+      tool: claude-in-chrome
+      tab: same-group-new-tab
+      notes: close tab + open new tab in same group; slower scroll (interval × 2); scroll up-then-down to reset lazy-load
+    attempt_3:
+      tool: claude-in-chrome
+      tab: same-group-new-tab
+      notes: hard page refresh; alternate extractor selector set; media-blocking OFF
+    attempt_4:
+      tool: claude-in-chrome
+      tab: fresh-group
+      notes: recreate the tab group via tabs_create_mcp; treat as clean Chrome session
+    attempt_5:
+      tool: claude-in-chrome
+      tab: fresh-group
+      notes: fresh group + slow scroll + alternate selectors stacked
+    attempt_6:
+      tool: claude-in-chrome
+      tab: fresh-group
+      notes: fresh group + media-blocking off + observer rewritten against live DOM
+    attempt_7:
+      tool: playwright
+      profile: ~/.cache/playwright-newsdigest/
+      notes: Playwright with persistent profile (must have live logins); default tuning
+    attempt_8:
+      tool: playwright
+      profile: ~/.cache/playwright-newsdigest/
+      notes: Playwright slow scroll + alternate selectors
+    attempt_9:
+      tool: playwright
+      profile: ~/.cache/playwright-newsdigest/
+      notes: Playwright fresh context (new browser instance, same profile)
+    attempt_10:
+      tool: playwright
+      profile: ~/.cache/playwright-newsdigest/
+      notes: Playwright + observer rewritten against live DOM. Last attempt before abort.
+
+# ---------------------------------------------------------------
+# Per-source gem caps (applied post-scoring, pre-ordering)
+# Only Hacker News and Medium have caps. All others uncapped within global 80-100.
+# ---------------------------------------------------------------
+caps:
+  hacker_news: { daily: 10, weekly: 15 }
+  medium:      { daily: 5,  weekly: 10 }
+
+# ---------------------------------------------------------------
+# Scoring rubric (see SKILL.md § Scoring Algorithm for full spec)
+# ---------------------------------------------------------------
+scoring:
+  # Per-item 0-5 axes, weighted. Max gem_score = 57.5.
+  weights:
+    teaches: 3.0
+    tool_discovery: 2.0
+    artifact: 2.0
+    discussion_quality: 1.5
+    contrarian_evidence: 1.0
+    postmortem: 2.0
+
+  # Relevance multiplier by inferred topic cluster
+  relevance:
+    - mult: 1.0
+      topics: [data_engineering, system_design, distributed_systems, product_shipping, startup_thinking]
+    - mult: 0.9
+      topics: [ai_research, agents, rag, benchmarks, local_news, energy, regional_tech]
+    - mult: 0.7
+      topics: [career, culture, interviews, claude_code, ai_tools]
+    - mult: 0.3
+      topics: [frontend, mobile, gaming, unrelated]
+
+  # +20% boost if item connects to an active project
+  project_bonus_multiplier: 1.2
+
+active_projects:
+  - Taskflow
+  - Helios
+  - Rai
+  - OpenKit
+
+# ---------------------------------------------------------------
+# Output shaping
+# ---------------------------------------------------------------
+output:
+  digest_dir: "~/helm/08-bawaba/daily/"
+  dumps_dir: "~/helm/03-rai/skills/news-digest/.runs/"     # working scratch (3-day window); durable copy is 13-archive/news/dumps/YYYY-MM-DD/
+  gems_total_target: [80, 100]              # min, max
+  top_shelf_count: [20, 30]                 # min, max
+  news_wire_count: [10, 15]                 # min, max
+  feed_count: 60                            # main feed size
+
+# ---------------------------------------------------------------
+# Source affinity (multiplies into final score, then re-clamped to [0, 100]).
+# Reflects John's actual reading habits — not collection volume,
+# not platform popularity. Tune as reading patterns shift.
+# ---------------------------------------------------------------
+source_affinity:
+  x_foryou: 1.4       # heavy daily reader
+  x_following: 1.4
+  hn: 1.1
+  reddit: 0.9         # collected volume already large; modest deweight
+  substack: 1.1       # boosting back to fair share after enrichment fix
+  medium: 1.0
+  github: 0.7         # quality-filtered already; shouldn't dominate
+
+# Soft per-source cap as a fraction of any one section's size.
+# Replaces the previous hard caps of 4/section (news_wire) and 8/section (top_shelf).
+# 0.35 → news_wire ≤ 5/source, top_shelf ≤ 11/source, feed ≤ 21/source.
+max_source_pct: 0.35
+
+# Daily X-share target band [min, max]. X is John's primary collection channel and we want
+# MORE of it, so the personalized body (Top Shelf + Feed) is rebalanced toward the UPPER end of
+# this band — the Feed flexes (overriding the per-source soft cap for X) by swapping its weakest
+# non-X items for the best unused ON-BEAT X (AI/DE/SysDesign/DevOps/projects; never regional/finance/
+# viral junk). On throttled-X days it stops short of the band rather than padding with junk.
+# News Wire is excluded (already X-majority by design); Top Shelf is untouched.
+x_share_target: [0.40, 0.55]
+
+# Hard cap on GitHub items across the entire digest.
+# GitHub Trending is pre-filtered (~12 items/day); without a ceiling it overrepresents.
+github_max: 4
+
+deep_dive:
+  candidates: 3                             # surface N, write 1 in full, list others as "also considered"
+
+wisdom:
+  max_items: 3
+  min_items: 0                              # no filler on quiet days
+
+# ---------------------------------------------------------------
+# Cross-day dedup (Step 1.5) — v5.4: persistent seen-URL ledger.
+# Every displayed item (News Wire + Top Shelf + Feed) is recorded forever in
+# seen_ledger.jsonl; anything with a record from a PRIOR date is dropped from
+# the pool. An old-but-unseen item passes once (labeled with its publish date
+# when older than stale_label_days), then never again. Same-date entries never
+# suppress a same-date re-run.
+# ---------------------------------------------------------------
+dedup:
+  ledger_file: "seen_ledger.jsonl"          # skill-local, git-tracked, append-only, never pruned (~25 KB/day)
+  stale_label_days: 3                       # publish date older than this → '· *published YYYY-MM-DD*' label, shown once
+  compare_sections: [gems, news_wire]       # sections whose displayed items get ledgered (wisdom skipped — quotes usually inside gems)
+  strip_url_params:
+    - utm_source
+    - utm_medium
+    - utm_campaign
+    - utm_term
+    - utm_content
+    - utm_id
+    - ref
+    - ref_src
+    - ref_url
+    - s
+    - t
+    - si
+    - fbclid
+    - gclid
+    - mc_cid
+    - mc_eid
+    - igshid
+    - spm
+    - trk
+  # Ledger matching is exact on (normalized title + author) — O(1) against an ever-growing ledger.
+  # URL match alone is sufficient; title match still requires the author on both sides.
+  author_match_required_for_title_fuzzy: true
+
+# ---------------------------------------------------------------
+# Cross-helm context (loaded at Step 0 for gem tagging + wisdom + deep dive grounding)
+# Paths relative to ~/helm/. Globs allowed.
+# ---------------------------------------------------------------
+cross_helm_context:
+  - .helm-index/helm-index.md
+  - 02-ana/identity/who-i-am.md
+  - 02-ana/identity/tech-stack.md
+  - 02-ana/identity/goals.md
+  - 02-ana/identity/mindset.md
+  - 05-projects/active/*/*.md
+  - 09-ideas/*.md
+  - 10-knowledge/_mocs/*.md
+  # Explicitly NOT loaded: 04-work/ (user excluded)
+
+# ---------------------------------------------------------------
+# Mental models (for Wisdom mapping). Source of truth = 02-ana/identity/mindset.md
+# § Mental Models (16) — this is a cache. Keep in sync when mindset.md evolves.
+# ---------------------------------------------------------------
+mental_models:
+  - Compounding
+  - First Principles
+  - Inversion
+  - Pain as Signal
+  - Invest in Thinking Not Pattern-Matching
+  - Capture-Connect-Build
+  - Human-AI Division of Labor
+  - 1000 Hours Rule
+  - Contribution Loop
+  - Synthesis Model
+  - Build in Public
+  - Verify Don't Assume
+  - Constraint as Strategy
+  - Simplicity First
+  - Dominate Don't Avoid
+  - Abstraction Is Earned
+
+# ---------------------------------------------------------------
+# Weekly magazine (Bawaba Weekly) — SKILL.md § Weekly Magazine.
+# The weekly is a MAGAZINE, not a recap: topical departments written as
+# educational prose. weekly_mine.py buckets the week's raw dumps into
+# department briefs; Claude picks subjects, enriches online, writes.
+# ---------------------------------------------------------------
+weekly:
+  output_dir: "~/helm/08-bawaba/weekly/"
+  archive_dir: "~/helm/13-archive/news/weekly/"
+  read_target_min: 60                 # John's Saturday reading commitment
+  word_target: [8000, 10000]
+  departments:                        # order = magazine order; words are targets, not caps
+    - { name: "Editor's Letter",  words: 300 }
+    - { name: "Cover Story",      words: 1800, web_enrich: true }
+    - { name: "Model State",      words: 1500, web_enrich: true }
+    - { name: "The Lesson",       words: 2000, web_enrich: true }
+    - { name: "The Workshop",     words: 1000, optional: true }   # cuttable on a thin week
+    - { name: "Reading Shelf",    words: 800 }
+    - { name: "Closing — Wisdom", words: 300 }
+  web_enrichment:
+    tools: [WebSearch, WebFetch]      # headless-safe; the weekly NEVER opens a browser
+    max_fetches: 10
+  mining:                             # weekly_mine.py knobs (defaults live in the script)
+    brief_max_kb: 60
+    lesson_min_days: 3                # concept must recur ≥3 days (auto-relaxed on thin weeks)...
+    lesson_min_sources: 2             # ...across ≥2 sources
+    cluster_min_items: 5
+    model_min_items: 2
+    shelf_min_body_chars: 3000
+    shelf_top_n: 15
+    cover_top_n: 5
+    lesson_top_n: 10
+    # model_entities / release_markers / interest_unigrams / evergreen_phrases:
+    # curated lists default inside weekly_mine.py; override here only when tuning.
+
+# ---------------------------------------------------------------
+# /news chat canonical prompts (surfaced when user types /news chat)
+# ---------------------------------------------------------------
+chat_prompts:
+  - "What should I pay most attention to and why?"
+  - "What am I missing that I'd want to know?"
+  - "Connect gem #N to my active projects."
+  - "What would this look like in 6 months if the trend holds?"

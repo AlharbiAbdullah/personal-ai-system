@@ -1,0 +1,120 @@
+#!/bin/sh
+# main moves only via project.py (PROJECT_MERGE), a sync to what origin really holds, or the first commit.
+# Some moves never reach this hook (git branch -m/-c onto main writes main directly), so the guard
+# records main after each update it saw, and refuses every ref update while main is elsewhere.
+case $1 in prepared | committed) ;; *) exit 0 ;; esac
+D={DEFAULT_BRANCH};                                                  # D rendered from .project.toml
+unset GIT_CONFIG_PARAMETERS GIT_CONFIG_COUNT GIT_CONFIG_GLOBAL GIT_CONFIG_SYSTEM GIT_CONFIG_NOSYSTEM XDG_CONFIG_HOME \
+  GIT_SSH_COMMAND GIT_SSH GIT_SSH_VARIANT  # git -c, GIT_CONFIG_*, XDG_CONFIG_HOME and GIT_SSH* cannot steer the guard's own git:
+# it reads this repo's config, ~/.gitconfig and the system's (and what they include), and follows url.<base>.insteadOf and core.sshCommand from the last two only
+T=$(command -v timeout || command -v gtimeout)                  # coreutils; without it, ls-remote runs untimed
+refuse() {  # $2: how to recover, when the guard knows
+  echo "blocked: $1" >&2
+  echo "  git may have changed the index and files for this move already: check git status" >&2
+  [ -z "$2" ] || echo "  to recover: $2" >&2; exit 1
+}
+own_rewrite() {  # the url.<base>.insteadOf git applies to $1 (the longest match), when this repo's own config sets it
+  tab=$(printf '\t'); best=; len=-1; rules=$(git config --show-scope --get-regexp '^url\..*\.insteadof$' 2>/dev/null)
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    scope=${line%%"$tab"*}; value=${line#*"$tab"}; value=${value#* }
+    case $1 in "$value"*) ;; *) continue ;; esac
+    [ "${#value}" -gt "$len" ] && { len=${#value}; best=; }
+    [ "${#value}" -eq "$len" ] && case $scope in global | system) ;; *) best=$value ;; esac
+  done <<EOF
+$rules
+EOF
+  printf '%s' "$best"
+}
+zero() { case $1 in *[!0]* | '') return 1 ;; esac; }                # no old value, or a delete
+need() { for t in "$@"; do command -v "$t" >/dev/null 2>&1 || refuse "the main guard needs $t, which is not on PATH"; done; }
+empty_repo() {  # no ref, no reflog, and no commit in the object store but the new one
+  [ -z "$(git rev-list -n 1 --all --reflog 2>/dev/null)" ] || return 1
+  git cat-file --batch-all-objects --batch-check='%(objecttype) %(objectname)' | grep '^commit ' | grep -qv " $new\$" && return 1
+  return 0
+}
+G=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+R=$G/project-main-tip; M=$G/project-main-rename; L=$G/logs/refs/.tmp-renamed-log  # L: a git branch -m under way
+cur=$(git rev-parse -q --verify "refs/heads/$D")
+if [ "$1" = committed ]; then                                        # record where main is now
+  [ -n "$G" ] || exit 0
+  while read -r _ _ ref; do [ "$ref" = "refs/heads/$D" ] && [ -n "$cur" ] && printf '%s\n' "$cur" >"$R"; done
+  exit 0
+fi
+[ -n "$G" ] || refuse "the main guard cannot find this repository's git folder"
+rec=; [ -f "$R" ] && read -r rec <"$R"
+src=; sha=; [ -s "$M" ] && read -r src sha <"$M"; [ -f "$M" ] && : >"$M"  # the branch the last update deleted
+off=; [ -n "$cur" ] && [ "$cur" != "$rec" ] && [ -z "$PROJECT_MERGE" ] && off=1
+relog() { mkdir -p "$(dirname "$G/logs/$1")" && mv "$L" "$G/logs/$1"; }  # give a branch its reflog back
+back=
+while read -r old new ref; do
+  if [ "$ref" != "refs/heads/$D" ]; then
+    case $ref in refs/heads/*) ;; *) continue ;; esac
+    if [ -f "$L" ] && zero "$new" && ! zero "$old"; then             # git branch -m deletes its source first
+      if [ -z "$cur" ] && [ -n "$rec" ] && [ -z "$PROJECT_MERGE" ]; then
+        relog "$ref"
+        refuse "$D is missing here: no branch renames until a human recreates it (specs/README.md#gates)"
+      fi
+      printf '%s %s\n' "$ref" "$old" >"$M"
+    fi
+    continue
+  fi
+  [ -n "$off" ] && [ "$new" = "$rec" ] && { back=1; continue; }      # main put back where the guard saw it
+  if zero "$new"; then                                               # delete, rename away, pack-refs, gc: recoverable,
+    if zero "$old" && [ -f "$L" ] && [ -n "$src" ] && [ -z "$PROJECT_MERGE" ]; then  # unless it clears the way for a
+      if ! git rev-parse -q --verify "$src" >/dev/null; then         # rename onto main: undo what that did already
+        relog "$src"
+        git update-ref -m "main guard: undo git branch -m onto $D" "$src" "$sha" "" &&
+          echo "  the rename had deleted ${src#refs/heads/} already: it is back at $sha" >&2
+      fi
+      refuse "$D moves only via 'mise run merge' (specs/README.md#gates): git branch -m/-M onto it"
+    fi
+    continue
+  fi
+  [ "$cur" = "$new" ] && continue
+  if [ -z "$cur" ]; then need grep; empty_repo && continue; fi      # first commit of an empty repo
+  [ -n "$PROJECT_MERGE" ] && continue                                                   # project.py merge/abandon/release
+  need sed grep cut head tr
+  want=$(git --no-replace-objects show "refs/heads/$D:.project.toml" 2>/dev/null | sed -n 's/^origin_url = "\(.*\)"$/\1/p')  # replace refs cannot forge it
+  have=$(git remote get-url origin 2>/dev/null); why=; fix=         # both URLs as url.<base>.insteadOf rewrites them
+  if [ -z "$have" ]; then :                                          # no origin: nothing to sync from
+  elif [ -z "$want" ]; then
+    why="$D's committed .project.toml records no origin_url yet (the first merge has not reached $D)"
+    fix="git reset --merge (it undoes this move's changes to the index and files; your own edits stay). Then a human runs 'mise run merge' again on the branch whose pull request merged: it checks that origin's $D is that merge commit, then syncs $D. Or a human who checked origin's $D runs, on $D: PROJECT_MERGE=1 git pull --ff-only origin $D"
+  elif [ "$(git ls-remote --get-url -- "$want" 2>/dev/null)" != "$have" ]; then
+    why="origin is $have, but $D's .project.toml records origin_url = $want"
+    fix="git reset --merge, then point origin at the recorded repo (git remote set-url origin $want), or re-run /project-init to take this remote on"
+  elif rule=$(own_rewrite "$want"); [ -n "$rule" ]; then            # .git/config could send ls-remote to another repo
+    why="this repo's own git config rewrites origin_url $want (url.<base>.insteadOf $rule), and the guard follows only your user and system git config"
+    fix="git reset --merge, then move that url.<base>.insteadOf rule to ~/.gitconfig"
+  else
+    ssh=$(git config --global --includes --get core.sshCommand 2>/dev/null || git config --system --includes --get core.sshCommand 2>/dev/null)  # never .git/config's
+    remote=$(GIT_SSH_COMMAND=${ssh:-ssh} ${T:+$T 10} git ls-remote --upload-pack=git-upload-pack origin "refs/heads/$D" 2>/dev/null | cut -f1)
+    [ -z "$remote" ] && refuse "cannot reach origin to confirm $D" \
+      "git reset --merge (it undoes this move's changes to the index and files; your own edits stay), then retry online. For an ssh origin the guard runs plain ssh, or the core.sshCommand of ~/.gitconfig (a file it includes too) or of the system's config; it ignores GIT_SSH_COMMAND and this repo's own core.sshCommand. If origin needs one of those, put it in ~/.gitconfig (git config --global core.sshCommand '<command>'), or a human who checked origin's $D syncs $D by hand (on $D: PROJECT_MERGE=1 git pull --ff-only origin $D)"
+    if [ "$new" = "$remote" ]; then                                 # a sync to what origin holds, if merge landed it all
+      log=$(git --no-replace-objects log --first-parent --format='%h %(trailers:key=Merged-By,valueonly,separator=%x2C,unfold)' "$new" --not "$cur" --) || log="?"
+      bad=$(printf '%s\n' "$log" | grep -v '^[0-9a-f]* mise run merge$' | grep . | cut -d' ' -f1 | head -n 5 | tr '\n' ' ')
+      [ -z "$bad" ] && continue
+      refuse "origin's $D holds commits that did not land through 'mise run merge' (no Merged-By trailer): $bad" \
+        "git reset --merge (it undoes this move's changes to the index and files; your own edits stay). Then a human who checked those commits syncs $D by hand (on $D: PROJECT_MERGE=1 git pull --ff-only origin $D; status --audit keeps naming them)"
+    fi
+  fi
+  [ -z "$cur" ] && refuse "$D is missing here, and only a human recreates it (specs/README.md#gates)"
+  if [ -n "$why" ]; then                                            # a pull, fetch or reset to what was fetched
+    fetched=$(git rev-parse -q --verify "refs/remotes/origin/$D"); fh=$(git rev-parse -q --verify FETCH_HEAD 2>/dev/null)
+    if [ "$new" = "$fetched" ] || [ "$new" = "$fh" ]; then
+      refuse "$D moves only via 'mise run merge' (specs/README.md#gates), and this sync from origin is not confirmed: $why" "$fix"
+    fi
+  fi
+  refuse "$D moves only via 'mise run merge' (specs/README.md#gates)"
+done
+if [ -z "$off" ] || [ -n "$back" ]; then exit 0; fi                 # main is where the guard last saw it
+[ -n "$rec" ] || refuse "$D is at $cur, and the main guard has no record of it: a human checks it, then runs mise install"
+how=$(git reflog show -n 1 --format=%gs "refs/heads/$D" -- 2>/dev/null)  # e.g. Branch: copied refs/heads/x to ...
+hd=$(git symbolic-ref -q HEAD); fix=                                 # git branch -m of the checked-out branch
+if [ -n "$hd" ] && ! git rev-parse -q --verify "$hd" >/dev/null; then
+  was=$(git reflog show --format='%H %gs' "refs/heads/$D" -- 2>/dev/null | sed -n "s|^\([0-9a-f]*\) Branch: renamed $hd to .*|\1|p" | head -n 1)
+  fix=", then git branch ${hd#refs/heads/} ${was:-<its last commit>}"
+fi
+refuse "$D moved without an update the guard saw (${how:-git branch -m/-c onto it, or a write into .git}): it is $cur, the guard saw $rec. Put it back: git update-ref refs/heads/$D $rec$fix"

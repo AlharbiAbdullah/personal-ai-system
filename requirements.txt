@@ -1,0 +1,27 @@
+# Personal AI System — Python dependencies
+# =============================================================================
+# The CORE system needs NOTHING here. Every lifecycle hook in 03-rai/hooks/ is
+# pure Python standard library — clone it, wire it in, and it runs on a stock
+# python3. The packages below are only for two OPTIONAL features.
+#
+# Install everything for the optional features:
+#     pip install -r requirements.txt
+# (use a venv, or add --user for a per-user install)
+# =============================================================================
+
+# --- News digest (/news-digest) ------------------------------------------------
+# Needed by the HN / Reddit / Substack / Medium collectors and enrichers.
+requests>=2.31          # _collect_curl.py, _collect_reddit_rss.py, _reddit_rss_paced.py
+beautifulsoup4>=4.12    # _collect_curl.py, _enrich_substack.py, _enrich_medium.py
+httpx>=0.27             # _enrich_substack.py, _enrich_medium.py
+
+# --- Already handled by `uv` (listed here only for the no-uv path) -------------
+# These two are normally provisioned automatically and do NOT need pip:
+#   * websocket-client — the headless X collector (_collect_x_headless.py) runs
+#     under `uv` and declares it inline as a script dependency.
+#   * chromadb         — the Memory v3 vector store runs through the uv wrapper
+#     03-rai/semantic-memory/scripts/py-chroma.sh; memory-injection.py imports it
+#     behind a try/except, so the system degrades gracefully without it.
+# Uncomment only if you intend to run these WITHOUT uv:
+# websocket-client>=1.6
+# chromadb>=0.5

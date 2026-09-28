@@ -1,0 +1,11 @@
+extends: existence
+message: "'%s': give the number or cut it."
+level: warning
+ignorecase: true
+tokens:
+  - many
+  - several
+  - various
+  - numerous
+  - a substantial
+  - a significant

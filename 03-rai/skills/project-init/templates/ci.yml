@@ -1,0 +1,23 @@
+# CI for {NAME}: the same `mise run verify` as a laptop, plus prove-red on PRs and the audit on push.
+# The gate ladder is written out once, in specs/README.md#gates.
+name: {CI_NAME}
+on:
+  push:
+    branches: ["{DEFAULT_BRANCH}"]
+  pull_request: {}
+permissions:
+  contents: read
+jobs:
+  "{CI_JOB}":
+    name: "{CI_JOB}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@{CHECKOUT_REF}
+        with:
+          fetch-depth: 0                # full history: the secret scan, prove-red's base, the audit
+      - uses: jdx/mise-action@{MISE_ACTION_REF}   # tools pinned by mise.lock
+      - run: mise run verify            # `uv run --locked` syncs the venv itself
+      - if: github.event_name == 'pull_request'
+        run: mise run prove-red -- --base "origin/${{ github.base_ref }}"
+      - if: github.event_name == 'push'
+        run: mise run status -- --audit # flags default-branch commits that skipped merge

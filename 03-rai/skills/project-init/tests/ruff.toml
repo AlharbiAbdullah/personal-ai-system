@@ -1,0 +1,10 @@
+# project-init's own test suite: the skill's Python rules (line length 100, S and ANN on top of
+# the defaults), minus what a test suite does by design.
+line-length = 100
+target-version = "py312"
+
+[lint]
+extend-select = ["S", "ANN"]
+# S101: pytest's plain assert. S603, S607: the tests run git, uv, sh and the fixture script
+# with a fixed argv, as the rendered projects' tests do (design 5.3 ignores S603/S607 there).
+ignore = ["S101", "S603", "S607"]

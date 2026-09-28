@@ -1,0 +1,7 @@
+extends: existence
+message: "Em dash. Use a period, comma, colon or parentheses."
+level: error
+nonword: true
+tokens:
+  - '—'
+  - '–'

@@ -1,0 +1,76 @@
+# Per-theme app mapping. What each app needs to be set to when this theme is active.
+# Used by /mac-theme when generating theme.lua and by audit to check adapters.
+#
+# Border = iconic, high-contrast palette pick per theme. Must be (a) in the
+# theme's own palette (normal/bright/selection_bg) and (b) bright enough vs
+# that theme's background to make the focused-window indicator obvious.
+# Canonical `accent` values were too muted on cool-bg themes — pink/orange/
+# cyan/purple variants from each palette make the focus cue actually pop.
+#
+# EDITOR THEMES ARE NOT LISTED HERE (changed 2026-08-14). Cursor and Antigravity
+# now load `rai.rai-themes`, one extension generated from theme.lua by
+# ~/.config/themes/build-editor-themes.py, so the editor name is derived:
+#   <theme-name> title-cased with hyphens as spaces + " (generated)"
+#   gruvbox-material-soft -> "Gruvbox Material Soft (generated)"
+# Nothing to map, nothing to install, nothing to drift. Before this, all 15 themes
+# pointed at published extensions and ALL 15 failed parity (worst dE 70.1); two
+# pointed at extensions that were never installed at all.
+
+[catppuccin]
+border = "0xfff38ba8"
+
+[gruvbox]
+border = "0xffd65d0e"
+
+[nord]
+border = "0xff88c0d0"
+
+[tokyo-night]
+border = "0xffbb9af7"
+
+[miasma]
+vscode_source = "https://raw.githubusercontent.com/OldJobobo/omarchy-miasma-theme/master/vscode.json"
+border = "0xffbb7744"
+manual = true
+
+[cobalt2]
+border = "0xffffc600"
+
+[gruvbox-light]
+border = "0xffcc241d"
+
+[everforest]
+border = "0xffdbbc7f"
+
+[kanagawa]
+border = "0xffe6c384"
+
+[ristretto]
+border = "0xfff38d70"
+
+[rose-pine]
+border = "0xffc4a7e7"
+
+[melange]
+border = "0xffe49b5d"
+
+[bamboo]
+border = "0xff81af58"
+
+[kanagawa-dragon]
+border = "0xffc4746e"
+
+[nightfox]
+border = "0xff719cd6"
+
+[duskfox]
+border = "0xffc4a7e7"
+
+[nordfox]
+border = "0xff81a1c1"
+
+[terramour]
+border = "0xff7fa68f"
+
+[gruvbox-material-soft]
+border = "0xffd8a657"

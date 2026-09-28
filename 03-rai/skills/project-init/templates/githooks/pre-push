@@ -1,0 +1,2 @@
+#!/bin/sh
+exec mise x -- uv run --script scripts/project.py hook pre-push "$@"

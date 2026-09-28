@@ -1,0 +1,71 @@
+# project-init standard for pyproject.toml. Merged key by key: a scalar the project already sets is kept,
+# a list gains the items it lacks (so the spec marker always lands), pytest addopts gains the flags it
+# lacks, and [tool.git-cliff] is replaced whole, because the tool owns it (merge and release write
+# CHANGELOG.md with it).
+
+[tool.ruff]
+line-length = 100
+# Tool-owned, hash-tracked copies: checked where project-init builds them. The project's own ruff
+# settings (target version, width, rule set) would otherwise reformat or flag files nobody may edit.
+extend-exclude = ["scripts/project.py", "tests/conftest.py"]
+
+[tool.ruff.format]
+# ruff formats the Python fences in Markdown files too: the docs keep the code as written
+exclude = ["*.md"]
+
+[tool.ruff.lint]
+extend-select = ["S", "ANN"]              # security + annotations, on top of ruff's defaults
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S603", "S607"]     # assert, and subprocess tests of the real entrypoint
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers -p no:cacheprovider"
+markers = ["spec(*ids): scenario ids this test proves"]
+
+# CHANGELOG.md in Keep a Changelog form. Merge runs `git cliff --with-commit "<title>" -o CHANGELOG.md`.
+# Groups come from the conventional type; spec, chore, ci, docs, test, style, build and refactor are left out.
+[tool.git-cliff.changelog]
+header = """
+# Changelog
+
+All notable changes to this project are documented in this file.
+The format follows Keep a Changelog (https://keepachangelog.com/en/1.1.0/)."""
+body = """
+
+{% if version %}\
+## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+
+{% for commit in commits %}\
+- {{ commit.message | split(pat="\n") | first | trim }}{% if commit.scope %} ({{ commit.scope }}){% endif %}
+{% endfor %}\
+{% endfor %}\
+"""
+trim = false
+postprocessors = [
+  { pattern = "\n{3,}", replace = "\n\n" },
+  { pattern = "\n+$", replace = "\n" },
+]
+
+[tool.git-cliff.git]
+conventional_commits = true
+filter_unconventional = true
+filter_commits = true
+protect_breaking_commits = true
+commit_parsers = [
+  { field = "breaking", pattern = "true", group = "<!-- 2 -->Removed" },   # any `type!:` or BREAKING CHANGE footer
+  { message = "^feat", group = "<!-- 0 -->Added" },
+  { message = "^change", group = "<!-- 1 -->Changed" },
+  { message = "^fix", group = "<!-- 3 -->Fixed" },
+  { message = "^perf", group = "<!-- 4 -->Performance" },
+  { message = ".*", skip = true },
+]
+
+[tool.git-cliff.bump]
+features_always_bump_minor = true
+breaking_always_bump_major = false        # while the version is 0.x, a breaking change bumps the minor

@@ -1,0 +1,36 @@
+{
+  "version": 3,
+  "skills": {
+    "obsidian-cli": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-cli/SKILL.md",
+      "installedTo": "03-rai/skills/obsidian/cli.md",
+      "commit": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "installedAt": "2026-09-09T10:56:45.291754Z",
+      "updatedAt": "2026-09-09T10:56:45.291754Z"
+    },
+    "obsidian-markdown": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-markdown/SKILL.md",
+      "installedTo": "03-rai/skills/obsidian/markdown.md",
+      "commit": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "installedAt": "2026-09-09T10:56:45.291754Z",
+      "updatedAt": "2026-09-09T10:56:45.291754Z"
+    },
+    "obsidian-bases": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-bases/SKILL.md",
+      "installedTo": "03-rai/skills/obsidian/bases.md",
+      "commit": "a1dc48e68138490d522c04cbf5822214c6eb1202",
+      "installedAt": "2026-09-09T10:56:45.291754Z",
+      "updatedAt": "2026-09-09T10:56:45.291754Z"
+    }
+  },
+  "dismissed": {}
+}

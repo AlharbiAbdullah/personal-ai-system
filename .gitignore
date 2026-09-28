@@ -1,0 +1,32 @@
+# Personal AI System — a brain, not an app. Information is never ignored here;
+# only two categories stay out of git.
+
+# 1. SECRETS — never commit credentials.
+.env
+.env.*
+*.pem
+*.key
+*_token
+03-rai/skills/news-digest/twscrape.db
+
+# 2. MACHINE DROPPINGS + DERIVED STATE — regenerated, carry zero information.
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+node_modules/
+# Vale packages downloaded by `vale sync` (the ai-tells rules and their templates).
+03-rai/config/vale/styles/ai-tells/
+03-rai/config/vale/styles/config/
+
+# ChromaDB vector store: a large binary REBUILT from your source memory + the
+# pending queue. Keep it local and let each machine regenerate it (it was the #1
+# source of git bloat). The information lives in your memory, not here.
+03-rai/semantic-memory/chromadb/
+
+# ── Going PUBLIC with your own fork? ───────────────────────────────────────────
+# Your real life (02-ana/) and accumulated memory (03-rai/memory/) are PRIVATE.
+# In a private vault you WANT them tracked. If you publish your vault publicly,
+# uncomment the two lines below to keep your personal content out of history:
+# 02-ana/
+# 03-rai/memory/

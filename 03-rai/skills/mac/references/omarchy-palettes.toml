@@ -1,0 +1,224 @@
+# Canonical Omarchy palettes. Source of truth for /mac-theme audit.
+# LOCAL POLICY (2026-08-12): selection colors deviate from upstream on purpose.
+# Bright selection fills (fg-as-selection, orange, lilac) hurt John's eyes
+# and hide selected text. Rule: selection_bg = a dim neutral from the theme's
+# OWN palette (typically ansi[0]), selection_fg = normal foreground. Applied to
+# gruvbox + everforest below; do NOT revert these on refresh-palettes.
+# Fetched 2026-04-17 from:
+#   catppuccin     basecamp/omarchy@dev   themes/catppuccin/colors.toml
+#   gruvbox        basecamp/omarchy@dev   themes/gruvbox/colors.toml
+#   nord           basecamp/omarchy@dev   themes/nord/colors.toml
+#   tokyo-night    basecamp/omarchy@dev   themes/tokyo-night/colors.toml
+#   miasma         OldJobobo/omarchy-miasma-theme@master  colors.toml
+#   cobalt2        hoblin/omarchy-cobalt2-theme@main      colors.toml
+#   gruvbox-light  Kushal0924/omarchy-gruvbox-light-theme@main alacritty.toml (derived)
+# Fetched 2026-05-16 from:
+#   everforest        basecamp/omarchy@master themes/everforest/colors.toml
+#   kanagawa          basecamp/omarchy@master themes/kanagawa/colors.toml
+#   ristretto         basecamp/omarchy@master themes/ristretto/colors.toml
+#   rose-pine         rose-pine/alacritty@main dist/rose-pine.toml (canonical Main variant)
+#   melange           savq/melange-nvim@master lua/melange/palettes/dark.lua
+#   bamboo (multiplex) ribru17/bamboo.nvim@master lua/bamboo/palette.lua
+#   kanagawa-dragon   rebelot/kanagawa.nvim@master lua/kanagawa/colors.lua (dragon palette)
+# Fetched 2026-05-21 from:
+#   nightfox          EdenEast/nightfox.nvim@main extra/nightfox/wezterm.toml
+#   duskfox           EdenEast/nightfox.nvim@main extra/duskfox/wezterm.toml
+#   nordfox           EdenEast/nightfox.nvim@main extra/nordfox/wezterm.toml
+
+[catppuccin]
+mode = "dark"
+accent = "#89b4fa"
+cursor = "#f5e0dc"
+foreground = "#cdd6f4"
+background = "#1e1e2e"
+selection_foreground = "#1e1e2e"
+selection_background = "#f5e0dc"
+normal  = ["#45475a", "#f38ba8", "#a6e3a1", "#f9e2af", "#89b4fa", "#f5c2e7", "#94e2d5", "#bac2de"]
+bright  = ["#585b70", "#f38ba8", "#a6e3a1", "#f9e2af", "#89b4fa", "#f5c2e7", "#94e2d5", "#a6adc8"]
+
+[gruvbox]
+mode = "dark"
+accent = "#7daea3"
+cursor = "#bdae93"
+foreground = "#d4be98"
+background = "#282828"
+selection_foreground = "#d4be98"
+selection_background = "#3c3836"
+normal  = ["#3c3836", "#ea6962", "#a9b665", "#d8a657", "#7daea3", "#d3869b", "#89b482", "#d4be98"]
+bright  = ["#3c3836", "#ea6962", "#a9b665", "#d8a657", "#7daea3", "#d3869b", "#89b482", "#d4be98"]
+
+[nord]
+mode = "dark"
+accent = "#81a1c1"
+cursor = "#d8dee9"
+foreground = "#d8dee9"
+background = "#2e3440"
+selection_foreground = "#d8dee9"
+selection_background = "#4c566a"
+normal  = ["#3b4252", "#bf616a", "#a3be8c", "#ebcb8b", "#81a1c1", "#b48ead", "#88c0d0", "#e5e9f0"]
+bright  = ["#4c566a", "#bf616a", "#a3be8c", "#ebcb8b", "#81a1c1", "#b48ead", "#8fbcbb", "#eceff4"]
+
+[tokyo-night]
+mode = "dark"
+accent = "#7aa2f7"
+cursor = "#c0caf5"
+foreground = "#a9b1d6"
+background = "#1a1b26"
+selection_foreground = "#c0caf5"
+selection_background = "#7aa2f7"
+normal  = ["#32344a", "#f7768e", "#9ece6a", "#e0af68", "#7aa2f7", "#ad8ee6", "#449dab", "#787c99"]
+bright  = ["#444b6a", "#ff7a93", "#b9f27c", "#ff9e64", "#7da6ff", "#bb9af7", "#0db9d7", "#acb0d0"]
+
+[miasma]
+mode = "dark"
+accent = "#78824b"
+cursor = "#c7c7c7"
+foreground = "#c2c2b0"
+background = "#222222"
+selection_foreground = "#c2c2b0"
+selection_background = "#78824b"
+normal  = ["#666666", "#685742", "#5f875f", "#b36d43", "#78824b", "#bb7744", "#c9a554", "#d7c483"]
+bright  = ["#666666", "#685742", "#5f875f", "#b36d43", "#78824b", "#bb7744", "#c9a554", "#d7c483"]
+
+[cobalt2]
+mode = "dark"
+accent = "#ffc600"
+cursor = "#ffc600"
+foreground = "#ffffff"
+background = "#122738"
+selection_foreground = "#ffffff"
+selection_background = "#0050A4"
+normal  = ["#000000", "#ff628c", "#3ad900", "#ffc600", "#0088ff", "#fb94ff", "#80fcff", "#ffffff"]
+bright  = ["#0050A4", "#ff628c", "#3ad900", "#ffc600", "#0088ff", "#fb94ff", "#80fcff", "#ffffff"]
+
+[gruvbox-light]
+mode = "light"
+accent = "#458588"
+cursor = "#3c3836"
+foreground = "#3c3836"
+background = "#f2e5bc"
+selection_foreground = "#ebdbb2"
+selection_background = "#076678"
+normal  = ["#f2e5bc", "#cc241d", "#98971a", "#d79921", "#458588", "#b16286", "#689d6a", "#7c6f64"]
+bright  = ["#928374", "#9d0006", "#79740e", "#b57614", "#076678", "#8f3f71", "#427b58", "#3c3836"]
+
+[everforest]
+mode = "dark"
+accent = "#7fbbb3"
+cursor = "#d3c6aa"
+foreground = "#d3c6aa"
+background = "#2d353b"
+selection_foreground = "#d3c6aa"
+selection_background = "#475258"
+normal  = ["#475258", "#e67e80", "#a7c080", "#dbbc7f", "#7fbbb3", "#d699b6", "#83c092", "#d3c6aa"]
+bright  = ["#475258", "#e67e80", "#a7c080", "#dbbc7f", "#7fbbb3", "#d699b6", "#83c092", "#d3c6aa"]
+
+[kanagawa]
+mode = "dark"
+accent = "#7e9cd8"
+cursor = "#c8c093"
+foreground = "#dcd7ba"
+background = "#1f1f28"
+selection_foreground = "#c8c093"
+selection_background = "#2d4f67"
+normal  = ["#090618", "#c34043", "#76946a", "#c0a36e", "#7e9cd8", "#957fb8", "#6a9589", "#c8c093"]
+bright  = ["#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#dcd7ba"]
+
+[ristretto]
+mode = "dark"
+accent = "#f38d70"
+cursor = "#c3b7b8"
+foreground = "#e6d9db"
+background = "#2c2525"
+selection_foreground = "#e6d9db"
+selection_background = "#403e41"
+normal  = ["#72696a", "#fd6883", "#adda78", "#f9cc6c", "#f38d70", "#a8a9eb", "#85dacc", "#e6d9db"]
+bright  = ["#948a8b", "#ff8297", "#c8e292", "#fcd675", "#f8a788", "#bebffd", "#9bf1e1", "#f1e5e7"]
+
+[rose-pine]
+mode = "dark"
+accent = "#c4a7e7"
+cursor = "#524f67"
+foreground = "#e0def4"
+background = "#191724"
+selection_foreground = "#e0def4"
+selection_background = "#403d52"
+normal  = ["#26233a", "#eb6f92", "#31748f", "#f6c177", "#9ccfd8", "#c4a7e7", "#ebbcba", "#e0def4"]
+bright  = ["#6e6a86", "#eb6f92", "#31748f", "#f6c177", "#9ccfd8", "#c4a7e7", "#ebbcba", "#e0def4"]
+
+[melange]
+mode = "dark"
+accent = "#e49b5d"
+cursor = "#ece1d7"
+foreground = "#ece1d7"
+background = "#292522"
+selection_foreground = "#ece1d7"
+selection_background = "#403a36"
+normal  = ["#34302c", "#bd8183", "#78997a", "#e49b5d", "#7f91b2", "#b380b0", "#7b9695", "#ece1d7"]
+bright  = ["#867462", "#d47766", "#85b695", "#ebc06d", "#a3a9ce", "#cf9bc2", "#89b3b6", "#ece1d7"]
+
+[bamboo]
+mode = "dark"
+accent = "#81af58"
+cursor = "#ece1c0"
+foreground = "#ece1c0"
+background = "#232923"
+selection_foreground = "#ece1c0"
+selection_background = "#363b35"
+normal  = ["#2d312c", "#dc4f62", "#81af58", "#ceba49", "#409cdc", "#a09af8", "#68baae", "#ece1c0"]
+bright  = ["#5a5e5a", "#e07870", "#81af58", "#dcbf84", "#88c1e9", "#de6bdb", "#68baae", "#ece1c0"]
+
+[kanagawa-dragon]
+mode = "dark"
+accent = "#c4746e"
+cursor = "#c5c9c5"
+foreground = "#c5c9c5"
+background = "#181616"
+selection_foreground = "#c5c9c5"
+selection_background = "#393836"
+normal  = ["#0d0c0c", "#c4746e", "#8a9a7b", "#c4b28a", "#8ba4b0", "#a292a3", "#8ea4a2", "#c5c9c5"]
+bright  = ["#737c73", "#c4746e", "#87a987", "#b6927b", "#658594", "#a292a3", "#949fb5", "#c5c9c5"]
+
+[nightfox]
+mode = "dark"
+accent = "#719cd6"
+cursor = "#cdcecf"
+foreground = "#cdcecf"
+background = "#192330"
+selection_foreground = "#cdcecf"
+selection_background = "#2b3b51"
+normal  = ["#393b44", "#c94f6d", "#81b29a", "#dbc074", "#719cd6", "#9d79d6", "#63cdcf", "#dfdfe0"]
+bright  = ["#575860", "#d16983", "#8ebaa4", "#e0c989", "#86abdc", "#baa1e2", "#7ad5d6", "#e4e4e5"]
+
+[duskfox]
+mode = "dark"
+accent = "#c4a7e7"
+cursor = "#e0def4"
+foreground = "#e0def4"
+background = "#232136"
+selection_foreground = "#e0def4"
+selection_background = "#433c59"
+normal  = ["#393552", "#eb6f92", "#a3be8c", "#f6c177", "#569fba", "#c4a7e7", "#9ccfd8", "#e0def4"]
+bright  = ["#47407d", "#f083a2", "#b1d196", "#f9cb8c", "#65b1cd", "#ccb1ed", "#a6dae3", "#e2e0f7"]
+
+[nordfox]
+mode = "dark"
+accent = "#81a1c1"
+cursor = "#cdcecf"
+foreground = "#cdcecf"
+background = "#2e3440"
+selection_foreground = "#cdcecf"
+selection_background = "#3e4a5b"
+normal  = ["#3b4252", "#bf616a", "#a3be8c", "#ebcb8b", "#81a1c1", "#b48ead", "#88c0d0", "#e5e9f0"]
+bright  = ["#465780", "#d06f79", "#b1d196", "#f0d399", "#8cafd2", "#c895bf", "#93ccdc", "#e7ecf4"]
+
+[terramour]
+mode = "dark"
+accent = "#7fa68f"
+cursor = "#eadddd"
+foreground = "#eadddd"
+background = "#3b2f31"
+selection_foreground = "#eadddd"
+selection_background = "#443739"
+normal  = ["#3b2f31", "#d07a7a", "#7fa68f", "#d6c37a", "#8fa3d1", "#b08fd1", "#79a6a3", "#eadddd"]
+bright  = ["#9c8c8d", "#dc8888", "#8fb298", "#e1cf8a", "#9fb3df", "#bc9cde", "#88b3b0", "#ffffff"]

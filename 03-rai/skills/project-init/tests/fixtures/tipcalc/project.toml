@@ -1,0 +1,8 @@
+# Becomes .project.toml in the fixture repo; trimmed to the keys check and status read.
+standard = "project-init v3"
+default_branch = "main"
+origin_url = ""
+
+[paths]
+src = ["src"]
+tests = ["tests"]

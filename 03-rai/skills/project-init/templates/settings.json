@@ -1,0 +1,72 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mise x -- uv run --script \"$CLAUDE_PROJECT_DIR/scripts/project.py\" hook session-start || echo 'project hooks are OFF on this machine: install mise, then run: mise install'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mise x -- uv run --script \"$CLAUDE_PROJECT_DIR/scripts/project.py\" hook pre-bash"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(mise run start *)",
+      "Bash(mise run fmt)",
+      "Bash(mise run test *)",
+      "Bash(mise run verify)",
+      "Bash(mise run status *)",
+      "Bash(mise run change *)",
+      "Bash(mise run backlog *)",
+      "Bash(mise run tdd *)",
+      "Bash(mise run proof *)",
+      "Bash(mise run doctor)",
+      "Bash(mise run lint)",
+      "Bash(mise run types)",
+      "Bash(mise run spec-check)",
+      "Bash(mise run prove-red *)",
+      "Bash(mise run selftest)",
+      "Bash(mise tasks *)",
+      "Bash(uv run --locked *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git switch *)",
+      "Bash(git add *)",
+      "Bash(git commit -m *)",
+      "Bash(git merge *)",
+      "Bash(git fetch *)",
+      "Bash(git pull --ff-only *)",
+      "Bash(git worktree *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh run view *)",
+      "Bash(gh issue list *)"
+    ],
+    "deny": [
+      "Bash(mise run approve*)",
+      "Bash(mise run merge*)",
+      "Bash(mise run abandon*)",
+      "Bash(mise run release*)",
+      "Bash(gh pr merge*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Edit(/.githooks/**)",
+      "Edit(/scripts/project.py)"
+    ]
+  }
+}

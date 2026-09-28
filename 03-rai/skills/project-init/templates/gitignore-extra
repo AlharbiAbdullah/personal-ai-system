@@ -1,0 +1,15 @@
+# project-init standard: local-only files. Missing lines are appended in this order (a line that is
+# already there with or without a trailing / counts as present); appending .env.* also appends
+# !.env.example after it, so the contract stays tracked.
+.env
+.env.*
+!.env.example
+mise.local.toml
+.claude/settings.local.json
+.cache/
+.agent/
+# Python (uv)
+.venv/
+__pycache__/
+*.py[oc]
+dist/
