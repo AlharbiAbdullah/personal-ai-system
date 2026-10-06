@@ -1,0 +1,18 @@
+{
+  "id": "coding-003",
+  "area": "coding",
+  "prompt": "`shop_db.py` is a stub for a small order store on SQLite (see README.md). Implement every function in it with the standard library `sqlite3` module only. Keep the names and signatures already in the file.\n\n- `connect(path) -> sqlite3.Connection`: open the database file with foreign-key enforcement switched on.\n- `init_schema(conn)`: create these tables if they do not exist (calling it twice is harmless):\n  - `customers(id INTEGER PRIMARY KEY, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, created_at TEXT NOT NULL)`; email uniqueness must be case-insensitive.\n  - `products(id INTEGER PRIMARY KEY, sku TEXT NOT NULL UNIQUE, name TEXT NOT NULL, price_cents INTEGER NOT NULL CHECK (price_cents >= 0))`\n  - `orders(id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(id), placed_at TEXT NOT NULL)`\n  - `order_items(order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE, product_id INTEGER NOT NULL REFERENCES products(id), quantity INTEGER NOT NULL CHECK (quantity > 0), unit_price_cents INTEGER NOT NULL, PRIMARY KEY (order_id, product_id))`\n- `add_customer(conn, email, name, created_at) -> int`: insert and return the new id. Raise `DuplicateCustomer` when the email already exists in any letter case. Store the email exactly as given.\n- `add_product(conn, sku, name, price_cents) -> int`: insert and return the new id (a negative price fails through the CHECK constraint with `sqlite3.IntegrityError`).\n- `set_price(conn, sku, price_cents)`: change a product's current price; raise `KeyError` for an unknown sku.\n- `place_order(conn, customer_id, items, placed_at) -> int`: `items` is a list of `(sku, quantity)` pairs; repeated skus are merged by adding their quantities. Each order line stores the product's price at the time of the order in `unit_price_cents` (later price changes do not affect old orders). Raise `ValueError` for an empty item list, an unknown sku or a quantity below 1; raise `KeyError` for an unknown customer. On any error nothing at all is written. Return the new order id.\n- `customer_totals(conn, since=None) -> list[tuple[str, int, int]]`: one row per customer: `(email, order_count, total_cents)`. Only orders with `placed_at >= since` count when `since` is given (ISO date strings compared as text). Customers without matching orders still appear, as `(email, 0, 0)`. `total_cents` is the sum of `quantity * unit_price_cents` over the counted orders; `order_count` counts orders, not order lines. Sort by `total_cents` descending, then by email ascending in plain case-sensitive (binary) order.\n- `top_products(conn, n) -> list[tuple[str, int]]`: the `n` best-selling products as `(sku, units_sold)` over all orders, sorted by units descending then sku ascending. Products that never sold are left out.\n\nEvery function that writes must commit before returning: a second connection to the same file must see the change.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

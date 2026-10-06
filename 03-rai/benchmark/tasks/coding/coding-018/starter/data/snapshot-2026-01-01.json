@@ -1,0 +1,5 @@
+[
+  {"customer_id": "C-001", "name": "Ann Lee", "city": "Austin", "tier": "gold"},
+  {"customer_id": "C-002", "name": "Bob Stone", "city": "Denver", "tier": null},
+  {"customer_id": "C-003", "name": "Cy Moss", "city": "Reno", "tier": "silver"}
+]

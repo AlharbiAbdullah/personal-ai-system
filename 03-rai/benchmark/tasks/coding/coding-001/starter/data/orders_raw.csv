@@ -1,0 +1,11 @@
+order_id,customer_email,amount,currency,order_date,status
+ORD-10001, Maria.Lopez@Example.com ,"$1,250.00",usd,2026-03-01,Completed
+ord-10002,tom.baker@example.org,19.999,EUR,05/03/2026, done
+ORD-10003,not-an-email,15.00,USD,2026-03-02,pending
+ORD-10004,ann.kim@example.net,-4.50,USD,2026-03-02,refunded
+ ORD-10002 ,tom.baker@example.org,19.99,EUR,2026-03-05,completed
+ORD-10005,lee.chen@example.com,7.5,,"Mar 9, 2026",canceled
+ORD-10006,sam.ortiz@example.com,30.00,JPY,2026-03-10,pending
+ORD-10007,kate.ross@example.com,12.345,GBP,2026-02-30,pending
+ORD-10008,omar.west@example.com,8.00,USD,2026/03/11,shipped
+ORD-1009,ben.ford@example.com,8.00,USD,2026-03-11,pending

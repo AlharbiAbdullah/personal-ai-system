@@ -1,0 +1,6 @@
+crm_id,name,email,phone,city,updated_at
+C-1,Ann Lee,Ann.Lee+news@gmail.com,(415) 555-0100,San Jose,2026-03-01T10:00:00Z
+C-2,Bob Stone,bob@stone.example,,Austin,2026-02-11 08:30:00+03:00
+C-3,Ann Lee,annlee@googlemail.com,,,2026-01-20T09:00:00Z
+C-4,Carla Diaz,,+44 20 7946 0958,London,2026-03-05T12:00:00+00:00
+C-5,Dev Patel,dev@patel.example,555-0199,,2026-03-02T00:00:00

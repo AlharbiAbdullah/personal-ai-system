@@ -1,0 +1,18 @@
+{
+  "id": "coding-019",
+  "area": "coding",
+  "prompt": "Write `dirdiff.sh`: a bash script (bash plus coreutils such as `find`, `sha256sum`, `sort`) that compares two directory trees by file content. See README.md; `sample/old` and `sample/new` are two small trees to try it on.\n\nUsage: `bash dirdiff.sh [-q] [-x PATTERN]... OLD NEW` (options come before the two directories).\n\n- Compare every regular file under OLD and under NEW, recursively, hidden files included, by its path relative to the tree root (no leading `./`) and the sha256 of its content. Symbolic links and directories themselves (including empty ones) are ignored.\n- `-x PATTERN` (repeatable) excludes every relative path that matches the bash glob pattern, where `*` also matches `/` (so `build/*` excludes everything below `build/`, and `*.tmp` excludes `.tmp` files at any depth).\n- Print one line per difference: `A <path>` for a file only in NEW, `D <path>` for a file only in OLD, `M <path>` for a file in both with different content. Identical files are not printed. Sort the lines by path in byte order (C locale), not by the letter.\n- `-q`: print nothing; only the exit status matters.\n- Exit status: 0 when there are no differences, 1 when there are, 2 for a usage error (unknown option, `-x` without a value, not exactly two directory operands, or OLD or NEW not an existing directory), with a message on stderr and nothing on stdout.\n- File and directory names may contain spaces, quotes, backslashes, a leading `-` and glob characters such as `[`, `]` and `*`. You may assume names contain no newlines.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

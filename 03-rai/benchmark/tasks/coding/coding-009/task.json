@@ -1,0 +1,18 @@
+{
+  "id": "coding-009",
+  "area": "coding",
+  "prompt": "The `inventory` package in this folder is a warehouse stock ledger. README.md is its contract. Users report several problems:\n\n- stock levels ignore movements dated on the query date, and a shipment on the same day as its delivery is refused;\n- two `Ledger` objects created in the same process see each other's movements, and creating a ledger from a list changes that list later;\n- average costs are wrong when deliveries have different quantities, and some values come out a cent off or with the wrong number of decimals;\n- stock values sometimes print as `0.3` instead of `0.30`;\n- the low-stock report misses items exactly at the threshold and is not sorted the way the README says;\n- the movement summary drops the last day of the window.\n\nFind and fix the bugs so the package behaves exactly as README.md describes. Keep every public name, signature and module path unchanged (`inventory.Ledger`, `inventory.Movement`, `inventory.Item`, `inventory.InsufficientStock`, `inventory.valuation.average_cost`, `inventory.valuation.stock_value`, `inventory.report.low_stock`, `inventory.report.movement_summary`). Python 3.12 standard library only.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": true,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

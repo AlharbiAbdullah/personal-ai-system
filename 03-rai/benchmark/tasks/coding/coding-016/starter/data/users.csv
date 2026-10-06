@@ -1,0 +1,5 @@
+id,email,name,age,plan,score,active,signup
+1,ann@example.com,Ann,34,pro,0.82,yes,2024-05-01
+2,bob@example,B,200,gold,1.5,maybe,2019-12-31
+3,ann@example.com,Cy,,free,,no,2024-02-30
+x,dee@example.org,Dee,41,team,0.5,TRUE,2025-01-15

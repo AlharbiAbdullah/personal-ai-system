@@ -1,0 +1,18 @@
+{
+  "id": "coding-004",
+  "area": "coding",
+  "prompt": "Implement the four report functions in `reports.py`. They query the `sales` table defined in `salesdb.py` (one row per sale line: `sale_date` text `YYYY-MM-DD`, `region`, `product`, `amount_cents` integer, negative for a return). Use the standard library `sqlite3` module only; SQLite supports window functions. Each function takes an open connection and returns a list of tuples, ordered as stated. A month is the `YYYY-MM` prefix of `sale_date`. All totals are sums of `amount_cents` and include returns.\n\n1. `region_running_totals(conn)` -> `(region, sale_date, day_total, running_total)`: one row per region and date that has sales. `day_total` is that region's total for the date; `running_total` is the cumulative sum of `day_total` for the region up to and including that date. Order by region, then date.\n\n2. `top_products(conn, k)` -> `(month, product, total, rank)`: for each month, rank the products sold that month by their month total, highest first, using dense ranking (equal totals share a rank and the next distinct total gets the next integer). Return the rows with `rank <= k`, ordered by month, then rank, then product. Raise `ValueError` when `k` is below 1.\n\n3. `month_over_month(conn)` -> `(month, total, prev_total, pct_change)`: one row per month that has sales, in month order. `prev_total` is the total of the previous month present in the data (`None` for the first month). `pct_change` is `(total - prev_total) * 100 / prev_total` as a float rounded to 1 decimal place, or `None` when `prev_total` is `None` or 0.\n\n4. `best_day_per_region(conn)` -> `(region, sale_date, day_total)`: for each region, the date with the highest `day_total`; on a tie, the earliest such date. Order by region.\n\nOn an empty table every function returns an empty list.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": true,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

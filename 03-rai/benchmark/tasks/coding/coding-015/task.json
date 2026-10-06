@@ -1,0 +1,18 @@
+{
+  "id": "coding-015",
+  "area": "coding",
+  "prompt": "Create `merge_customers.py` (Python 3.12 standard library only) that merges customer records from the CRM export (`data/crm.csv`) and the billing export (`data/billing.json`) into one golden record per person. See README.md and the sample files for the input formats.\n\nCommon record shape used everywhere below: a dict with keys `source` (`\"crm\"` or `\"billing\"`), `id` (str), `name`, `email`, `phone`, `city` (raw strings, `\"\"` when missing) and `updated_at` (a timezone-aware `datetime`).\n\nImplement:\n- `normalize_email(raw) -> str | None`: strip and lowercase. It must contain exactly one `@` with a non-empty part on each side, else `None`. Drop everything from the first `+` in the local part. If the domain is `gmail.com` or `googlemail.com`, also remove every `.` from the local part and use the domain `gmail.com`. If the local part ends up empty, return `None`. `None` or blank input returns `None`.\n- `normalize_phone(raw) -> str | None`: keep only the digits. If they start with `00`, drop those two zeros. If exactly 10 digits remain, put `1` in front. A result with 11 to 15 digits is returned as `\"+\" + digits`; anything else (including `None` input) returns `None`.\n- `load_crm(path) -> list[dict]`: CSV with header `crm_id,name,email,phone,city,updated_at`.\n- `load_billing(path) -> list[dict]`: a JSON list of objects `{\"billing_id\", \"full_name\", \"contact\": {\"email\", \"phone\"}, \"address\": {\"city\"}, \"last_modified\"}`; `contact` or `address` (or keys inside them) may be missing or `null`, which means `\"\"`.\n  For both loaders: timestamps are ISO-8601 (a space or `T` separator; `Z`, an offset, or no offset, which means UTC); `id` comes from `crm_id` / `billing_id`; `name` from `name` / `full_name`. `path` may be `str` or `Path`.\n- `merge(records) -> list[dict]`:\n  - Two records belong to the same person when their normalised emails are equal (and not `None`) or their normalised phones are equal (and not `None`). Matching is transitive (A~B and B~C puts A, B, C together) and works within and across sources.\n  - For each person, output `{\"ids\", \"name\", \"email\", \"phone\", \"city\", \"updated_at\"}`:\n    - `ids`: sorted list of `\"<source>:<id>\"` strings;\n    - each of `name`, `email`, `phone`, `city`: taken from the highest-priority record that has a value for it. Priority: latest `updated_at` first (compare instants); on a tie, `crm` before `billing`; then the lexicographically smaller `id`. \"Has a value\": for `email`/`phone` the normalised value is not `None` (output the normalised value); for `name`/`city` the value is non-empty after stripping (output it stripped). `None` when no record has a value;\n    - `updated_at`: the latest `updated_at` of the group in UTC, formatted `YYYY-MM-DDTHH:MM:SSZ`.\n  - Sort the output by the first element of `ids`.\n- Command line: `python merge_customers.py --crm CRM_CSV --billing BILLING_JSON --out OUT_JSON` loads both files, merges all records, and writes the merged list as JSON to OUT_JSON.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "coding-001",
+  "area": "coding",
+  "prompt": "Create `clean_orders.py` in this folder. It cleans the raw order export described in README.md (sample: `data/orders_raw.csv`). Python 3.12 standard library only.\n\nInput: a CSV file with a header row and the columns `order_id, customer_email, amount, currency, order_date, status`. A missing cell counts as an empty string.\n\nImplement:\n- `clean_row(row: dict[str, str]) -> dict[str, str]`: return the cleaned row with exactly those six keys, or raise `ValueError` whose message is exactly one of the reasons listed below.\n- `clean_file(src, out, rejects) -> tuple[int, int]`: read the CSV `src`, write the clean rows to the CSV `out` and the rejected rows to the CSV `rejects`, and return `(clean_count, rejected_count)`. Paths may be `str` or `pathlib.Path`.\n- A command line: `python clean_orders.py SRC --out OUT --rejects REJECTS` runs `clean_file` and prints `clean=<n> rejected=<m>`. If SRC does not exist, print an error to stderr and exit with status 1.\n\nField rules, checked in this order (the first rule that fails decides the reason):\n1. `order_id`: strip surrounding whitespace and uppercase. It must then be `ORD-` followed by exactly 5 digits. Reason: `bad order_id`.\n2. `customer_email`: strip and lowercase. It must contain no whitespace and exactly one `@`, with a non-empty part before it; the domain after it must contain at least one `.` and must not start or end with `.`. Reason: `bad email`.\n3. `amount`: strip; remove one leading `$` if present; remove every `,` (thousands separators). What remains must be an optional `-`, one or more digits, and optionally a `.` followed by one or more digits. Otherwise reason `bad amount`. A value below zero gets reason `negative amount`. Output the amount with exactly two decimals, rounding half up, with exact decimal arithmetic (`12.345` -> `12.35`, `2.675` -> `2.68`, `$1,234.5` -> `1234.50`).\n4. `currency`: strip and uppercase; empty means `USD`. Must be `USD`, `EUR` or `GBP`. Reason: `bad currency`.\n5. `order_date`: strip. Accepted formats: `YYYY-MM-DD`, `YYYY/MM/DD`, `DD/MM/YYYY`, and `Mon D, YYYY` / `Mon DD, YYYY` with an English three-letter month abbreviation in any letter case (e.g. `Mar 5, 2026`). It must be a real calendar date. Output `YYYY-MM-DD`. Reason: `bad date`.\n6. `status`: strip and lowercase, then map `completed`, `complete`, `done` -> `completed`; `cancelled`, `canceled` -> `cancelled`; `pending` -> `pending`; `refunded` -> `refunded`. Anything else: reason `bad status`.\n\nDuplicates (in `clean_file`): a row that passes every rule but whose cleaned `order_id` was already written to OUT is rejected with reason `duplicate order_id`. The first clean occurrence wins; a rejected row never blocks a later row with the same id.\n\nOutput files:\n- OUT: header `order_id,customer_email,amount,currency,order_date,status`, then the clean rows in input order.\n- REJECTS: header `row,order_id,reason`, then one line per rejected row in input order. `row` is the 1-based position of the data row in SRC (the header is not counted); `order_id` is the original cell with surrounding whitespace stripped (not uppercased).",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": true,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

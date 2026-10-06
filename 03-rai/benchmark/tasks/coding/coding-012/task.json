@@ -1,0 +1,18 @@
+{
+  "id": "coding-012",
+  "area": "coding",
+  "prompt": "Create `ingest.py` (Python 3.12 standard library only) with a function `ingest(root) -> dict` (`root` is a `str` or `pathlib.Path`) and a command line `python ingest.py ROOT` that prints the returned dict as JSON with `sort_keys=True`. See README.md; `sample-root/` shows the layout.\n\nLayout under ROOT (create whatever is missing): `inbox/`, `processed/`, `failed/`, `ledger.jsonl`, `transactions.jsonl` (both JSON Lines, one object per line).\n\nEvery regular file directly in `inbox/` whose name ends in `.csv` is handled, in name order; everything else in `inbox/` is left alone. For each file:\n1. Compute the sha256 hex digest of its bytes. If `ledger.jsonl` already holds a record with that digest (the same content was ingested before, under any name, including earlier in this same run), delete the file from the inbox and count it in `duplicates`.\n2. Otherwise validate it. A valid file is UTF-8 CSV whose header row is exactly `txn_id,account,amount_cents`; blank lines are ignored; every other row has exactly 3 fields and, after stripping surrounding whitespace from each field, a non-empty `txn_id`, a non-empty `account` and an `amount_cents` that is an integer (digits with an optional leading `-`). An empty file has a bad header.\n   If the file is invalid: move it to `failed/<name>` (replacing any older file there), write `failed/<name>.error` containing one line `line <n>: <reason>` for the first problem, where `<n>` is the 1-based line number in the file (the header is line 1), and count it in `failed`. Nothing from an invalid file is written anywhere else.\n3. Otherwise, for each row in order: if its `txn_id` already exists in `transactions.jsonl` (from any earlier file, or earlier in this file), count it in `rows_skipped`; else append `{\"txn_id\": str, \"account\": str, \"amount_cents\": int, \"source\": \"<file name>\"}` to `transactions.jsonl` and count it in `rows_written`. Then append `{\"sha256\": \"<digest>\", \"name\": \"<file name>\", \"rows\": <number of data rows in the file>}` to `ledger.jsonl`, move the file to `processed/<first 12 hex chars of the digest>_<file name>`, and count it in `processed`.\n\nReturn `{\"processed\": int, \"duplicates\": int, \"failed\": int, \"rows_written\": int, \"rows_skipped\": int}` for this call only.\n\nIt must be safe to run at any time:\n- running again with nothing new in the inbox changes no file and returns all zeros;\n- if an earlier run crashed after appending some rows to `transactions.jsonl` but before writing the file's ledger record, the next run re-processes the file without duplicating any row;\n- if an earlier run crashed after writing the ledger record but before moving the file, the next run treats the file as a duplicate.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "coding-005",
+  "area": "coding",
+  "prompt": "Create `migrate.py`, a schema migration runner for SQLite using only the Python 3.12 standard library (`sqlite3`). Migration files live in a directory; the sample set is in `migrations/` (see README.md).\n\nFile rules: a migration file is named `NNN_name.sql`: exactly three digits, an underscore, a name made of lowercase letters, digits and underscores, then `.sql`. Every other file is ignored. The version is the integer value of `NNN`. A file may hold several SQL statements.\n\nImplement:\n- `class MigrationError(Exception)`.\n- A frozen dataclass `Migration` with fields `version: int`, `name: str` (the part between the underscore and `.sql`), `path: pathlib.Path`, `checksum: str` (sha256 hex digest of the file's bytes).\n- `discover(directory) -> list[Migration]`: the migrations in the directory, sorted by version. Raise `MigrationError` when two files share a version.\n- `applied(conn) -> dict[int, str]`: maps each applied version to its stored checksum. Creates the bookkeeping table if it is missing: `schema_migrations(version INTEGER PRIMARY KEY, name TEXT NOT NULL, checksum TEXT NOT NULL, applied_at TEXT NOT NULL)`.\n- `migrate(conn, directory, target=None, now=None) -> list[int]`: apply the pending migrations in version order, only up to and including `target` when it is given, and return the versions applied by this call (`[]` when nothing is pending). `now` is a zero-argument callable returning the `applied_at` text; the default is `datetime.now(timezone.utc).isoformat()`.\n  - Before applying anything, check history: if an applied version has no file any more, or its file's checksum differs from the stored one, raise `MigrationError` and apply nothing.\n  - Out-of-order files are refused: if a pending migration (one this call would apply) has a lower version than the highest applied version, raise `MigrationError` and apply nothing.\n  - Each migration is atomic: all of its statements and its `schema_migrations` row are committed together or not at all. If any statement fails, that migration is rolled back completely (no table, index, column or row from it remains), migrations applied earlier in the same call stay committed, later ones are not attempted, and `MigrationError` is raised with the version formatted as three digits (e.g. `004`) in its message.\n  - Applied migrations are committed: another connection to the same file sees them.\n\nCommand line: `python migrate.py DB [--dir DIR] [--target N] [--status]` (`--dir` defaults to `migrations`).\n- Without `--status`: migrate, then print `applied NNN_name` for each applied migration in order, or `up to date` when nothing was pending.\n- With `--status`: apply nothing; print one line per discovered migration in version order: `NNN_name applied` or `NNN_name pending`.\n- On `MigrationError`: print the message to stderr and exit with status 1. Otherwise exit 0.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

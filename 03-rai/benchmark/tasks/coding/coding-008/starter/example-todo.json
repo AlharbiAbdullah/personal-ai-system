@@ -1,0 +1,7 @@
+{
+  "next_id": 4,
+  "tasks": [
+    {"id": 1, "text": "Renew passport", "tags": ["admin"], "due": "2026-10-15", "done": false},
+    {"id": 3, "text": "Write pipeline runbook", "tags": ["work", "docs"], "due": null, "done": true}
+  ]
+}

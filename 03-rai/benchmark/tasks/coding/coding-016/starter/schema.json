@@ -1,0 +1,13 @@
+{
+  "fields": {
+    "id": {"type": "int", "required": true, "min": 1, "unique": true},
+    "email": {"type": "str", "required": true, "pattern": "[^@ ]+@[^@ ]+\\.[a-z]+", "unique": true},
+    "name": {"type": "str", "min_length": 2, "max_length": 40},
+    "age": {"type": "int", "min": 0, "max": 130},
+    "plan": {"type": "str", "required": true, "enum": ["free", "pro", "team"]},
+    "score": {"type": "float", "min": 0, "max": 1},
+    "active": {"type": "bool"},
+    "signup": {"type": "date", "min": "2020-01-01"}
+  },
+  "allow_extra": false
+}

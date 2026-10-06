@@ -1,0 +1,96 @@
+# Harness routes and the model catalog for /rai benchmark.
+# A harness runs only when enabled = true. Enable one only on a route inside its provider's
+# terms: Claude Max is for Claude Code, Google Antigravity is for Google's own agy CLI.
+
+[harness.claude-code]
+enabled = true
+account = "anthropic"
+route = "Claude Max subscription through claude -p"
+
+[harness.agy]
+enabled = true
+account = "google"
+route = "Google Antigravity subscription through agy -p"
+
+[harness.pi]
+enabled = false
+account = "pi"
+route = "none yet"
+reason = "pi-antigravity breaks Antigravity ToS section 6; Claude Max tokens are barred outside Anthropic's apps"
+
+[harness.opencode]
+enabled = false
+account = "opencode"
+route = "none yet"
+reason = "no subscription route inside a provider's terms; the Antigravity auth plugins break Google's ToS"
+
+# Model mode: each model runs in its home harness. default = true models run when none are picked.
+
+[model."opus-5.5"]
+harness = "claude-code"
+id = "claude-opus-5-5"
+label = "Claude Opus 5.5"
+default = true
+
+[model."sonnet-5.5"]
+harness = "claude-code"
+id = "claude-sonnet-5-5"
+label = "Claude Sonnet 5.5"
+default = true
+
+[model."haiku-4.5"]
+harness = "claude-code"
+id = "claude-haiku-4-5-20251001"
+label = "Claude Haiku 4.5"
+default = true
+
+[model."fable-5.1"]
+harness = "claude-code"
+id = "claude-fable-5-1"
+label = "Claude Fable 5.1"
+default = true
+
+[model."cc-sonnet-4.6"]
+harness = "claude-code"
+id = "claude-sonnet-4-6"
+label = "Claude Sonnet 4.6"
+default = false
+
+[model."gemini-3.1-pro"]
+harness = "agy"
+id = "gemini-3.1-pro-high"
+label = "Gemini 3.1 Pro (high)"
+default = true
+
+[model."gemini-3.8-flash"]
+harness = "agy"
+id = "gemini-3.8-flash-high"
+label = "Gemini 3.8 Flash (high)"
+default = true
+
+[model."agy-sonnet-4.6"]
+harness = "agy"
+id = "claude-sonnet-4-6"
+label = "Claude Sonnet 4.6"
+default = false
+
+[model."agy-opus-4.6"]
+harness = "agy"
+id = "claude-opus-4-6-thinking"
+label = "Claude Opus 4.6 (thinking)"
+default = false
+
+# Harness mode: the model each harness runs. Same model where the subscriptions allow it.
+[harness_mode]
+claude-code = "cc-sonnet-4.6"
+agy = "agy-sonnet-4.6"
+
+# The two judges. Each scores every judged check on its own.
+[judge.opus]
+harness = "claude-code"
+id = "opus"
+effort = "xhigh"
+
+[judge.gemini]
+harness = "agy"
+id = "gemini-3.1-pro-high"

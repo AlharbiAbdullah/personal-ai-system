@@ -1,0 +1,18 @@
+{
+  "id": "coding-008",
+  "area": "coding",
+  "prompt": "Create `todo.py`, a command-line todo list built with `argparse` (Python 3.12 standard library only) that stores everything in one JSON file. See README.md; `example-todo.json` shows the file format.\n\nInvocation: `python todo.py [--db PATH] COMMAND ...` where `--db` comes before the command and defaults to `todo.json`.\n\nFile format: `{\"next_id\": <int>, \"tasks\": [{\"id\": <int>, \"text\": <str>, \"tags\": [<str>, ...], \"due\": \"YYYY-MM-DD\" or null, \"done\": <bool>}, ...]}` with tasks kept in id order. A missing file means an empty list with `next_id` 1. Read-only commands never create the file. Every write replaces the file atomically (write a temporary file in the same directory, then `os.replace`); no temporary files may be left behind.\n\nCommands:\n- `add TEXT [--tag TAG]... [--due DATE]`: add an open task and print `added <id>`. The id is `next_id`, which then increases by one; ids are never reused, even after `remove`. TEXT is stored stripped.\n- `list [--status open|done|all] [--tag TAG] [--overdue] [--today DATE]`: print the matching tasks, one per line, as five tab-separated fields: id, `x` if done else `-`, text, tags joined with `,` (empty field when there are none), due date or `-`. `--status` defaults to `open`. `--tag` keeps tasks that have that tag (case-insensitive). `--overdue` keeps tasks whose due date is before `--today`, and requires `--today`. Order: tasks with a due date first, by due date ascending, then tasks without one; ties by id ascending. Print nothing when no task matches.\n- `done ID`: mark the task done and print `done <id>` (marking a done task again is fine).\n- `remove ID`: delete the task and print `removed <id>`.\n- `edit ID [--text TEXT] [--due DATE | --no-due] [--add-tag TAG]... [--remove-tag TAG]...`: change the task and print `edited <id>`. `--due` and `--no-due` together are a usage error, and so is `edit` without any change option. Added tags go after the existing ones.\n\nTags: stored lowercased and stripped, duplicates removed keeping the first occurrence (this applies to `--tag` and `--add-tag`; `--remove-tag` and the list filter compare the same normalised form).\n\nErrors:\n- Usage errors exit with status 2 (argparse's behaviour) and write nothing. They include: a DATE that is not exactly `YYYY-MM-DD` and a real calendar date, a TEXT that is empty after stripping, a non-integer ID, a missing or unknown command, an unknown option, `--overdue` without `--today`.\n- `done`, `remove` or `edit` with an id that does not exist: print `no such task: <id>` to stderr, exit 1, leave the file unchanged.\n- A database file that exists but is not valid JSON, or is not an object with an integer `next_id` and a `tasks` list: print `corrupt database: <path as given to --db>` to stderr, exit 1, leave the file unchanged.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

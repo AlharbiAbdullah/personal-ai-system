@@ -1,0 +1,18 @@
+{
+  "id": "coding-017",
+  "area": "coding",
+  "prompt": "The nightly incremental load in the `etl/` package (extract, transform, load, pipeline) copies orders from the shop database into the warehouse. README.md in this folder is its contract. In production it loses orders that the shop commits late, lets test orders into the warehouse, gets some amounts wrong by a cent, rewrites the first-load time of orders that did not change, and lets an older copy of an order overwrite a newer one.\n\nFind and fix the bugs so the package meets README.md exactly. Keep all module paths, function names and signatures (`etl.extract.fetch_changes`, `etl.transform.transform`, `etl.load.ensure_schema`, `etl.load.get_watermark`, `etl.load.set_watermark`, `etl.load.upsert`, `etl.pipeline.run`) and the table layouts. Python 3.12 standard library only (`sqlite3`).",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

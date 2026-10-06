@@ -1,0 +1,33 @@
+# Each task: optional deps (names of tasks that must finish first), optional duration in minutes.
+
+[tasks.extract_orders]
+duration = 5
+
+[tasks.extract_customers]
+duration = 3
+
+[tasks.clean_orders]
+deps = ["extract_orders"]
+duration = 4
+
+[tasks.clean_customers]
+deps = ["extract_customers"]
+duration = 2
+
+[tasks.join_orders_customers]
+deps = ["clean_orders", "clean_customers"]
+duration = 6
+
+[tasks.daily_revenue]
+deps = ["join_orders_customers"]
+duration = 2
+
+[tasks.customer_ltv]
+deps = ["join_orders_customers", "clean_customers"]
+duration = 7
+
+[tasks.publish_dashboard]
+deps = ["daily_revenue", "customer_ltv"]
+duration = 1
+
+[tasks.audit_log]

@@ -1,0 +1,10 @@
+{"event_id": "e-001", "user_id": "u-ann", "type": "view", "ts": "2026-03-01T08:15:00Z"}
+{"event_id": "e-002", "user_id": "u-ann", "type": "purchase", "ts": "2026-03-01T08:20:00Z", "amount": 19.99}
+{"event_id": "e-003", "user_id": "u-bob", "type": "click", "ts": "2026-03-02T01:30:00+03:00"}
+{"event_id": "e-004", "user_id": "u-bob", "type": "purchase", "ts": "2026-03-02T02:00:00+03:00", "amount": 5.125}
+{"event_id": "e-002", "user_id": "u-ann", "type": "purchase", "ts": "2026-03-01T08:20:00Z", "amount": 19.99}
+{"event_id": "e-005", "user_id": "u-ann", "type": "refund", "ts": "2026-03-02T09:00:00-05:00", "amount": 19.99}
+not json at all
+{"event_id": "e-006", "user_id": "u-cat", "type": "purchase", "ts": "2026-03-02T10:00:00", "amount": 3}
+
+{"event_id": "e-007", "user_id": "u-cat", "type": "signup", "ts": "2026-03-02T10:05:00Z"}

@@ -1,0 +1,18 @@
+{
+  "id": "coding-010",
+  "area": "coding",
+  "prompt": "`billing.py` computes monthly invoices (see README.md) in one long function. Refactor it into a package, then add a new plan. Python 3.12 standard library only.\n\nPart 1: refactor without changing behaviour. Replace `billing.py` with a package `billing/`:\n- `billing/__init__.py` re-exports `compute_invoice`, so `from billing import compute_invoice` keeps working.\n- `billing/invoice.py`: `compute_invoice(customer, usage, period)`, same signature and same return value.\n- `billing/plans.py`: `get_plan(name)` returns a plan object with a `name`, a `base_cents` attribute and a method `charges(api_calls, storage_gb) -> tuple[int, int]` returning `(api_charge_cents, storage_charge_cents)`. It raises `ValueError(\"free plan limit exceeded\")` when the free plan's call limit is exceeded. An unknown name raises `ValueError(\"unknown plan: <name>\")`.\n- `billing/discounts.py`: `discount_cents(code, plan_name, subtotal) -> int`. It normalises the code itself the way the current code does (`None` or empty means no discount). An unknown code raises `ValueError(\"unknown discount code: <normalised code>\")`.\n- `billing/tax.py`: `tax_rate(country) -> float`. It normalises the country code itself the way the current code does; unknown countries give `0.0`.\n\nFor every input the current code accepts or rejects, the new code must give exactly the same result: the same dict, the same rounding (including the existing float `round()` behaviour), the same exception types and messages, and the same order of checks when an input has several problems (usage metrics first, then the plan, then the discount code). The tests in `tests/` must keep passing.\n\nPart 2: add an `enterprise` plan:\n- base fee 25000 cents;\n- 1,000,000 API calls included; above that, 10 cents per started block of 1000 extra calls;\n- 500 GB of storage included; above that, 10 cents per GB;\n- no hard call limit;\n- the `PRO20` discount code, which today applies only to `pro`, also applies to `enterprise`.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

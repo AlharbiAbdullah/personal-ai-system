@@ -1,0 +1,18 @@
+{
+  "id": "coding-006",
+  "area": "coding",
+  "prompt": "Write `rotate_logs.sh` in this folder: a bash script that rotates log files (see README.md; `sample-logs/` has files to try it on).\n\nUsage: `bash rotate_logs.sh DIR KEEP`\n\n- DIR must be an existing directory and KEEP a whole number of at least 1 (digits only). Otherwise, including a wrong number of arguments, print a usage message to stderr, print nothing on stdout, change nothing, and exit with status 2.\n- Only regular files directly inside DIR (no recursion) whose names end in `.log` are rotated. A `.log` file that is empty (0 bytes) is skipped. Directories and all other files are left alone.\n- Rotating `NAME.log` keeps at most KEEP old generations, `NAME.log.1` (newest) to `NAME.log.KEEP` (oldest), in three steps:\n  1. delete every existing `NAME.log.N` where N is all digits and N >= KEEP (N can be larger than KEEP if KEEP was lowered since the last run);\n  2. for N from KEEP-1 down to 1, rename `NAME.log.N` to `NAME.log.(N+1)` if it exists (missing generations are skipped, so gaps move up but are not filled);\n  3. rename `NAME.log` to `NAME.log.1` and create a new empty `NAME.log`.\n  Files such as `NAME.log.2.gz` are not generations and are never touched.\n- File contents must be preserved byte for byte. File names may contain spaces and glob characters such as `[`, `]` and `*`.\n- For each rotated file print `rotated NAME.log` (the base name, no directory) on stdout, in byte-wise (C locale) sorted order of the names, then exit 0. When nothing needs rotating, print nothing and exit 0.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": true,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

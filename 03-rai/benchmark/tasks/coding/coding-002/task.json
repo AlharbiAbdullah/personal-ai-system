@@ -1,0 +1,18 @@
+{
+  "id": "coding-002",
+  "area": "coding",
+  "prompt": "`aggregate.py` summarises the app's event stream (JSON Lines, sample in `data/events.jsonl`), but its numbers are wrong and it crashes on bad lines (see README.md). Rewrite it so it meets this spec exactly. Python 3.12 standard library only; keep the function name and the command line.\n\nA valid event is a JSON object with:\n- `event_id`: non-empty string\n- `user_id`: non-empty string\n- `type`: one of `view`, `click`, `purchase`, `refund`\n- `ts`: an ISO-8601 timestamp string WITH a UTC offset or `Z` (e.g. `2026-03-01T23:30:00+03:00`). A timestamp without an offset is invalid.\n- `amount`: required for `purchase` and `refund` only: a JSON number (booleans do not count) greater than 0. It is ignored for `view` and `click`.\n\n`aggregate(lines: Iterable[str]) -> dict` returns:\n```\n{\"days\":  {\"YYYY-MM-DD\": {\"events\": int, \"users\": int, \"purchases\": int, \"refunds\": int, \"revenue\": \"D.DD\"}},\n \"users\": {\"<user_id>\": {\"events\": int, \"revenue\": \"D.DD\", \"first_seen\": \"YYYY-MM-DDTHH:MM:SSZ\", \"last_seen\": \"YYYY-MM-DDTHH:MM:SSZ\"}},\n \"invalid_lines\": int,\n \"duplicates\": int}\n```\nRules:\n- Blank or whitespace-only lines are skipped and counted nowhere.\n- A line that is not valid JSON, is not a JSON object, or breaks any rule above is counted in `invalid_lines` and otherwise ignored.\n- A valid event whose `event_id` already appeared in an earlier VALID event is counted in `duplicates` and otherwise ignored (an invalid line never reserves an id).\n- Every other valid event is \"counted\". Days are the UTC calendar day of `ts` (apply the offset first).\n- `events`: counted events; `users`: distinct user_ids with a counted event that day; `purchases` / `refunds`: counted events of that type.\n- `revenue` = purchase amounts minus refund amounts, computed exactly in decimal (no binary float error), formatted with two decimals, rounding half up (`0.125` -> `\"0.13\"`). It can be negative (`\"-5.00\"`).\n- `first_seen` / `last_seen`: the earliest / latest counted event instant for the user, converted to UTC and formatted as shown.\n- Only days and users with at least one counted event appear.\n\nCommand line: `python aggregate.py INPUT --out OUTPUT` writes the result as JSON with `indent=2, sort_keys=True` to OUTPUT and prints exactly `events=<counted events> invalid=<invalid_lines> duplicates=<duplicates>`.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

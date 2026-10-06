@@ -1,0 +1,18 @@
+{
+  "id": "coding-014",
+  "area": "coding",
+  "prompt": "The reporting client in this folder retries badly (see README.md, `client.py`, `errors.py`). Build a reusable retry module and use it in the client. Python 3.12 standard library only.\n\n1. Create `retry.py` with:\n- `class RetryError(Exception)` with attributes `attempts` (int, number of calls made) and `last_exception` (the exception from the final call).\n- `retry_call(fn, *, attempts=3, base_delay=0.1, factor=2.0, max_delay=5.0, jitter=False, retry_on=(Exception,), giveup=None, on_retry=None, sleep=time.sleep, rng=None)`. `fn` takes no arguments.\n  - Validate first, before calling `fn`: `attempts >= 1`, `base_delay >= 0`, `factor >= 1`, `max_delay >= 0`; otherwise raise `ValueError`.\n  - Call `fn` up to `attempts` times and return its result as soon as a call returns (whatever the value).\n  - An exception that is not an instance of one of `retry_on`, or for which `giveup(exc)` returns true, propagates unchanged at once (no sleep, no further calls).\n  - After the k-th failed call (k = 1, 2, ...), if calls remain: the delay is `min(max_delay, base_delay * factor ** (k - 1))`. If the exception has an attribute `retry_after` that is an int or float (not a bool) and >= 0, the delay is `min(max_delay, retry_after)` instead, with no jitter. Otherwise, when `jitter` is true, the delay is `rng.uniform(0, delay)` (\"full jitter\"), calling `rng.uniform` exactly once for that retry; `rng` defaults to a new `random.Random()`. Then call `on_retry(k, exc, delay)` if given, then `sleep(delay)`.\n  - When the last allowed call fails with a retryable exception, raise `RetryError` chained from that exception (`raise ... from exc`). Never sleep after the last call.\n- `retry(**options)`: a decorator factory taking the same keyword options as `retry_call`; the decorated function retries with its own arguments and keeps its `__name__` and `__doc__`.\n\n2. Change `client.fetch_report(transport, report_id, *, sleep=time.sleep)` to use `retry_call`: retry only `errors.TransientError` (which includes `errors.RateLimited` and its `retry_after`), at most 5 attempts, base delay 0.5 s, factor 2, max delay 4 s, no jitter, passing its `sleep` through. Other exceptions (such as `errors.PermanentError`) propagate at once. When every attempt fails, `RetryError` propagates; never return `None` for a failure.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

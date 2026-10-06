@@ -1,0 +1,18 @@
+{
+  "id": "coding-011",
+  "area": "coding",
+  "prompt": "Create `logstats.py` (Python 3.12 standard library only) that computes per-endpoint stats from API gateway access logs. Sample: `logs/access.log`; see README.md.\n\nLine format (fields separated by single spaces):\n`<ip> <ident> <user> [<DD/Mon/YYYY:HH:MM:SS +ZZZZ>] \"<METHOD> <TARGET> <PROTOCOL>\" <status> <bytes> <seconds>`\n- `user` is `-` when unknown. `Mon` is an English three-letter month; the timestamp must be a real date and time and must have a numeric UTC offset.\n- the quoted request must consist of exactly three non-empty space-separated parts.\n- `status` is exactly 3 digits; `bytes` is digits or `-`; `seconds` is digits, optionally followed by `.` and digits.\n- nothing may follow `seconds` (a trailing newline is fine).\n\nImplement:\n- `parse_line(line) -> dict | None`: return `{\"ip\", \"user\", \"ts\", \"method\", \"path\", \"status\", \"bytes\", \"ms\"}` where `user` is `None` for `-`, `ts` is a timezone-aware `datetime`, `path` is TARGET without its query string (`?...`) or fragment (`#...`), `status` is an int, `bytes` is an int (0 for `-`), and `ms` is `seconds * 1000` rounded to the nearest integer (`1.005` -> 1005). Return `None` for any line that does not match the format.\n- `normalize_path(path) -> str`: split on `/`, drop empty segments, replace every segment made only of digits with `:id` and every segment that is a UUID (8-4-4-4-12 hex digits with dashes, any letter case) with `:uuid`, and join again with a leading `/`. The root path stays `/`; there is never a trailing slash.\n- `summarize(lines, start=None, end=None) -> dict` returning `{\"endpoints\": {...}, \"malformed\": int}`.\n  - Blank lines are ignored. Every other line that `parse_line` rejects counts in `malformed` (regardless of the time window).\n  - Parsed lines count only when `start <= ts < end`; each bound is an aware datetime and optional; compare instants, not wall-clock text.\n  - Endpoint key: `\"<METHOD> <normalize_path(path)>\"`. Value: `{\"count\", \"errors\", \"error_rate\", \"p50\", \"p95\", \"max\", \"bytes\"}` where `errors` counts statuses >= 500, `error_rate` is `errors / count` rounded to 4 decimal places, `p50`/`p95`/`max` are in ms, `bytes` is the sum. Percentiles use the nearest-rank method: sort the ms values ascending and take the element at 1-based rank `ceil(p / 100 * n)`.\n\nCommand line: `python logstats.py LOGFILE [--top N] [--start ISO] [--end ISO]` (`--start`/`--end` are ISO-8601 datetimes with an offset, e.g. `2026-03-11T00:00:00+00:00`; `--top` defaults to 10). Print the N endpoints with the highest count (ties broken by key ascending), one line each, tab-separated: count, p95, the error percentage `100 * errors / count` formatted with one decimal and a `%` sign, and the key. Then print a final line `malformed=<n>`.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

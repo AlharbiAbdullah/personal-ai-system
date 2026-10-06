@@ -1,0 +1,18 @@
+{
+  "id": "coding-020",
+  "area": "coding",
+  "prompt": "Create `dag.py` (Python 3.12 standard library only; `tomllib` reads TOML) that plans a pipeline of dependent tasks. See README.md and the sample `pipeline.toml`.\n\nPipeline file: a `[tasks]` table with one sub-table per task (`[tasks.<name>]`). Optional keys: `deps`, a list of task names that must finish first (default empty; repeated names count once), and `duration`, a non-negative integer number of minutes (default 1).\n\nA graph below is a `dict[str, list[str]]` mapping each task to its dependencies.\n\nImplement:\n- `class PipelineError(Exception)` and `class CycleError(PipelineError)`; a `CycleError` has an attribute `cycle`: a list `[t0, t1, ..., tk, t0]` where each task depends directly on the next one in the list (a task that depends on itself gives `[t, t]`).\n- `load_pipeline(path) -> tuple[dict[str, list[str]], dict[str, int]]`: return `(graph, durations)`. Raise `PipelineError` for an unreadable file, invalid TOML, a missing `[tasks]` table, `deps` that is not a list of strings, a `duration` that is not a non-negative integer (booleans are not integers), or a dependency naming a task that does not exist (the message must contain both task names). Cycles are not checked here.\n- `topo_order(graph) -> list[str]`: every task after all of its dependencies. Deterministic: whenever several tasks are ready, take the alphabetically smallest first. Raise `PipelineError` for a dependency on an unknown task and `CycleError` (with a real cycle from the graph) when there is a cycle.\n- `levels(graph) -> list[list[str]]`: level 0 holds the tasks without dependencies; a task's level is one more than the highest level among its dependencies. Return the levels in order, each sorted alphabetically (`[]` for an empty graph). Same errors as `topo_order`.\n- `downstream(graph, task) -> list[str]`: every task that depends on `task` directly or indirectly, sorted alphabetically, not including `task` itself. An unknown task raises `KeyError`.\n- `critical_path(graph, durations) -> tuple[int, list[str]]`: the chain of tasks with the largest total duration, as `(total_minutes, chain)`. The chain starts at a task without dependencies and each next task depends on the previous one. If several chains tie, return any of them. An empty graph gives `(0, [])`. Same errors as `topo_order`.\n\nCommand line: `python dag.py PIPELINE [--levels | --critical]`.\n- Default: print the `topo_order`, one task per line.\n- `--levels`: one line per level, `<index>: <tasks separated by single spaces>`.\n- `--critical`: one line, `<total> <task> -> <task> -> ...`.\n- On a `PipelineError` (cycles included): print `error: <message>` to stderr and exit 1.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

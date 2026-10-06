@@ -1,0 +1,18 @@
+{
+  "id": "coding-013",
+  "area": "coding",
+  "prompt": "Create `tzutil.py` (Python 3.12 standard library only: `datetime` and `zoneinfo`) that converts between local wall-clock times and instants correctly across daylight saving time transitions. See README.md. Zone names are IANA names such as `America/New_York`; an unknown name raises `zoneinfo.ZoneInfoNotFoundError`. Nothing may depend on the machine's local timezone.\n\nImplement:\n- `class NonexistentTimeError(ValueError)` and `class AmbiguousTimeError(ValueError)`.\n- `localize(naive, tz_name, ambiguous=\"earlier\") -> datetime`: attach the zone to a naive `datetime` and return an aware datetime showing the same wall time.\n  - If that wall time does not exist in the zone (it is skipped when clocks jump forward), raise `NonexistentTimeError`.\n  - If it happens twice (clocks moved back), `ambiguous=\"earlier\"` returns the first occurrence, `\"later\"` the second, and `\"raise\"` raises `AmbiguousTimeError`.\n  - Any other `ambiguous` value raises `ValueError`; so does an aware (non-naive) input.\n- `daily_at(hhmm, tz_name, start, days) -> list[datetime]`: for each of the `days` consecutive local dates beginning at `start` (a `date`), the instant at which the local clock shows `hhmm`, returned as aware datetimes in UTC (offset zero), in date order.\n  - If the wall time does not exist that day, use the instant that is the same distance past the jump: e.g. `02:30` on a day when clocks jump from 02:00 to 03:00 becomes 03:30 local time. Some zones jump by 30 minutes, not an hour.\n  - If the wall time happens twice that day, use the earlier occurrence.\n  - `hhmm` must be exactly two digits, a colon and two digits forming a valid time (`00:00` to `23:59`); otherwise raise `ValueError`. `days` below 0 raises `ValueError`; `days == 0` returns `[]`.\n- `elapsed(start, end, tz_name) -> timedelta`: the real time that passes between two naive local wall times in the zone (ambiguous times use the earlier occurrence; a nonexistent time raises `NonexistentTimeError`). It is negative when `end` is before `start`. Example: from 00:00 to 04:00 on the day New York springs forward is 3 hours.\n- `format_local(instant, tz_name) -> str`: render an aware datetime as local time in the zone, ISO-8601 with whole seconds (drop microseconds) and the UTC offset, e.g. `2026-03-08T03:30:00-04:00`. A naive input raises `ValueError`.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": true,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

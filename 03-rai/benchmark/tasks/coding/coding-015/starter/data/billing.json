@@ -1,0 +1,5 @@
+[
+  {"billing_id": "B-10", "full_name": "Ann M. Lee", "contact": {"email": "", "phone": "+1 415.555.0100"}, "address": {"city": "Oakland"}, "last_modified": "2026-03-04T08:00:00Z"},
+  {"billing_id": "B-11", "full_name": "Carla Diaz", "contact": {"email": "carla@diaz.example", "phone": "0044 20 7946 0958"}, "address": {}, "last_modified": "2026-02-01T00:00:00Z"},
+  {"billing_id": "B-12", "full_name": "Eve Moss", "contact": {"email": "eve@moss.example"}, "address": {"city": "Denver"}, "last_modified": "2026-01-05T00:00:00Z"}
+]

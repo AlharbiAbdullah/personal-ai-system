@@ -1,0 +1,6 @@
+station, temp ,humidity,note
+north-1,21.5,40,ok
+north-2, 19.25 ,n/a,
+south-1,,38,sensor offline
+south-2,-3.5,41,ok
+east-1,22,39

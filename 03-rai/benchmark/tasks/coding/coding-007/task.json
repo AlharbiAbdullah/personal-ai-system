@@ -1,0 +1,18 @@
+{
+  "id": "coding-007",
+  "area": "coding",
+  "prompt": "Write `colstats.sh` in this folder: a bash script (awk is allowed) that prints statistics for one numeric column of a delimited text file with a header row (see README.md and `data/readings.csv`).\n\nUsage: `bash colstats.sh [-d DELIM] FILE COLUMN`\n\nParsing rules:\n- `-d DELIM` sets the field delimiter: exactly one character, default `,`. Fields are never quoted. Tab is passed as a real tab character.\n- The first line is the header. COLUMN is a header name; header cells are compared after trimming surrounding spaces. If several header cells have that name, use the first one.\n- A line may end in `\\r\\n`; the `\\r` is never part of a field.\n- Empty lines after the header (nothing but an optional `\\r`) are ignored completely.\n- For every other line, take the cell in that column (a missing trailing cell counts as empty) and trim surrounding spaces. The cell is numeric when it matches `^[+-]?[0-9]+(\\.[0-9]+)?$`; otherwise it is skipped (this includes empty cells and things like `1e3`, `.5`, `n/a`).\n\nOutput on stdout, one `key=value` per line, in exactly this order:\n```\ncount=<number of numeric cells>\nsum=<sum>\nmin=<smallest value>\nmax=<largest value>\nmean=<sum / count>\nskipped=<number of skipped cells>\n```\n`sum`, `min`, `max` and `mean` are printed with two decimals (`printf \"%.2f\"`). Compare values numerically, not as text. When count is 0, print only the `count=0` and `skipped=<n>` lines.\n\nExit status:\n- 0 on success.\n- 2 on a usage error: wrong number of arguments, an unknown option, a `-d` value that is not exactly one character, a FILE that is missing, unreadable or empty (0 bytes). Print a message to stderr.\n- 3 when COLUMN is not in the header: print `column not found: <COLUMN>` to stderr and nothing on stdout.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

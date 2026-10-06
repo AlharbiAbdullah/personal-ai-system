@@ -1,0 +1,18 @@
+{
+  "id": "coding-018",
+  "area": "coding",
+  "prompt": "Create `scd2.py` that keeps the customer dimension as a type 2 slowly changing dimension in SQLite (Python 3.12 standard library `sqlite3` only). See README.md; `data/` has two sample monthly snapshots. Dates are `YYYY-MM-DD` strings.\n\nImplement:\n- `init(conn)`: create the table `dim_customer` with columns `sk INTEGER PRIMARY KEY`, `customer_id TEXT NOT NULL`, `name TEXT`, `city TEXT`, `tier TEXT`, `valid_from TEXT NOT NULL`, `valid_to TEXT` (NULL while the version is current), `is_current INTEGER NOT NULL` (1 or 0), plus a unique index that allows at most one row with `is_current = 1` per `customer_id`. Calling it twice is harmless.\n- `apply_snapshot(conn, rows, as_of) -> dict`: `rows` is the FULL current state of the source, a list of dicts with `customer_id` and the tracked attributes `name`, `city`, `tier` (a missing key means NULL). Returns `{\"inserted\": n, \"updated\": n, \"closed\": n, \"unchanged\": n}`.\n  - A `customer_id` without a current row (new, or one that was closed earlier and came back) gets a new current row with `valid_from = as_of`: inserted.\n  - A current row whose tracked attributes all equal the snapshot's is left alone: unchanged. Comparison is NULL-safe: NULL equals NULL, but NULL differs from the empty string.\n  - A current row with any different attribute is closed (`valid_to = as_of`, `is_current = 0`) and a new current version with `valid_from = as_of` is added: updated.\n  - A current row whose `customer_id` is not in the snapshot is closed the same way: closed.\n  - `customer_id` values are compared exactly (case-sensitive).\n  - Raise `ValueError` and change nothing when `as_of` is not a valid `YYYY-MM-DD` date, when `as_of` is earlier than any `valid_from` or `valid_to` already in the table (an equal date is allowed), or when the snapshot contains the same `customer_id` twice.\n  - All changes of one call happen in a single transaction and are committed before returning (another connection sees them). Applying the same snapshot again with the same `as_of` changes nothing and reports everything as unchanged.\n- `as_of_view(conn, day) -> list[tuple]`: `(customer_id, name, city, tier)` for every version valid on that day (`valid_from <= day` and (`valid_to` is NULL or `valid_to > day`)), sorted by `customer_id`.\n- `history(conn, customer_id) -> list[tuple]`: every version of that customer as `(name, city, tier, valid_from, valid_to)`, oldest first.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}

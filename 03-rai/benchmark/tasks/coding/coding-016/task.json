@@ -1,0 +1,18 @@
+{
+  "id": "coding-016",
+  "area": "coding",
+  "prompt": "Create `validate.py` (Python 3.12 standard library only) that validates a CSV file against a small JSON schema. `schema.json` is the schema for `data/users.csv`; see README.md.\n\nSchema format: a JSON object `{\"fields\": {<name>: <spec>, ...}, \"allow_extra\": <bool, default false>}` with no other top-level keys and at least one field. Each spec has a `type` (`str`, `int`, `float`, `bool`, `date`) plus optional rules:\n- for every type: `required` (bool), `unique` (bool), `enum` (list);\n- `int`: `min`, `max` (integers); `float`: `min`, `max` (numbers); `date`: `min`, `max` (`YYYY-MM-DD` strings);\n- `str`: `min_length`, `max_length` (integers >= 0), `pattern` (a regular expression, matched against the whole value).\nAny other key, a rule not allowed for the type, an unknown type, a value of the wrong kind or an invalid regex makes the schema invalid.\n\nImplement:\n- `class SchemaError(ValueError)` and `class HeaderError(ValueError)`.\n- `check_schema(data) -> dict`: validate an already-parsed schema and return it; raise `SchemaError` if invalid.\n- `load_schema(path) -> dict`: read the JSON file (`str` or `Path`) and `check_schema` it; unreadable or invalid JSON also raises `SchemaError`.\n- `check_header(header: list[str], schema) -> None`: raise `HeaderError` with message `duplicate column: <c>` for a repeated column, `missing required column: <f>` when a required field has no column, and `unexpected column: <c>` for a column not in the schema unless `allow_extra` is true. A missing optional column is fine (its cells count as empty).\n- `validate_rows(rows, schema) -> list[tuple[int, str, str]]`: `rows` is an iterable of dicts (as from `csv.DictReader`). Return `(row_number, field, message)` errors, `row_number` 1-based over data rows, ordered by row and then by the field order of the schema. At most one error per cell: the first failing check in this order wins.\n  1. Strip surrounding whitespace. An empty cell is `required` if the field is required; otherwise it is fine and no other check applies.\n  2. Type conversion: `int` must match `[+-]?[0-9]+` (`not an int`); `float` must be accepted by Python's `float()` and be finite (`not a float`); `bool` is one of `true`, `false`, `yes`, `no`, `1`, `0` in any case (`not a bool`); `date` must be exactly `YYYY-MM-DD` and a real date (`not a date`); `str` is used as is.\n  3. `below min` / `above max` (inclusive bounds, compared after conversion).\n  4. `too short` / `too long` (string length).\n  5. `pattern mismatch`.\n  6. `not in enum`: the converted value must equal one of the listed values (for `date`, the list holds `YYYY-MM-DD` strings).\n  7. `duplicate`: for `unique` fields, the converted value already appeared in an earlier row (only cells that passed all checks above are remembered; empty cells never count).\n\nCommand line: `python validate.py SCHEMA CSV [--max-errors N] [--format text|json]`.\n- Invalid schema: print `schema error: <message>` to stderr, exit 2. Header problem (including an empty file with no header): print `header error: <message>` to stderr, exit 2.\n- Otherwise validate all rows. If there are errors, print at most N of them (all when `--max-errors` is not given) and exit 1: in text format one line each, `row <n>: <field>: <message>`; in json format a single JSON list of `{\"row\": n, \"field\": f, \"message\": m}` objects. Without errors exit 0; the json format prints `[]` and the text format prints a short confirmation line.",
+  "cwd": "work",
+  "setup": {
+    "files": {}
+  },
+  "checks": [
+    {
+      "type": "pytest"
+    }
+  ],
+  "quick": false,
+  "status": "active",
+  "source": "written",
+  "added": "2026-10-01"
+}
