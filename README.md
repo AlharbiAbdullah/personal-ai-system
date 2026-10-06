@@ -14,6 +14,8 @@ assistant grows into a second brain that's actually about you.
 > The assistant is named **Rai** by default. It's just a name. Rename it to whatever you like
 > (see [SETUP](./SETUP.md)).
 
+![Personal AI System architecture](docs/diagrams/architecture.excalidraw.svg)
+
 ---
 
 ## The idea
@@ -86,6 +88,12 @@ The capture and idea pipelines move things from a quick note to finished work:
 
 Read the **[manual](./12-system/manual/README.md)** for a pointer map into the live docs, starting
 with the root `AGENTS.md` and `03-rai/ARCHITECTURE.md`.
+
+---
+
+## Tech stack
+
+![Personal AI System tech stack](docs/diagrams/tech-stack.excalidraw.svg)
 
 ---
 
