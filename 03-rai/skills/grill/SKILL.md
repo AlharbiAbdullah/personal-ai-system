@@ -13,7 +13,7 @@ description: >
 
 Interrogate the task until its decisions, dependencies, assumptions and failure modes are settled. Then write them where the build step reads them. Grill writes specs, never code.
 
-**Pipeline:** `/grill` → `/spec-improve` (optional) → approval → `/compile` (which runs `/adversarial-review`).
+**Pipeline:** `/grill` → `/spec-improve` (optional) → approval → `/compile` (which runs `/fusion review`).
 
 **Single-agent mandate:** run inline. Never use the Agent or Workflow tools.
 
@@ -118,7 +118,7 @@ Once every branch is settled or its risk explicitly accepted, write:
     ## Assumptions accepted
     - <assumption>: <the risk John accepted>
 
-One decision per bullet, each an answer from the rounds. No checkboxes: `/compile` and `/adversarial-review` hold the work to these bullets.
+One decision per bullet, each an answer from the rounds. No checkboxes: `/compile` and `/fusion review` hold the work to these bullets.
 
 ### 2.5 Write the plan file
 

@@ -28,7 +28,7 @@ Ask one question using AskUserQuestion:
 
 - **Promote to inbox** — needs research / deserves attention. `mv` to `~/helm/01-inbox/`.
 - **Delete** — not worth it. `rm` the file.
-- **Skip** — leave it in landing, move to the next file.
+- **Skip**: only when he says he keeps the file for later. It stays in landing. Never offer Skip on your own.
 - **Stop** — end the run.
 
 ### Step 3: Act on the answer
@@ -39,7 +39,7 @@ Ask one question using AskUserQuestion:
 
 ### Step 4: Report
 
-After the run, print a one-line summary: `promoted: N, deleted: N, skipped: N`.
+After the run, print a one-line summary: `promoted: N, deleted: N, skipped: N`. The sweep goes on at [[13-capture-sweep]] step 2, the inbox.
 
 ## Rules
 

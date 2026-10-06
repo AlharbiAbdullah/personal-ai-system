@@ -12,6 +12,9 @@ description: >
 Create, validate, and update Rai skills. Each skill is a folder with
 a SKILL.md file and optional resources (scripts, references, assets).
 
+Building or changing a skill follows [[24-changing-rai]]. This skill supplies its naming,
+layout and validation rules.
+
 ## Naming Rules
 
 - **kebab-case** folder names: `my-skill/`, not `MySkill/` or `my_skill/`

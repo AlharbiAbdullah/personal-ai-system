@@ -3,7 +3,7 @@ name: learning
 description: >
   Learning router for courses, tutorials, and skill acquisition. USE WHEN the
   user wants to start a learning topic, generate a lesson, take a quiz, or
-  verify full coverage before declaring a topic done. Sub-skills operate on
+  check a topic's coverage (never a closing gate). Sub-skills operate on
   `~/helm/06-learning/`.
 ---
 
@@ -24,7 +24,7 @@ Default is **review**: a lesson is a live, interactive session, not a doc you re
 | Create a new topic folder + progress.md + curriculum overview | start-topic | `start-topic.md` |
 | Run a live review-based lesson (concept + code, then drills) | teach | `teach.md` |
 | Retrieval practice, spaced + weak-area-weighted | quiz | `quiz.md` |
-| Verify a topic has full coverage before declaring done | audit-coverage | `audit-coverage.md` |
+| Check a topic's coverage when he asks (never a closing gate) | audit-coverage | `audit-coverage.md` |
 
 ## How to use
 

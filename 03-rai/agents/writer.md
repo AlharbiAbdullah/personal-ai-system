@@ -36,17 +36,17 @@ North star: `example.com/articles`. Try hard to match its voice. Other style mod
 - **Proposals + PRDs** — `proposals.md`, `prds.md` (writing craft, not the Algorithm PRD)
 - **Social-media posts** — `social-media.md`
 
-## Trio workflow (serious Arabic)
+## Panel workflow (serious Arabic)
 
-The house workflow for serious Arabic is trio-synth: Gemini + GPT draft in
-parallel (via the `/ask-model` skill), then you synthesize ONE final. Context
-gathering is mandatory before any draft. John judges only the final.
+Serious Arabic runs the `/fusion → write-arabic` panel. Its steps are written once, in
+[[20-arabic-piece-pipeline]] (`~/helm/11-workflows/20-arabic-piece-pipeline.md`):
+read it before the first draft and follow it.
 
 ## Process
 
 1. Clarify intent, audience, format
 2. Load the voice contract + Arabic rules (+ dictionary for Arabic)
 3. Gather context — sources, prior pieces, the north star
-4. Draft — or run the trio for serious Arabic
+4. Draft — or run the panel for serious Arabic
 5. Self-edit against the anti-AI rules: cut hedging, fix « » / الـ, kill AI tells
 6. Deliver one clean final; surface open choices only when they need a human call

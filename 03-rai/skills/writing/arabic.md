@@ -3,8 +3,8 @@ name: arabic
 description: >
   Arabic prose drafting. USE WHEN the user needs to write Arabic content
   for the region business correspondence, Arabic LinkedIn posts, internal Arabic
-  docs, formal letters to local government entities, or Arabic-first
-  communication with peers. Defaults to MSA; switches to Khaleeji dialect
+  docs, formal letters to organizations, or Arabic-first
+  communication with peers. Defaults to MSA; switches to your chosen dialect
   when the audience is peers or informal.
 ---
 
@@ -29,7 +29,7 @@ What makes Lumen the north star:
 - **Lead with the claim**: the opening line tells you what the piece is about. No throat-clearing, no "في عالمنا اليوم".
 - **Short sentences, hard breaks**: long sentences are broken into two. Paragraphs rarely exceed five lines.
 - **Concrete numbers, named people, real places**: "35 سنة", "الجولة 25", "اسم النادي" — not "بعض اللاعبين" or "إحدى الجولات".
-- **Light Khaleeji code-switch in dialogue and asides** — never in the body. Inside quoted speech and parenthetical asides, dialect is welcome.
+- **Light dialect code-switch in dialogue and asides** — never in the body. Inside quoted speech and parenthetical asides, dialect is welcome.
 - **Light English code-switch for technical terms only**: brand names, software, foreign titles. Never as a crutch.
 - **One controlled comma per clause**: no four-comma sprawl.
 - **Sub-headings (##) for long-form**: thesis → evidence → counterpoint → close.
@@ -43,8 +43,8 @@ Two registers. Pick one before drafting:
 
 | Register | When | Vibe |
 |----------|------|------|
-| **formal** | Columns, opinion pieces, ministry letters, white papers, business emails, LinkedIn posts, considered Twitter threads | MSA, punchy, written. Short sentences. No classical flourishes. Concrete numbers. Lead with the claim. |
-| **informal** | WhatsApp/Slack replies, casual tweets, peer notes, voice-style asides | Khaleeji or relaxed MSA. Conversational markers ("اللي", "لما", "وش"). Code-switch English tech terms where natural. Short and reactive. |
+| **formal** | Columns, opinion pieces, formal letters, white papers, business emails, LinkedIn posts, considered Twitter threads | MSA, punchy, written. Short sentences. No classical flourishes. Concrete numbers. Lead with the claim. |
+| **informal** | WhatsApp/Slack replies, casual tweets, peer notes, voice-style asides | Your dialect or relaxed MSA. Conversational markers ("اللي", "لما"). Code-switch English tech terms where natural. Short and reactive. |
 
 If unsure, ask. Picking wrong is worse than asking.
 
@@ -58,12 +58,9 @@ If unsure, ask. Picking wrong is worse than asking.
 6. **Draft in target register**: don't translate from English. Think in the register first.
 7. **Trim**: Arabic AI output tends to inflate. Cut 30%. Long Arabic sentences feel formal even when not intended. Break them.
 8. **Self-check** against the Arabic anti-patterns below + the Lumen signature checklist above.
-9. **For serious Arabic prose, use the `/ask-model` trio workflow.** Three models collaborate to produce ONE final output, not three for picking.
-   - `~/helm/03-rai/skills/ask-model/scripts/trio-synth.sh write <prompt-file> ~/helm/03-rai/skills/ask-model/preludes/write-arabic.md` — Gemini + GPT draft in parallel, Claude synthesizes.
-   - **Always establish CONTEXT first.** Before drafting, write a context block: target file/section, audience, purpose, current state (paste it), English source if any, constraints (length, markup), locked-in phrasings that must not change. All three models receive this block.
-   - User reads ONLY the final synthesis. Approves, applies, or steers.
-   - When the user steers ("X reads wrong", "I prefer Y consistently", "lock in this phrasing"), capture the signal: update `arabic-dictionary.md` for forbidden translations, `voice.md` for preferred patterns, or memory for session/user preferences. The agent curates; the user doesn't manage rule files manually.
-   - Single-model calls (`call.sh gemini|gpt|claude ...`) and three-way compare (`compare.sh`) remain available for quick second opinions, critiques, or translations.
+9. **For serious Arabic prose, use the `/fusion → write-arabic` panel.** Six voices collaborate to produce ONE final output, not six for picking. The steps are written once, in [[20-arabic-piece-pipeline]]: follow it from the context brief to the steering capture.
+   - Every voice drafts, then scores the others' drafts; the coordinating session synthesizes.
+   - Quick second opinions and translations: `/fusion → ask`. A critique of a finished draft: `/fusion → review` with the `review-prose-ar` rules.
 
 ## Arabic-specific anti-patterns (avoid)
 
@@ -75,7 +72,7 @@ If unsure, ask. Picking wrong is worse than asking.
 - **Vowelization (تشكيل)**: don't add diacritics. Aggressively strip what AI defaults sprinkle in. `أحول` not `أُحوّل`. `المعقدة` not `المعقّدة`. Shadda, damma, kasra on body prose — all out. Only keep diacritics when the audience genuinely needs them (children, learners, religious text, ambiguous proper noun).
 - **Hedging qualifiers when the verb already implies them**: `أحول البيانات إلى قرارات` beats `أحول البيانات الخام إلى قرارات`. The verb "transform" already implies the source was unprocessed; "raw" is filler. Trim qualifiers like `الخام`, `الأولية`, `المبدئية`, `الحقيقية`, `الفعلية` when the surrounding sentence makes them redundant.
 - **Diplomatic-news Arabic in tech-leader prose**: certain words read as press-release / wire-service Arabic, not lived speech. They're grammatically correct but tonally wrong for a local tech writer's voice. Swap them out:
-  - `نظير / نظيرة` (peer) → `أخرى` (other), `شقيقة` (sister — local-gov register), or `مماثلة` (similar). `وزارة نظيرة` reads diplomatic-Arabic; `وزارة أخرى` reads natural.
+  - `نظير / نظيرة` (peer) → `أخرى` (other), or `مماثلة` (similar). `شركة نظيرة` reads diplomatic-Arabic; `شركة أخرى` reads natural.
   - `أصلب / تجعلها أصلب` (harder, sturdier — for software hardening) → `تقوّي`, `تصقل`, `تنضّج`, `تحسّن`. `أصلب` is a literal-translation shape that no Arab tech speaker uses for software maturity.
   - `يصمد` (withstands) → `يعمل تحت الحمل`, `لا يسقط`. `يصمد` evokes battlefield, not infrastructure.
   - `يحمل العبء / يحمل الحمل` (carries the burden) → `يواجه التحديات`, `يواجه نفس المشكلة`. Carrying-burden is an English-translation reflex; local tech voice says "faces" challenges, not "carries" burdens.
@@ -84,8 +81,8 @@ If unsure, ask. Picking wrong is worse than asking.
   - `المسبق / مسبقًا` (prior, previously, upstream — as a modifier) → drop or rephrase. `المصدر المسبق محدث؟` → `مصدر البيانات محدث؟`. `المرتبطين مسبقًا` → `المرتبطين` (the perfect-aspect verb already implies the past state). `مسبقًا` is filler that translation-mind adds for completeness; Arabic rarely needs it.
   - `المستهلكين` (consumers — for downstream data/system users) → `المستفيدين` (beneficiaries). In Arabic, `المستهلكين` carries a commercial / retail-goods sense; it doesn't read right for downstream data consumers or system users. `المستفيدين` is the natural local tech-gov term for "the parties that use the output downstream".
   - `بأسره / برمته / قاطبة` (entire, whole — classical wholeness modifiers) → `كاملاً`, or drop entirely. `مشروع المكتب بأسره` → `مشروع المكتب كاملاً` or just `مشروع المكتب`. The classical forms read literary, not lived speech.
-  - `نطاق / النطاقات / مدير نطاق` (domain, scope, domain-owner — when the real referent is a government department) → `إدارة`, `الإدارات`, `مدير إدارة`. In local gov context, `إدارة` is the lived word for an organizational department; `نطاق` reads abstract / English-org-chart-translated. Keep `نطاق` only when the meaning is genuinely "scope" or "area of responsibility" rather than a named department.
-  - `نهضوي / تنموي / استشرافي` (developmental / forward-looking) → describe what changed concretely. These are ministry-speech filler.
+  - `نطاق / النطاقات / مدير نطاق` (domain, scope, domain-owner — when the real referent is an organizational department) → `إدارة`, `الإدارات`, `مدير إدارة`. In an organization, `إدارة` is the lived word for an organizational department; `نطاق` reads abstract / English-org-chart-translated. Keep `نطاق` only when the meaning is genuinely "scope" or "area of responsibility" rather than a named department.
+  - `نهضوي / تنموي / استشرافي` (developmental / forward-looking) → describe what changed concretely. These are official-speech filler.
   - **Test**: would a local tech leader say this word aloud in a meeting? If no, it's wire-service Arabic. Cut.
 
 ## Meaning over translation (CRITICAL — read before every Arabic draft)
@@ -109,7 +106,7 @@ Then write that. Within a chunk, English sentences may collapse, reorder, split,
 
 **Anti-pattern**: opening the English chunk and walking line-by-line, producing one Arabic sentence per English sentence. This is the AI-default that produces stiff translated prose. The result reads competent but lifeless — the rhythm is wrong, the openings are wrong, the closes don't land. Avoid.
 
-**Pace yourself.** For serious Arabic prose (formal letters, memos, columns, ministry letters, op-eds), translate **slowly**. One chunk at a time. Don't speed-run the whole document in a single pass — that's how chunk-by-chunk degrades into sentence-by-sentence at the seams. Pause after each chunk, re-read the Arabic aloud, make sure it stands on its own as Arabic prose before moving to the next chunk.
+**Pace yourself.** For serious Arabic prose (formal letters, memos, columns, op-eds), translate **slowly**. One chunk at a time. Don't speed-run the whole document in a single pass — that's how chunk-by-chunk degrades into sentence-by-sentence at the seams. Pause after each chunk, re-read the Arabic aloud, make sure it stands on its own as Arabic prose before moving to the next chunk.
 
 **Two failure modes to avoid:**
 
@@ -138,7 +135,7 @@ Then write that Arabic. The English source becomes a reference for intent, never
 
 **The framing that produces the best output:**
 
-When dispatching the trio, frame the task as: *"You are a local tech writer at «لومن» telling this story in Arabic for the first time. The English below is the writer's source notes — not text to translate, just intent to convey."* This framing produces bolder rewrites: re-structured paragraphs, native Arabic openings, dropped metaphors that don't carry. Verified on the agentic-coding-revolution rewrite — the version that locked in started with: *"في 2025، تغيّرت البرمجة من سؤال تقني إلى سؤال ذهني: هل تعرف ماذا تريد؟"* The English had no such opener — it was written fresh because the trio was told to write, not translate.
+When dispatching the panel, frame the task as: *"You are a local tech writer at «لومن» telling this story in Arabic for the first time. The English below is the writer's source notes — not text to translate, just intent to convey."* This framing produces bolder rewrites: re-structured paragraphs, native Arabic openings, dropped metaphors that don't carry. Verified on the agentic-coding-revolution rewrite — the version that locked in started with: *"في 2025، تغيّرت البرمجة من سؤال تقني إلى سؤال ذهني: هل تعرف ماذا تريد؟"* The English had no such opener — it was written fresh because the trio was told to write, not translate.
 
 ## English code-switch density (don't pile up `«»` tokens)
 
@@ -187,8 +184,8 @@ These are small, specific patterns that emerged from real edits. They're stricte
 
 - **Email**: subject line in target register, body 80-200 words for formal, can be shorter for informal.
 - **LinkedIn post**: 100-300 words formal. Strong opener. Concrete example. Soft close (no CTA spam).
-- **Ministry/DG letter**: formal register, header (date, recipient, subject), greeting, body (problem → ask → next step), closing (الاسم، الصفة، التاريخ).
-- **Notes / Slack / WhatsApp**: informal, as concise as English. Khaleeji is fine.
+- **Formal letter to an executive**: formal register, header (date, recipient, subject), greeting, body (problem → ask → next step), closing (الاسم، الصفة، التاريخ).
+- **Notes / Slack / WhatsApp**: informal, as concise as English. Dialect is fine.
 
 ## Voice anchors
 
@@ -200,9 +197,9 @@ Anchor files live in `~/helm/02-ana/voice-samples/arabic/`. Tiered by priority.
 
 | File | What it anchors |
 |------|-----------------|
-| `formal--lumen-sports-column.md` | Analytical column — section-headed long-form, concrete numbers, structured argument (a columnist, مصدر مطّلع) |
-| `formal--lumen-secondary-actor.md` | Cultural/critical essay — تمهيد → النتيجة structure, embedded thinker reference, casual-but-precise MSA (a columnist, a culture newsletter) |
-| `formal--lumen-frida-kahlo-wallet.md` | Humorous personal essay — MSA narration with dialect dialogue, parenthetical asides to reader, punchline close (a columnist, a personal newsletter) |
+| `formal--lumen-essay-1.md` | Analytical column — section-headed long-form, concrete numbers, structured argument (a columnist, a news newsletter) |
+| `formal--lumen-essay-2.md` | Cultural/critical essay — تمهيد → النتيجة structure, embedded thinker reference, casual-but-precise MSA (a columnist, a culture newsletter) |
+| `formal--lumen-essay-3.md` | Humorous personal essay — MSA narration with dialect dialogue, parenthetical asides to reader, punchline close (a columnist, a personal newsletter) |
 
 ### Tier 2 — Secondary niche references (layer only when domain demands)
 
@@ -213,15 +210,15 @@ Anchor files live in `~/helm/02-ana/voice-samples/arabic/`. Tiered by priority.
 
 | Register | File | What it anchors |
 |----------|------|-----------------|
-| formal | `formal--columnist-a-syria-analysis.md` | Long-form analytical political column |
-| formal | `formal--columnist-a-egypt-crises.md` | Narrative-driven political column (Napoleon framing) |
-| formal | `formal--columnist-a-hezbollah-israel.md` | Short-form punchy opinion thread (Twitter, three-beat structure) |
-| formal | `formal--columnist-a-medium-year-review.md` | Reflective retrospective voice (Medium year-end piece) |
-| formal | `formal--columnist-b-ai-agents.md` | Tech-executive MSA, English term code-switching |
-| formal | `formal--columnist-c-retirement.md` | Personal reflective essay — narrative MSA, light dialect in dialogue |
-| formal | `formal--columnist-d-dostoyevsky-regret.md` | Literary/philosophical op-ed — dense MSA, embedded quotations |
-| informal | `informal--columnist-a-local-uae-exchange.md` | Conversational reflection, Khaleeji markers ("اللي", "لما"), peer voice |
-| informal | `informal--columnist-b-claude-code.md` | Programmer informal voice — MSA + Khaleeji + English tech terms |
+| formal | `formal--columnist-a-1.md` | Long-form analytical column |
+| formal | `formal--columnist-a-2.md` | Narrative-driven column with a historical frame |
+| formal | `formal--columnist-a-3.md` | Short-form punchy opinion thread (Twitter, three-beat structure) |
+| formal | `formal--columnist-a-4.md` | Reflective retrospective voice (Medium year-end piece) |
+| formal | `formal--columnist-b-1.md` | Tech-executive MSA, English term code-switching |
+| formal | `formal--columnist-c-1.md` | Personal reflective essay — narrative MSA, light dialect in dialogue |
+| formal | `formal--columnist-d-1.md` | Literary/philosophical op-ed — dense MSA, embedded quotations |
+| informal | `informal--columnist-a-1.md` | Conversational reflection, dialect markers ("اللي", "لما"), peer voice |
+| informal | `informal--columnist-b-1.md` | Programmer informal voice — MSA + dialect + English tech terms |
 
 **Default: Lumen only.** Layer a Tier-2 reference *only* when the piece sits clearly inside that niche. When in doubt, stop at Tier 1.
 
@@ -235,8 +232,8 @@ To add or rotate anchors, see `~/helm/02-ana/voice-samples/arabic/README.md`.
 
 ## Examples
 
-- "اكتب إيميل لفريق الامتثال في الجهة المنظمة عن Matchbox" → formal email
+- "اكتب إيميل لفريق الهندسة في شركة شريكة عن Matchbox" → formal email
 - "بوست لينكدإن بالعربي عن مشروع هيليوس بدون فلسفة" → formal LinkedIn post
-- "خطاب رسمي لمدير عام في جهة حكومية لطلب اجتماع" → formal ministry letter
+- "خطاب رسمي لمدير عام في شركة لطلب اجتماع" → formal letter
 - "رد سريع لأخوي على الواتساب عن تأخير الديبلوي" → informal note
 - "ترجم هذا البوست الإنجليزي للعربي مع الحفاظ على نبرتي" → translate-and-adapt (English source → formal)

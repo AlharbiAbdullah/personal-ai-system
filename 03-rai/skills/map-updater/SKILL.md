@@ -13,18 +13,18 @@ Keep navigation maps current so Claude and John can navigate without burning con
 
 Output: `~/helm/.helm-index/helm-index.md`
 
-Obsidian-style wiki-link index of the vault's knowledge topics. Human-browsable first, Claude-readable second. Absolute path — works from any cwd.
+Obsidian-style wiki-link index of the vault's knowledge topics. Human-browsable first, Claude-readable second. Absolute path, so it works from any cwd.
 
 What goes in:
-- `10-knowledge/` — topic notes, grouped by domain (Data Engineering, AI/ML, System Design, DevOps, etc.). Parent notes first, indented children.
-- `10-knowledge/_mocs/` — MOCs (Maps of Content).
-- `09-ideas/` — Seed/Plant/Tree notes worth surfacing.
-- `05-projects/` — active and completed project notes.
-- `06-learning/` — active courses.
-- `02-ana/` — self, family, identity, journal pointers (light touch, privacy).
-- `11-workflows/` — playbook table with use-when column.
+- `10-knowledge/`: topic notes, grouped by domain (Data Engineering, AI/ML, System Design, DevOps, etc.). Parent notes first, indented children.
+- `10-knowledge/_mocs/`: MOCs (Maps of Content).
+- `09-ideas/`: Seed/Plant/Tree notes worth surfacing.
+- `05-projects/`: active and completed project notes.
+- `06-learning/`: active courses.
+- `02-ana/`: self, family, identity, journal pointers (light touch, privacy).
+- `11-workflows/`: the workflow table: one row per `NN-*.md` file, in number order, its title and its `**Use when:**` line shortened. Copy the rows from the tables in `11-workflows/AGENTS.md`; never invent a row. One line on top: John's workflows, read and follow the matching one.
 
-What stays out: `03-rai/`, `12-system/`, `13-archive/`, `00-landing/`, `01-inbox/`, `08-bawaba/` — those are not knowledge.
+What stays out: `03-rai/`, `12-system/`, `13-archive/`, `00-landing/`, `01-inbox/`, `08-bawaba/`. Those are not knowledge.
 
 ### 2. Codemap (when present)
 
@@ -36,7 +36,7 @@ Runs only if `.codemap/codemap.md` exists in the current project (walk up from c
 
 ## When to run
 
-- Manually via `/map-updater` — updates whichever maps apply.
+- Manually via `/map-updater`: updates whichever maps apply.
 - On demand after adding knowledge notes, restructuring folders, or large code changes.
 
 The session-start hook (`03-rai/hooks/session-start.py`) loads both maps into context at the start of every session: helm-index always, codemap when present in cwd.
@@ -129,7 +129,7 @@ One-line descriptions. Navigation, not documentation. Public API only.
 ## Rules
 
 1. Helm index runs every invocation. Codemap runs only if `.codemap/` exists in the current project.
-2. Never create `.codemap/` in the helm vault itself — helm uses `.helm-index/` instead.
+2. Never create `.codemap/` in the helm vault itself: helm uses `.helm-index/` instead.
 3. Create `.helm-index/` if missing. The folder is the home of `helm-index.md`.
 4. Create `.codemap/` only when explicitly initializing a code project, never implicitly.
 5. Replace the one dated "Last Updated" / "Updated" line on every run. Never append change notes.

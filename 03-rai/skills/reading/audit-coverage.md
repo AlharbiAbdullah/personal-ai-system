@@ -1,18 +1,20 @@
 ---
 name: audit-coverage
-description: Verify a book curriculum covers every chapter/law with full treatment. Flags gaps before "done".
+description: Verify a book curriculum covers every chapter/law with full treatment. Flags gaps. Optional, never a gate before the close.
 allowed-tools: Read, Bash, WebSearch, AskUserQuestion
 ---
 
 # Audit Coverage (Reading)
 
-Book curricula have strict coverage bars. Before declaring "done", verify every chapter/law has:
+Book curricula have strict coverage bars. When John asks for a coverage check, verify every chapter/law has:
 1. The author's argument (with reasoning)
 2. At least one named story (specific historical figure, specific event, retellable)
 3. The framework or strategies (any numbered lists / phases / methods, preserved in full)
 4. The danger (what goes wrong when misunderstood or misapplied)
 
 Missing any of these four = inadequate coverage.
+
+The audit is optional, never a gate: a curriculum closes on his word, audited or not.
 
 ## Instructions
 
@@ -80,6 +82,10 @@ Example: "The Seven Deadly Realities" stays that way, not renamed to "seven comm
 ### Step 7: Offer to fix
 
 For each gap, offer to regenerate the lesson via `/reading teach`. Don't auto-fix.
+
+### Step 8: Hand off the close
+
+The audit never closes a curriculum. When the book belongs to a learning topic and John closes it, the close runs [[12-learning-stage]] step 7.
 
 ## Rules
 

@@ -152,7 +152,7 @@ Show reinforcement. Identify families, clusters, tensions, operating principles.
 2. **Stories are sacred.** Include enough detail to retell. Named figures, specific events. "Darwin on the Beagle" not "a scientist who traveled."
 3. **Named frameworks are sacred.** "The Seven Deadly Realities" stays. Don't paraphrase.
 4. **Author's voice matters.** Preserve arguments. Don't sanitize or editorialize.
-5. **Apply to real life.** Every lesson connects to John's work (Data/AI), ambition (1000x engineer), relationships, culture (the United States), personal growth.
+5. **Apply to real life.** Every lesson connects to the reader's work, goals, relationships, culture and personal growth, as `02-ana/identity/` describes them.
 6. **Pacing:** dense chapters (~35 pages) max 2 per lesson; very dense max 1; laws/rules 6-7; light chapters max 3.
 7. **Per-chapter treatment standard:** argument + named story + framework + danger. Missing any = insufficient coverage.
 

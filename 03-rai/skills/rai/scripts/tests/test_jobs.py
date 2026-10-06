@@ -158,9 +158,13 @@ def _iso(d):
     return f"{y}-W{wk:02d}"
 
 
-def _news(w, daily_days_old=0, weekly_weeks_old=0, x_age_h=3.0, login_failed=False):
+def _news(w, daily_days_old=0, weekly_weeks_old=0, x_age_h=3.0, login_failed=False,
+          digest=True, daily_age_h=None):
     today = date.today()
-    w.write(f"helm/08-bawaba/daily/{today - timedelta(days=daily_days_old)}.md", "# digest")
+    day = today - timedelta(days=daily_days_old)
+    w.write(f"helm/08-bawaba/daily/{day}.md", "# daily", age_h=daily_age_h)
+    if digest:
+        w.write(f"helm/08-bawaba/digest/{day}.md", "> [!abstract] Bottom line")
     w.write(f"helm/08-bawaba/weekly/{_iso(today - timedelta(weeks=weekly_weeks_old))}.md", "# issue")
     run = f"helm/03-rai/skills/news-digest/.runs/{today}"
     w.write(f"{run}/x_foryou.json", "[]", age_h=x_age_h)
@@ -204,6 +208,17 @@ def test_job_1_fault_x_login_dead(w, systemd):
 def test_job_1_fault_x_dumps_stale(w, systemd):
     _news(w, x_age_h=50)
     assert st("JOB-1").status == WARN
+
+
+def test_job_1_ok_digest_still_being_written(w, systemd):
+    _news(w, digest=False, daily_age_h=0.5)
+    assert st("JOB-1").status == PASS
+
+
+def test_job_1_fault_digest_missing(w, systemd):
+    _news(w, digest=False, daily_age_h=3)
+    r = st("JOB-1")
+    assert r.status == WARN and "no digest for daily" in r.evidence
 
 
 # JOB-2: portfolio, gold-skim, Obsidian Sync watcher ─────────────────────────────
@@ -289,9 +304,9 @@ def test_data_5_fault_two_missed_runs(w, systemd):
 
 
 def test_data_5_fault_last_run_failed(w, systemd):
-    _backup(w, outcome="FAIL restic check reported errors")
+    _backup(w, outcome="FAIL backup check reported errors")
     r = st("DATA-5")
-    assert r.status == FAIL and "restic check" in r.evidence
+    assert r.status == FAIL and "backup check" in r.evidence
 
 
 def test_data_5_fault_no_status(w, systemd):

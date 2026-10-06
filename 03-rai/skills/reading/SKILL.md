@@ -17,7 +17,7 @@ Books through Claude Code. Complete coverage. "I don't have time to read books. 
 |------|-----------|--------------|
 | Scaffold a book curriculum + progress.md + tier plan | start-book | `start-book.md` |
 | Generate a lesson (Chapter / Law / Practice / Synthesis) | teach | `teach.md` |
-| Verify full book coverage before declaring done | audit-coverage | `audit-coverage.md` |
+| Check a book's coverage when he asks (never a closing gate) | audit-coverage | `audit-coverage.md` |
 
 ## How to use
 

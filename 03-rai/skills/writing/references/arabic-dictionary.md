@@ -70,8 +70,8 @@ Spacing: write `الـ «word»` with a space between `الـ` and the « » —
 - **AI** — *Context-dependent. Three rules — pick by where the term sits:*
   - *English `«AI»` (or `الـ «AI»`) — when it's a tight tech-jargon compound or a category heading: `«AI agents»`, `«AI models»`, `«AI Engineering»` as a section title, `«AI tooling»`.*
   - *Arabic `الذكاء الاصطناعي` — when it sits inside natural Arabic prose flow as a subject/object: "يغيّر الذكاء الاصطناعي طريقة البناء"، "تطبيقات على الذكاء الاصطناعي".*
-  - *Arabic `ذكاء اصطناعي` (indefinite) — in first-person bio contexts where John introduces himself in Arabic-first prose: "مهندس بيانات وذكاء اصطناعي من أوستن". The Arabic-first identity register wins over the "label/heading" rule because the audience is reading Arabic about a person, not browsing a tech section.*
-  - *Tell: tech-jargon compound or section heading → English. Sentence subject/object → Arabic definite. Bio-title for John → Arabic indefinite.*
+  - *Arabic `ذكاء اصطناعي` (indefinite) — in first-person bio contexts written in Arabic prose: "باحثة ذكاء اصطناعي". The bio register wins over the "label/heading" rule because the audience is reading Arabic about a person, not browsing a tech section.*
+  - *Tell: tech-jargon compound or section heading → English. Sentence subject/object → Arabic definite. Bio title → Arabic indefinite.*
 - **ML**
 - **LLM / LLMs**
 - RAG
@@ -160,7 +160,7 @@ Spacing: write `الـ «word»` with a space between `الـ` and the « » —
 - **system design** — *Context-dependent.*
   - *English `«system design»` — when it's a category title, a section heading, a labeled discipline name in a list of disciplines, or a CV/resume-style descriptor.*
   - *Arabic `تصميم الأنظمة` (or `بناء الأنظمة`) — when speaking about the practice in flowing Arabic prose: "أعمل في تصميم الأنظمة"، "بناء الأنظمة الموزّعة يحتاج إلى...".*
-  - *Arabic `تصميم الأنظمة` (also) — in first-person bio contexts where John introduces himself in Arabic-first prose: "أبني عند تقاطع البيانات وتصميم الأنظمة...". The Arabic-first identity register wins over the "label/heading" rule.*
+  - *Arabic `تصميم الأنظمة` (also) — in first-person bio contexts written in Arabic prose: "أعمل في تصميم الأنظمة الموزّعة". The bio register wins over the "label/heading" rule.*
   - *Tell: section heading or CV descriptor → English. Sentence subject or bio listing in Arabic prose → Arabic.*
 - **architecture** — *Context-dependent. Avoid `«المعمارية»` AND `«البنية»` in tech prose — both read stiff and AI-default. Three valid renderings in priority order:*
   - ***Preferred — describe concretely** when context allows: section heading "كيف يعمل", body phrasing "ثلاث طبقات", "كيف بُني". Native local tech voice describes rather than names abstract structure.*

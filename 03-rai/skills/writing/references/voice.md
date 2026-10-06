@@ -46,7 +46,7 @@ Passive voice signals AI hedging. Use it only when the actor genuinely doesn't m
 
 - "11 Docker services" not "many services"
 - "1 month, 40k LOC" not "a substantial effort"
-- "RTX 4070, 16GB" not "modest hardware"
+- "8 cores, 32GB" not "modest hardware"
 - "3 silent failures" not "several issues"
 
 If you don't know the number, say so. Don't fudge with "various" or "numerous".

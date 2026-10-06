@@ -91,7 +91,7 @@ Example for React 18 → 19:
 
 ## Examples
 
-- "Plan Python 3.9 → 3.12 migration for OpenKit"
+- "Plan a Python 3.9 → 3.12 migration for a pipeline repo"
 - "Upgrade Next.js from pages router to app router for Dataforge"
-- "Migrate Helios from Dagster 1.x to 2.x"
-- "Move Taskflow React codebase from Create-React-App to Vite"
+- "Migrate a legacy Airflow pipeline repo to Dagster"
+- "Move a React codebase from Create-React-App to Vite"

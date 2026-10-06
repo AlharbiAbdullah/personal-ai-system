@@ -32,7 +32,7 @@ BROKEN_SUBSYSTEMS = {
 SUBSYSTEM_ORDER = [
     "Data safety", "Environment", "Stores", "Pipeline", "Live capture", "Self-evolve",
     "Retrieval", "Hooks", "Identity", "Eval", "Config", "Harness", "Vault", "Code",
-    "Auto-memory", "Skills", "Agents", "Jobs", "Drift", "External", "Self-test",
+    "Auto-memory", "Skills", "Agents", "Workflows", "Jobs", "Drift", "External", "Self-test",
 ]
 
 
@@ -80,6 +80,12 @@ class Paths:
         self.SYSTEMD_USER = home / ".config" / "systemd" / "user"
         self.OPENCODE = home / ".config" / "opencode"
         self.PI = home / ".pi" / "agent"
+        self.GEMINI = home / ".gemini"
+        # the harness adapters write under XDG_DATA_HOME; mirror it on the real home only
+        xdg_data = os.environ.get("XDG_DATA_HOME") if real else None
+        data = Path(xdg_data) if xdg_data else home / ".local" / "share"
+        self.SHADOWS = data / "rai" / "transcripts"   # one folder per adapter (opencode, agy)
+        self.OPENCODE_DB = data / "opencode" / "opencode.db"
         self.DEVENV = home / "dev-env"
         self.TESTS = Path(__file__).resolve().parent.parent / "tests"
 

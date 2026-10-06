@@ -23,7 +23,7 @@ Read these to ground rating decisions:
 ls -1 ~/helm/01-inbox/*.md 2>/dev/null
 ```
 
-Skip `AGENTS.md`.
+Skip `AGENTS.md`, and any file he says he keeps for later.
 
 ### Step 2: For each file
 
@@ -56,6 +56,8 @@ Enrich the file in place with this template (appended or replacing thin content)
 
 ### Step 3: Propose destination
 
+A and B items get a destination, and so does a C item that cross-links to something already live. Every other C item, and every D item, goes to the delete batch (Step 5).
+
 Based on the enriched content, propose one of:
 - Reading material → `07-reading/` (create a curriculum folder if a book)
 - Curriculum / course → `06-learning/`
@@ -64,22 +66,28 @@ Based on the enriched content, propose one of:
 - Project → `09-ideas/` as a Seed (only `/ideas → graduate` opens a kitchen); research for a project that already has a kitchen → `05-projects/kitchen/{name}/research/`
 - Work item → `04-work/{engagement}/`
 
+The routing table in [[13-capture-sweep]] step 4 wins where this list differs.
+
 ### Step 4: Confirm and move
 
-Use AskUserQuestion: "Move to {destination}, or keep in inbox for now?"
+Use AskUserQuestion: "Move to {destination}?" A no means another home or the delete batch, never "keep for later".
 
-On confirmation: `mv` the enriched file to the destination. Keep the same filename or rename to match destination conventions.
+On confirmation: `mv` the enriched file to the destination whole, research included. Keep the same filename or rename to match destination conventions.
 
-### Step 5: Report
+### Step 5: Delete batch
 
-After the run: `enriched: N, moved: N, kept: N`.
+Show John the C and D deletions as one batch. Delete on his yes: a delete needs his go.
+
+### Step 6: Report
+
+After the run: `enriched: N, moved: N, deleted: N`. Then confirm both folders at [[13-capture-sweep]] step 5.
 
 ## Rating scale
 
 A / B / C / D — relevance to John, NOT generic importance.
 - **A** — directly serves a current goal or deep identity anchor.
 - **B** — clearly relevant; worth acting on soon.
-- **C** — adjacent; revisit when bandwidth opens.
+- **C**: adjacent. Deleted, unless it cross-links to something already live.
 - **D** — weak tie; consider deleting instead of routing.
 
 If you think an item is worse than D, propose deletion.

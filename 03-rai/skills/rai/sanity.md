@@ -30,7 +30,7 @@ chromadb. A full run takes a few seconds.
 
 Present the report as-is: it is grouped by subsystem, with a fix line under every FAIL and WARN.
 Lead with the VERDICT line, surface FAIL and WARN rows first, and offer to investigate. Do not
-auto-fix.
+auto-fix. A DEGRADED or BROKEN verdict runs [[17-brain-healthcheck]].
 
 ## Flags
 
@@ -49,7 +49,7 @@ auto-fix.
 
 | Subsystem | Asserts | FAIL means BROKEN |
 |-----------|---------|:-:|
-| Data safety | origin reachable and pushes landing, coordinator heartbeat, no count drop, union merge rules, restic backup fresh, no tracked file near GitHub's limits, no unattended `git pull --rebase` | yes |
+| Data safety | origin reachable and pushes landing, coordinator heartbeat, no count drop, union merge rules, offsite backup fresh, no tracked file near GitHub's limits, no unattended `git pull --rebase` | yes |
 | Environment | chromadb imports, the wrapper runs | yes |
 | Stores | the four collections populated, fresh, writable, queryable, in parity with the committed index | yes |
 | Pipeline | queue draining, scripts parse on both interpreters, coordinator wired and firing, its steps succeeding, scanner capturing both transcript roots | yes |
@@ -58,10 +58,11 @@ auto-fix.
 | Retrieval | the frozen memory block fresh, semantic, episodic and daily queries returning rows | yes |
 | Hooks | every registered hook present, parsing, importing, firing, error-free, and touching its artifact | yes |
 | Identity, Eval | identity loads as session-start runs it, stays in the budget session-start warns on; the golden set parses | |
-| Config, Harness | the Claude Code, pi and OpenCode edges resolve into the vault, pi runs the same hooks, the dev-env bootstrap can recreate every edge | |
+| Config, Harness | the Claude Code edges resolve into the vault; other harness adapters, if you run any, run the same hooks and keep writing shadows | |
 | Vault, Code | the folder skeleton, templates and root files exist; every other `.py` and `.sh` in the vault parses | |
 | Auto-memory | helm's Claude Code memory slot is mounted from `03-rai/auto-memory`, the index is under the loader's 200-line cut | |
 | Skills, Agents | names match folders, critical skills reachable, no dead collection refs, agents match their MANIFEST | |
+| Workflows | FLOW-1 to FLOW-7. The skills, agents and links a workflow names resolve; every workflow is in the `11-workflows/AGENTS.md` table and the helm index. No line citations, headers complete, open GAP blocks as a WARN | |
 | Jobs | news, portfolio, gold-skim and the Obsidian Sync watcher timers fire clean and leave output; every helm timer is asserted | |
 | Drift | MANIFEST rows, types and counts, doc paths, helm-index and curated wikilinks, router tables, Obsidian folders, cited check IDs, tracked-but-ignored files | |
 | External | the claude-hud status line resolves | |
@@ -78,7 +79,8 @@ overrides it. A SKIP never counts toward the verdict.
 
 - **HEALTHY:** no FAIL, at most two WARN.
 - **DEGRADED:** a FAIL outside the load-bearing set, or three or more WARN. A feature is off. Data is safe.
-- **BROKEN:** a FAIL in a subsystem marked yes above. Stop and fix it before other brain work.
+- **BROKEN:** a FAIL in a subsystem marked yes above. Stop and fix it before other brain work,
+  through [[17-brain-healthcheck]] step 2.
 
 A check that raises, hangs past 90 seconds, or returns a malformed result reports FAIL with the
 reason. A broken check is a finding, never a silent pass.
@@ -86,11 +88,12 @@ reason. A broken check is a finding, never a silent pass.
 ## On a fresh kit
 
 Before `./setup.sh` and your first few sessions, expect BROKEN: the `~/.claude` links, the four
-collections and the self-evolve files do not exist yet. After setup and a first
-`/rai process-sessions`, what stays red is honest. A few checks cover optional parts you may
+collections and the self-evolve files do not exist yet. Run `/map-updater` once to build the vault index (VAULT-3, FLOW-4), and a first
+`/rai process-sessions` to fill the stores. After that, what stays red is honest. A few checks cover optional parts you may
 never set up: the pi bridge (HARN), the vault auto-memory store (MEM-1) and the offsite backup
-(DATA-5) SKIP until you do. The Jobs checks assume the news and maintenance timers from
-`SYNC-ARCHITECTURE.md`; drop the ones you do not run from `JOBS` in `sanity_checks/jobs.py`.
+(DATA-5) SKIP until you do. The Jobs checks assume timers this kit does not install (news, maintenance, portfolio,
+backup); drop the ones you do not run from `JOBS` in `sanity_checks/jobs.py`. CFG-1 expects
+the Context7 MCP server and EXT-1 the claude-hud plugin.
 
 ## The alarm path
 
@@ -119,12 +122,11 @@ without a `test_<id>_fault*` test.
 - **New collection:** add it to `ASSERTED_COLLECTIONS` with a check, or to
   `TOMBSTONED_COLLECTIONS`. META-1 FAILs on a live collection in neither.
 - **New hook:** HOOK-1 to HOOK-4 read the registry, so it is covered for presence, parsing and
-  firing. Add a HOOK-6 effect row if it writes an artifact, and wire it into the pi bridge
-  (HARN-2 WARNs otherwise).
+  firing. Add a HOOK-6 effect row if it writes an artifact. If you run other harnesses,
+  wire it into each adapter too. HARN-2, HARN-4 and HARN-5 WARN otherwise.
 - **New timer:** add it to `JOBS` in `sanity_checks/jobs.py` and give it an output check. JOB-3
   WARNs on any helm timer missing there.
-- **New harness edge:** assert it in `harness.py` and create it in the dev-env bootstrap.
-  HARN-3 WARNs when the bootstrap cannot recreate an edge sanity asserts.
+- **New harness edge:** assert it in `harness.py` and create it in `setup.sh`.
 - **New subsystem:** add it to `SUBSYSTEM_ORDER` in `sanity_checks/core.py`, and to
   `BROKEN_SUBSYSTEMS` if a failure there means the brain is not working.
 

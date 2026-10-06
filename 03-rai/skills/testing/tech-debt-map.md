@@ -152,7 +152,7 @@ Date: YYYY-MM-DD | Analyst: [Name]
 
 ## Examples
 
-- "Map tech debt in the Matchbox codebase"
-- "What should we clean up before the Taskflow v2 launch?"
+- "Map tech debt in the open-kit codebase"
+- "What should we clean up before the v2 launch?"
 - "Which files are most at risk of breaking when we add feature X?"
 - "Coverage gap analysis for OpenKit"

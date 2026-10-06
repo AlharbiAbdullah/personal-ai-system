@@ -18,6 +18,8 @@ Ask John which engagement the meeting is for. List options from `ls ~/helm/04-wo
 
 Load every `.md` file in `~/helm/04-work/{engagement}/` that looks relevant (PRDs, proposals, prior meeting notes).
 
+List the open follow-ups first. They are the unchecked lines in the Follow-ups sections of the engagement's prior meeting files and its close-out note. They head the new briefing.
+
 ### Step 3: Ask for meeting specifics
 
 Use AskUserQuestion:
@@ -60,6 +62,10 @@ Template:
 ## Follow-ups (blank — fill after the meeting)
 - [ ]
 ```
+
+### Step 5: After the meeting
+
+The Follow-ups section stays blank until the debrief. The debrief appends to this same file: [[11-meeting-to-followthrough]] step 3.
 
 ## Rules
 

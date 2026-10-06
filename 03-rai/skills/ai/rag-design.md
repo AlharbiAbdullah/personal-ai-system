@@ -49,6 +49,8 @@ Split documents into retrievable units.
 ### 3. Embed
 Convert chunks to vectors.
 
+**Local first when the data can't leave.** When a RAG system runs where data must stay on-site, the embedder and the reranker are local models on the target's own servers. Pick an open-source model below before any API.
+
 **Model choices:**
 - **OpenAI text-embedding-3-small / large** — strong baseline, cheap
 - **Cohere embed-english / multilingual** — strong, especially multilingual
@@ -61,7 +63,7 @@ Convert chunks to vectors.
 Put vectors in a database + query by similarity.
 
 **Vector DBs:**
-- **ChromaDB** — simple, local-first, good for prototypes + small scale (this is what John uses)
+- **ChromaDB** — simple, local-first, good for prototypes + small scale (Rai's own memory runs on it)
 - **Pinecone** — managed, scales, pay-per-use
 - **Weaviate** — open source, supports hybrid
 - **Qdrant** — open source, fast, Rust
@@ -83,6 +85,8 @@ Refine the retrieval + build the final context.
 - **Cohere Rerank** — state of the art, API-based
 - **BGE Reranker** — open source, works well
 - **LLM-as-reranker** — ask an LLM "is chunk X relevant to query Y?" (slow + expensive; high quality)
+
+When the data can't leave the site, start with a local open-source reranker. The local-first note under Embed says why.
 
 **Context assembly:**
 - Order chunks by relevance
@@ -142,7 +146,7 @@ You cannot improve what you don't measure. Set up a test set.
 
 ## Examples
 
-- "Design the RAG pipeline for OpenKit regulatory document Q&A"
-- "Tune the Taskflow chat — it's hallucinating"
+- "Design the RAG pipeline for regulatory document Q&A"
+- "Tune the Helios chat: it's hallucinating"
 - "Pick chunking strategy for Arabic legal documents"
-- "Set up eval harness for Matchbox RAG responses"
+- "Set up eval harness for RAG responses on a golden set"

@@ -93,7 +93,7 @@ After teardown, generate a 1-page battlecard for sales:
 
 ## Examples
 
-- "Competitor teardown: Collibra for Matchbox positioning"
+- "Competitor teardown: Yeoman and Cookiecutter for open-kit positioning"
 - "Battlecard against Alation for data governance sales"
-- "How does Databricks position vs Snowflake for Taskflow use case?"
-- "Investigate the local compliance tooling landscape against OpenKit"
+- "How does Databricks position vs Snowflake for a lakehouse use case?"
+- "Investigate the project-scaffolding tool landscape against OpenKit"

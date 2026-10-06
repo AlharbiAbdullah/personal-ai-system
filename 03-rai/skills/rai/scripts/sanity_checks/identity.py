@@ -45,11 +45,24 @@ def identity_loads():
         return FAIL, "no SessionStart hook registered", "Register hooks/session-start.py under SessionStart in config/settings.json."
     # the registered interpreter (system python3), not sanity's own; stdin closed, as a hook's
     # is once Claude Code has written the payload, so a stdin read can never hang the run
+    # as Claude Code runs it: no RAI_HARNESS (an adapter sets one)
+    base = {k: v for k, v in os.environ.items() if k != "RAI_HARNESS"}
     r = subprocess.run(["bash", "-c", cmd], capture_output=True, text=True, timeout=30,
-                       stdin=subprocess.DEVNULL, env={**os.environ, "HOME": str(P.HOME)})
+                       stdin=subprocess.DEVNULL, env={**base, "HOME": str(P.HOME)})
     out = r.stdout
     markers = [m for m in ("Steering", "Identity", "Memory") if m in out]
     ev = f"{len(out)} chars, markers={markers}"
+    if "Rai session context" in out:
+        # Claude Code mode: the identity loads through the CLAUDE.md imports (HARN-7), and the
+        # hook prints only the dynamic part. The full snapshot, as the adapters get it, must
+        # still carry the sections, and the short part must stay under Claude Code's inline cap.
+        full = subprocess.run(["bash", "-c", cmd], capture_output=True, text=True, timeout=30,
+                              stdin=subprocess.DEVNULL, env={**base, "HOME": str(P.HOME), "RAI_HARNESS": "sanity"}).stdout
+        markers = [m for m in ("Steering", "Identity", "Memory") if m in full]
+        ev = f"{len(out)} chars in Claude Code, {len(full)} chars full, markers={markers}"
+        if len(out) >= 10_000:
+            return WARN, ev, "Claude Code shows only a 2 KB preview past 10,000 characters: trim session-start's Claude mode."
+        return (PASS, ev, "") if markers else (WARN, ev, "Full snapshot produced but expected sections absent.")
     if not out.strip():
         err = (r.stderr.strip().splitlines() or [""])[-1][:100]
         return FAIL, f"blank output, rc={r.returncode}" + (f": {err}" if err else ""), "SessionStart produces nothing — identity load broken."

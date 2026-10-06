@@ -20,7 +20,7 @@ Ask (single-select): `ai | data | business | personal | other`.
 
 ### Step 3: Pick a slug
 
-From the spark, propose a kebab-case slug (e.g., `ai-native-data-solutions`, `k8s-mlops-platform`). Ask John to confirm or override.
+From the spark, propose a kebab-case slug (e.g., `offline-first-notes`, `invoice-ocr-pipeline`). Ask John to confirm or override.
 
 ### Step 4: Write the Seed
 

@@ -58,6 +58,10 @@ Template:
 
 If the plan references a specific engagement doc, link to it with a wiki-link: `[[04-work/{engagement}/{file}]]`.
 
+### Step 6: Hand off
+
+The week closes in [[08-weekly-review]]: the retro and next week's one priority happen there.
+
 ## Rules
 
 - One file per ISO week. Don't split across files.

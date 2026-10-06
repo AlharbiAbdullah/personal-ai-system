@@ -1,106 +1,51 @@
 ---
 name: workflow
 description: >
-  Playbook router. USE WHEN the user is about to run a recurring multi-step
-  process that has a playbook: "ship this", "the news didn't fire", "close the
-  month", "do it on ubuntu too", "review the portfolio", "I finished this book",
-  "prep the {x} meeting", "let's debug this", "is the bot ready for real money",
-  "init this project", "add a feature to {repo}", "replan {repo}".
-  Maps the trigger to the right numbered playbook in `~/helm/11-workflows/` and
-  reads it. This is the sequencing layer OVER skills: it never replaces a skill,
-  it orders them.
+  John's way of doing a kind of work: numbered workflows in ~/helm/11-workflows/.
+  USE WHEN the work is one of these kinds, asked for or not. Debugging, code review,
+  shipping, a project or task, a data pipeline or platform, air-gapped delivery, an
+  architecture decision, an AI build, a work engagement or meeting. An audit, an
+  incident on a machine, a machine change, changing Rai, a learning stage, a
+  purchase, a research write-up, Arabic writing, the weekly review, money days. Plain
+  /workflow prints the menu. Reads the matching workflow; Rai follows it and names it.
 ---
 
 # Workflow
 
-The discovery surface for `~/helm/11-workflows/`. A **playbook** is the ordering,
-decision gates, and stop-conditions that no single skill owns. It sequences
-skills, it does not re-implement them. When the user is about to start a recurring
-process, match the trigger below, then `Read` the playbook file and follow it.
-
-The playbooks live in `~/helm/11-workflows/`, **not** in this skill folder. This
-router only maps intent → file.
-
-## Routing table
-
-Match on the user's phrasing or the situation. Then `Read` `~/helm/11-workflows/{file}`.
-
-### Coding & shipping
-| Trigger | Playbook | File |
-|---------|----------|------|
-| "new project", "build {idea} from scratch", "start the {idea} project" (an idea in `09-ideas/`, no folder yet) | project | `01-project.md` |
-| "do this task", "implement {feature}", "fix {bug}", single unit of work | task | `02-task.md` |
-| "plan {project}", "write the PRD/SPEC for {project}", "graduate this idea", "draft the specs for {project}" | kitchen | `03-kitchen.md` |
-| "let's debug this", "{X} is broken", "why is {behaviour} happening" | debugging | `04-debugging.md` |
-| "review this diff", "self-review before merge" | code-review | `05-code-review.md` |
-| "ship this", "deploy {project}", "cut a release" | shipping | `06-shipping.md` |
-| "should I adopt {tool}", "evaluate {tech}", "learn {framework}" | learning-tech | `07-learning-tech.md` |
-| "init this project", "set up a new project", "adopt {repo}", "upgrade {repo} to v3", "audit {repo}", "add a feature to {repo}", "replan {repo}" | project-init | `21-project-init.md` |
-
-### Life & money
-| Trigger | Playbook | File |
-|---------|----------|------|
-| "close the month", "payday", "salary landed", "monthly money run" | monthly-money-close | `09-monthly-money-close.md` |
-| "quarterly review", "run the Q review", "90-day statement review" | quarterly-financial-review | `14-quarterly-financial-review.md` |
-| "is the bot ready for real money", "go live with the bot" | bot-go-live-readiness | `19-bot-go-live-readiness.md` |
-
-### Work
-| Trigger | Playbook | File |
-|---------|----------|------|
-| "prep the {engagement} meeting", "debrief the meeting", "action items from {meeting}" | meeting-to-followthrough | `11-meeting-to-followthrough.md` |
-
-### Knowledge & vault
-| Trigger | Playbook | File |
-|---------|----------|------|
-| "weekly review", "Saturday processing", "process the week" | weekly-review | `08-weekly-review.md` |
-| "I finished {book/course}", "harvest {topic}" | harvest-curriculum | `12-harvest-curriculum.md` |
-| "clear the inbox", "run a capture sweep", "empty landing + inbox" | capture-sweep | `13-capture-sweep.md` |
-| "research {X} properly and write it up", "deep research on {X}" | deep-research-to-home | `18-deep-research-to-home.md` |
-| "write an Arabic post", "اكتب مقال", "Arabic piece for the site" | arabic-piece-pipeline | `20-arabic-piece-pipeline.md` |
-
-### Operations (machines & the brain)
-| Trigger | Playbook | File |
-|---------|----------|------|
-| "news didn't fire", "digest is placeholders", "no news today" | news-digest-recovery | `10-news-digest-recovery.md` |
-| "add this theme", "{X} didn't adapt/repaint", "roll out {theme}" | theme-rollout | `15-theme-rollout.md` |
-| "do it on ubuntu too", "mirror to the other machine", "set up on both boxes" | cross-machine-parity | `16-cross-machine-parity.md` |
-| "is the brain healthy", "brain healthcheck" | brain-healthcheck | `17-brain-healthcheck.md` |
+The router for `~/helm/11-workflows/`. A workflow is John's way of doing one kind of work. The definition, the conventions and the menu live in `~/helm/11-workflows/AGENTS.md`. These are his workflows, not Claude Code's Workflow-tool scripts.
 
 ## How to use
 
-1. Match the request to a row. If two could fit, see the playbook's own header.
-   - project (01) or project-init (21): an idea still only in `09-ideas/` goes to 01; a
-     folder or repo in hand goes to 21. 01 hands off to 21 at init, so either start is safe.
-   - "cut a release" goes to 06. In a repo with `.project.toml`, 06 sends the version,
-     changelog and tag to Phase E of 21.
-   - A PRD for work or a client is not a playbook: `/writing → prds`. 03 drafts the
-     `specs/` of a product John builds himself.
-2. `Read` `~/helm/11-workflows/{file}`: the whole file.
-3. Follow it step by step. Where a step says `/router → sub-skill`, invoke that skill
-   for the machine work; the playbook owns only the sequence and the gates.
-4. If a step needs adapting to the current context, **propose** the adaptation rather
-   than silently skipping it (per `11-workflows/AGENTS.md`).
-5. Do **not** auto-invoke a playbook the user didn't ask for. Suggest by name when the
-   situation matches.
+1. **Plain `/workflow`:** print the menu, the tables under `## The workflows` in `11-workflows/AGENTS.md`, and stop.
+2. **Match by kind of work.** Read the headers live, never from a copy:
+   ```sh
+   grep -H -E '^\*\*(Use when|Not for):\*\*' ~/helm/11-workflows/[0-9]*.md
+   ```
+3. **Read the whole workflow file**, then say which one you follow: "Following 04 debugging."
+4. **Follow it step by step.** Run the skills and agents its steps name. A hand-off goes to the named workflow and step.
+5. **A step that does not fit the moment** gets a proposed adaptation, never a silent skip.
+6. **Two workflows fit:** ask with 2 or 3 options, one marked (Recommended).
 
-## Workflow vs skill: the boundary
+## Boundaries that trip
 
-- A **skill** is one capability invocation (`/testing → tdd`).
-- A **playbook** is the *ordering + decision gates + stop-conditions* across 2 or more
-  skills that no single skill owns.
-- If a candidate is really one skill, it belongs in `03-rai/skills/`, not here.
-- A playbook **delegates** to skills (`run /X`); it must never paste a skill's content.
+- Checking a repo against the project-init standard is 21. Auditing a system, the vault, a machine or an architecture is 23.
+- An idea with no folder yet is 01. A folder or repo in hand is 21.
+- A release is 06. In a repo with `.project.toml`, 06 hands the version, the changelog and the tag to 21 Phase E.
+- A PRD for work or a client is `/writing → prds`. A decision paper for leadership is 30.
+- A bug in code is 04. Something broken on a machine is 25. The news run is 10. A sanity alarm is 17.
+- Buying something is 26. Purchase research lands in its shopping plan, not in `10-knowledge/`.
+- A learning build keeps the Socratic rule in `/learning`, even when the work looks like debugging.
 
-## Single-writer note
+## Workflow and skill
 
-Playbooks that edit the `~/helm` vault leave the push to the coordinator. The hub is the
-sole writer of `origin`; every other machine is a **passive replica** and never runs
-`git push` on the vault. Vault playbooks end by leaving changes for the hub's next
-maintenance run. Only code-project playbooks (in `~/projects/`) call `/git → commit`.
-See `03-rai/SYNC-ARCHITECTURE.md`.
+- A skill is a capability. A workflow is his way of doing a kind of work, and it names the skills and agents its steps use.
+- A workflow never pastes a skill's content. It names the skill at the step.
+
+## Vault edits
+
+Follow the commit rule in `11-workflows/AGENTS.md`, under Conventions.
 
 ## Cross-references
 
-- The playbooks themselves → `~/helm/11-workflows/`
-- Folder rules + index → `~/helm/11-workflows/AGENTS.md`
-- Reference-integrity audits run inside → `/rai → sanity`
+- The workflows, their rules and the menu: `~/helm/11-workflows/AGENTS.md`
+- Reference checks: `/rai → sanity`, subsystem `Workflows` (FLOW-1 to FLOW-7)

@@ -101,16 +101,7 @@ _ARABIC = re.compile("[؀-ۿ]")
 _CODE = re.compile(r"```.*?```|`[^`\n]+`", re.DOTALL)
 
 
-def _banned_words():
-    """Parse the list from response-format.md at runtime — single source of truth."""
-    for ln in (ROOT / "identity" / "response-format.md").read_text().splitlines():
-        if ln.lower().startswith("never use:"):
-            return [w.strip().rstrip(".").lower() for w in ln[10:].split(",") if w.strip()]
-    return []
-
-
 def section_c(run_id: str):
-    banned = _banned_words()
     outputs = []
     for t in _recent_transcripts(30):
         d = normalize_transcript(t)
@@ -124,12 +115,10 @@ def section_c(run_id: str):
     sample = random.Random(run_id).sample(outputs, min(30, len(outputs)))
     lint = []
     for txt in sample:
-        prose = _CODE.sub("", txt)  # banned words inside code/quotes are not voice
-        low = prose.lower()
-        hits = [w for w in banned if re.search(rf"\b{re.escape(w)}\b", low)]
-        v = {"banned": hits, "em_dash": prose.count("—"),
+        prose = _CODE.sub("", txt)  # code and quotes are not voice
+        v = {"em_dash": prose.count("—"),
              "emoji": bool(_EMOJI.search(prose)), "arabic": bool(_ARABIC.search(prose))}
-        v["clean"] = not (hits or v["em_dash"] or v["emoji"] or v["arabic"])
+        v["clean"] = not (v["em_dash"] or v["emoji"] or v["arabic"])
         lint.append(v)
     clean = sum(1 for v in lint if v["clean"])
     tone = judge(
@@ -141,10 +130,8 @@ def section_c(run_id: str):
     ) if sample else []
     tone_avg = round(sum(v.get("tone", 0) for v in tone) / max(1, len(tone)), 1)
     score = round(0.7 * clean / max(1, len(lint)) + 0.3 * tone_avg / 10, 3)
-    top_banned = sorted({w for v in lint for w in v["banned"]})
     return {"score": score, "sampled": len(lint), "clean": clean, "tone_avg": tone_avg,
-            "issues": ([f"banned words appearing: {', '.join(top_banned[:8])}"] if top_banned else [])
-            + ([f"em-dashes in {sum(1 for v in lint if v['em_dash'])} outputs"]
+            "issues": ([f"em-dashes in {sum(1 for v in lint if v['em_dash'])} outputs"]
                if any(v["em_dash"] for v in lint) else [])}
 
 
@@ -292,8 +279,9 @@ def section_smokes(run_id: str):
     runs = []
     for g in sample:
         try:
+            # the smoke tests the real assistant: his settings, skills and CLAUDE.md, not isolated
             out = run_claude(f"/recall {g['question']}", model="sonnet", effort="high",
-                             timeout=420, cwd=str(Path.home() / "helm"))
+                             timeout=420, cwd=str(Path.home() / "helm"), isolate=False)
         except Exception as e:  # a dead smoke is a finding, not a crash
             out = f"SMOKE-ERROR: {e}"
         runs.append({"question": g["question"], "expected": g["expected"],

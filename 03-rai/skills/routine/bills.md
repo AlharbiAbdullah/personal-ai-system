@@ -1,12 +1,12 @@
 ---
 name: bills
-description: Monthly bill-pay run. Opens every bill-pay portal in browser tabs so all recurring bills can be paid in one sitting. Also surfaces non-portal bills (household help, a household helper) as reminders.
+description: Monthly bill-pay run. Opens every bill-pay portal in browser tabs so all recurring bills can be paid in one sitting. Also surfaces non-portal bills as reminders.
 allowed-tools: Bash, Read
 ---
 
 # Bills
 
-Monthly cadence. Run when salary lands (~26-27th) or whenever bills are due. Opens every customer portal at once, then walks John through `bills.md` to tick each one off.
+Monthly cadence. Run on payday or whenever bills are due. Opens every customer portal at once, then walks John through `bills.md` to tick each one off.
 
 ## Instructions
 
@@ -24,7 +24,7 @@ If the current month's tracker block doesn't exist yet, **append a fresh dated b
 - [ ] Internet — _amount_
 - [ ] Phone — John — _amount_
 - [ ] Phone — second line — _amount_
-- [ ] Household help — _amount_
+- [ ] A non-portal bill — _amount_
 - [ ] (digital subs auto-debit — no action)
 ```
 
@@ -56,7 +56,7 @@ If any portal has migrated, fall back to the alternates:
 After the tabs are open, tell John explicitly:
 
 > **Non-portal bills to handle this round:**
-> - **Household help** — [amount] — internal transfer or cash.
+> - **A non-portal bill** — [amount] — transfer or cash.
 > - **Digital subscriptions** — already on card ending XXXX, no action needed. (See `financial/subscriptions.md`.)
 
 ### Step 4: Pay-day flow
@@ -67,7 +67,7 @@ Suggest the order: utilities → telecom → household services.
 2. Water tab → log in → pay.
 3. Internet tab → log in → pay.
 4. Phone tab → log in → pay the first line → switch line → pay the second line.
-5. Open banking app → internal transfer to household help.
+5. Open the banking app → pay the non-portal bills.
 
 After each, **tick the checkbox** in `bills.md` for the current month's tracker.
 
@@ -76,10 +76,10 @@ After each, **tick the checkbox** in `bills.md` for the current month's tracker.
 If any bill is unusually high (>20% above the average in `bills.md`), flag it inline in the tracker entry, e.g.:
 
 ```markdown
-- [x] Electricity — 410 ⚠ +60% vs avg, likely AC season starting
+- [x] Electricity — 120 ⚠ +60% vs avg, likely a seasonal spike
 ```
 
-These flags become the input for next quarter's financial review.
+These flags feed [[09-monthly-money-close]] step 2, the spend check against the cap. They also become the input for next quarter's financial review.
 
 ### Step 6: Update autopay status if changed
 
@@ -87,7 +87,7 @@ If John turns on autopay for any bill during this session, update the **Autopay?
 
 ## When to use
 
-- Once per month, right after salary lands (around the 26-27th).
+- Once per month, on payday.
 - Or whenever a specific bill is overdue — same flow, ignore the ones already paid.
 
 ## Don't use for

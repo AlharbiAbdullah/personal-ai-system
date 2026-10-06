@@ -1,12 +1,12 @@
 ---
 name: audit-coverage
-description: Verify a learning topic has full coverage before declaring done. Flags gaps.
+description: Check a learning topic's coverage when John asks. Flags gaps. Optional, never a gate before the close.
 allowed-tools: Read, Bash, AskUserQuestion
 ---
 
 # Audit Coverage
 
-Before John marks a topic as complete, verify it. Identify gaps, missing mechanisms, unanswered questions.
+Run it when John asks for a coverage check. It is optional, never a gate: a topic closes on his word, audited or not. Identify gaps, missing mechanisms, unanswered questions.
 
 ## Instructions
 
@@ -85,6 +85,10 @@ Output a pass/fail per lesson + an overall verdict:
 ### Step 6: Offer to fix
 
 For each failed lesson, offer to regenerate it via `/learning teach`. Don't auto-fix without confirmation.
+
+### Step 7: Hand off the close
+
+The audit never closes a topic. When John closes the stage, the close runs [[12-learning-stage]] step 7.
 
 ## Rules
 

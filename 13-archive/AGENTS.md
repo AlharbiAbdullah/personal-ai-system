@@ -12,6 +12,7 @@ Session JSONs are cheap to store and the forensic/wisdom-mining value compounds 
 - `learning/`: retired learning topics, moved here whole at John's explicit request. Frozen reference, not active curricula. Rehearsal happens via `/retain` only.
 - `news/`: the news pipeline's archive. Git-tracked, NEVER purged.
   - `daily/`, `weekly/`: prior news digests, moved here automatically by the `/news-digest` pipeline after each run.
+  - `digest/`: prior short digests, moved here by the scheduled runner after each new one.
   - `dumps/YYYY-MM-DD/`: the FULL raw collection dumps of every news run (all ~2k tweets/posts collected each day, not just the ~100 displayed). Copied automatically by `present_v5.py` and the scheduled runner.
   - `weekly-runs/weekly-YYYY-Www/`: the weekly magazine's run dirs, copied automatically by the scheduled runner.
 - `audits/`: closed audits, their single home. Frozen decision records, not live plans.

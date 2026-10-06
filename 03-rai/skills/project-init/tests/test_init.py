@@ -745,7 +745,7 @@ def test_one_person_under_several_emails_counts_once(tmp_path: Path) -> None:
         ("john doe", "j.doe@example.invalid"),
         ("John Doe", "j.doe@example.invalid"),
         ("John Q", "10000001+DoeJohn@users.noreply.github.com"),
-        ("zeta240", "9zqxmt@privaterelay.example.invalid"),
+        ("webuser", "9zqxmt@privaterelay.example.invalid"),
         ("Claude", "noreply@anthropic.com"),
     ]
     other = make_repo(tmp_path / "helios", {"m.py": "m = 0\n"})
@@ -755,7 +755,7 @@ def test_one_person_under_several_emails_counts_once(tmp_path: Path) -> None:
         git(other, "add", f"m{i}.py", env=who)
         git(other, "commit", "-q", "-m", f"feat: m{i}", env=who)
     _, facts = preflight_json(other)
-    # Test Author, the John identities as one person, zeta240; Claude is a bot
+    # Test Author, the John identities as one person, webuser; Claude is a bot
     assert (facts["tier"], len(listed(facts, "authors"))) == ("team", 3)
 
 
@@ -4662,7 +4662,7 @@ def commit_as(repo: Path, rel: str, subject: str, **who: str) -> None:
 
 
 WEB_FLOW = {"GIT_COMMITTER_NAME": "GitHub", "GIT_COMMITTER_EMAIL": "noreply@github.com"}
-ZETA240 = {"GIT_AUTHOR_NAME": "zeta240", "GIT_AUTHOR_EMAIL": "9zqxmt@privaterelay.example.invalid"}
+WEBUSER = {"GIT_AUTHOR_NAME": "webuser", "GIT_AUTHOR_EMAIL": "9zqxmt@privaterelay.example.invalid"}
 
 
 def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> None:
@@ -4670,7 +4670,7 @@ def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> No
     set the team tier, and merge then waited for a review nobody could give."""
     repo = make_repo(tmp_path / "helios", {"pyproject.toml": '[project]\nname = "helios"\n'})
     for i in range(3):
-        commit_as(repo, f"names{i}.py", "Add files via upload", **ZETA240, **WEB_FLOW)
+        commit_as(repo, f"names{i}.py", "Add files via upload", **WEBUSER, **WEB_FLOW)
     commit_as(repo, "bump.txt", "chore: bump", GIT_AUTHOR_NAME="dependabot[bot]")
     code, facts = preflight_json(repo)
     assert code == 0, facts["stops"]
@@ -4680,7 +4680,7 @@ def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> No
     )
     assert facts["author_commits"] == {"Test Author <author@example.invalid>": 1}
     assert facts["authors_not_counted"] == [
-        "zeta240 <9zqxmt@privaterelay.example.invalid>: 3 GitHub web uploads, no git commit"
+        "webuser <9zqxmt@privaterelay.example.invalid>: 3 GitHub web uploads, no git commit"
     ]
     assert facts["bot_commits"] == 1
     text = init(
@@ -4689,25 +4689,25 @@ def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> No
     assert "authors ..... 1 human in 6 months: solo tier\n" in text
     assert "              counted: Test Author (1 commit)\n" in text
     assert (
-        "              not counted (web-UI commits only and bots, D9): zeta240 (3 GitHub web "
+        "              not counted (web-UI commits only and bots, D9): webuser (3 GitHub web "
         "uploads, no git commit); 1 bot commit\n"
     ) in text
     # render's tier follows the same count: no team.md, CODEOWNERS or PR template
     assert load_init().human_authors(repo) == ["Test Author <author@example.invalid>"]
 
     # a pull request GitHub merged is real work: its author counts
-    commit_as(repo, "pr.py", "feat: a teammate's change (#4)", **ZETA240, **WEB_FLOW)
+    commit_as(repo, "pr.py", "feat: a teammate's change (#4)", **WEBUSER, **WEB_FLOW)
     _, facts = preflight_json(repo)
     assert facts["tier"] == "team" and facts["authors_not_counted"] == []
     # and so does a commit made with git by an account that also uploaded
     other = make_repo(tmp_path / "other", {"pyproject.toml": '[project]\nname = "other"\n'})
-    commit_as(other, "u.py", "Add files via upload", **ZETA240, **WEB_FLOW)
-    commit_as(other, "g.py", "feat: from a clone", **ZETA240)
+    commit_as(other, "u.py", "Add files via upload", **WEBUSER, **WEB_FLOW)
+    commit_as(other, "g.py", "feat: from a clone", **WEBUSER)
     _, facts = preflight_json(other)
     assert facts["tier"] == "team"
     counted = facts["author_commits"]
     assert isinstance(counted, dict)
-    assert counted["zeta240 <9zqxmt@privaterelay.example.invalid>"] == 1
+    assert counted["webuser <9zqxmt@privaterelay.example.invalid>"] == 1
     # a pull request GitHub rebased: committer GitHub, no (#N), but the author date is the one
     # the teammate committed with git, a day before GitHub wrote it
     based = make_repo(tmp_path / "based", {"pyproject.toml": '[project]\nname = "based"\n'})
@@ -4716,7 +4716,7 @@ def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> No
         "GIT_AUTHOR_DATE": f"@{now - 2 * 86400} +0000",
         "GIT_COMMITTER_DATE": f"@{now - 86400} +0000",
     }
-    commit_as(based, "r.py", "feat: rebased onto main", **ZETA240, **WEB_FLOW, **day)
+    commit_as(based, "r.py", "feat: rebased onto main", **WEBUSER, **WEB_FLOW, **day)
     _, facts = preflight_json(based)
     assert facts["tier"] == "team" and facts["authors_not_counted"] == []
     # a web edit (authored and committed at once, no upload) is not
@@ -4725,11 +4725,11 @@ def test_web_ui_uploads_and_bots_never_make_a_second_human(tmp_path: Path) -> No
         "GIT_AUTHOR_DATE": f"@{now - 86400} +0000",
         "GIT_COMMITTER_DATE": f"@{now - 86400} +0000",
     }
-    commit_as(edit, "README.md", "Update README.md", **ZETA240, **WEB_FLOW, **same)
+    commit_as(edit, "README.md", "Update README.md", **WEBUSER, **WEB_FLOW, **same)
     _, facts = preflight_json(edit)
     assert facts["tier"] == "solo"
     assert facts["authors_not_counted"] == [
-        "zeta240 <9zqxmt@privaterelay.example.invalid>: 1 GitHub web edit, no git commit"
+        "webuser <9zqxmt@privaterelay.example.invalid>: 1 GitHub web edit, no git commit"
     ]
 
 
@@ -6052,12 +6052,12 @@ def test_ruff_format_leaves_markdown_alone_and_the_baseline_only_shrinks(tmp_pat
 KNOWLEDGE = {
     "last_updated": "2026-04-20",
     "decisions": [
-        {"date": "2026-04-04", "decision": "pgvector replaces ChromaDB", "rationale": "one box"},
+        {"date": "2026-04-04", "decision": "Postgres replaces SQLite", "rationale": "one box"},
         {"decided": "2026-04-05", "what": "Keep six routers"},
     ],
     "patterns": ["RAG service exposes one interface", "Notes live in [[helios-notes]]"],
     "gotchas": ["Logs land in /home/someone/work/helios/logs", "See ~/helm/05-projects/x"],
-    "open_threads": ["Superset embedding"],
+    "open_threads": ["Dashboard embedding"],
     "dependencies": {"added": {"pgvector": "2026-04-04"}, "removed": ["chromadb"]},
     "recent_files": ["backend/main.py"],
     "tags_index": ["rag"],
@@ -6151,7 +6151,7 @@ def test_migrate_v1_applies_the_p4_moves(tmp_path: Path) -> None:
     text = report.read_text(encoding="utf-8")
     assert f"> Snapshot {committed} of `project_memory/accumulated_knowledge.json`" in text
     for line in (
-        "- [ ] 2026-04-04: pgvector replaces ChromaDB. Why: one box",
+        "- [ ] 2026-04-04: Postgres replaces SQLite. Why: one box",
         "- [ ] 2026-04-05: Keep six routers",
         "- [ ] Notes live in helios-notes",
         "- [ ] Logs land in ~/work/helios/logs",

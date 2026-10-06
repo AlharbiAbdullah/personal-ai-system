@@ -12,19 +12,22 @@ Rai's brain. One paragraph per top-level dir or file. See `AGENTS.md` for how Ra
   MEMORY-ARCHITECTURE.md       # the memory system: capture, stores, injection, recall, self-evolve
   SYNC-ARCHITECTURE.md         # optional multi-machine sync pattern (ignore on one machine)
   agents/                      # agent personas, one .md each, plus MANIFEST.md (tiers)
+  benchmark/                   # /rai benchmark: targets.toml, tasks/ (yours to write), results/
   config/
     settings.json              # Claude Code harness contract
     .skill-lock.json           # pins for the vendored kepano/obsidian-skills (source + commit)
     vale/                      # Vale prose styles (Rai), run by the root .vale.ini
+  harness/
+    claude-code/               # user-instructions.md + identity-imports.md (generated) + README.md
   hooks/
     *.py                       # 11 event handlers, each registered in config/settings.json
     lib/                       # shared utilities
     scripts/                   # the batch memory pipeline + skill-called utilities
-    tests/                     # pytest for the SDD memory routing (test_sdd_routing.py)
+    tests/                     # pytest for the hooks, memory routing and harness capture
     context_mapping.json       # cwd-to-context label map, read by lib/session_extract.py
   identity/                    # Rai-only config; every *.md here auto-loads
   memory/
-    state/                     # memory-block.md (the frozen snapshot) + README.md
+    state/                     # memory-block.md (the frozen snapshot), written by the drain
     work/                      # example task record; nothing writes here now (see memory/)
     learning/                  # captured learnings, the hook error sink, the sanity status
   semantic-memory/
@@ -50,7 +53,7 @@ The vault is the canonical home; `setup.sh` mounts it into Claude Code through s
 
 | Mount | Target |
 |---|---|
-| `~/.claude/CLAUDE.md` | `03-rai/AGENTS.md` (Claude Code has no user-level `AGENTS.md`, so this symlink is the one exception to "AGENTS.md is the only instruction filename") |
+| `~/.claude/CLAUDE.md` | `03-rai/harness/claude-code/user-instructions.md`, which imports `AGENTS.md` and the identity (Claude Code has no user-level `AGENTS.md`) |
 | `~/.claude/agents` | `03-rai/agents` |
 | `~/.claude/hooks` | `03-rai/hooks` |
 | `~/.claude/skills` | `03-rai/skills` |
@@ -139,11 +142,23 @@ Long-term recall. Design: `MEMORY-ARCHITECTURE.md`; collection contract:
 the stores from it and the archive. `daily/` holds the live logs, `pending/` the drain queue.
 `scripts/py-chroma.sh` runs Python with `chromadb` available.
 
+### `harness/`
+
+`claude-code/` holds how Claude Code loads the identity: `~/.claude/CLAUDE.md` links to
+`user-instructions.md`, which imports `AGENTS.md` and the generated `identity-imports.md`.
+`claude-code/README.md` explains why: a hook's inline output is capped at 10,000 characters.
+
+### `benchmark/`
+
+The data of `/rai benchmark`: the harness routes and model catalog (`targets.toml`), your task
+set (`tasks/`, empty in the kit; the engine has built-in smoke tasks) and one folder per run
+(`results/`). The engine is `skills/rai/scripts/bench.py` with `bench_lib/`.
+
 ### `AGENTS.md`
 
 Rai's global instructions: identity load paths, the session-memory summary, skill routing
 and the PRD note. Loaded into every Claude Code session through the `~/.claude/CLAUDE.md`
-symlink.
+imports.
 
 ## Cross-file relationships
 

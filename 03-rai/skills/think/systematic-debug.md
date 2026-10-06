@@ -10,6 +10,8 @@ description: >
 
 Observe → Hypothesize → Isolate → Fix. In that order. No skipping.
 
+Called from [[04-debugging]], follow 04's order, not this one.
+
 ## When to use
 
 - Bug is intermittent or hard to reproduce
@@ -72,7 +74,7 @@ End of Phase 3: you have the root cause. Verify it by predicting: "If I change X
 
 ## Phase 4: Fix
 
-Now (and only now) write the fix.
+Now (and only now) write the fix. It hands to [[04-debugging]] steps 5 to 7. In a repo with `.project.toml`, it runs the fix lane of [[21-project-init]] Phase C.
 
 1. **Address the root cause**, not the symptom. Patching symptoms creates layered bugs.
 2. **Write a regression test** that fails without the fix, passes with it
@@ -127,6 +129,6 @@ bugs, force the methodology:
 ## Examples
 
 - "Debug why Helios chat returns 500 intermittently"
-- "Systematic debug: Taskflow ingestion pipeline loses 0.1% of events"
+- "Systematic debug: the ingestion pipeline loses 0.1% of rows"
 - "Why does the OpenKit scanner hang on large repos?"
 - "This test fails in CI but passes locally — walk through systematically"

@@ -261,7 +261,7 @@ Used by: [consumers]
 
 ## When to Use This Skill
 
-Invoke /solution_architect when:
+Invoke `/architecture → solution-architect` when:
 - Designing application architecture
 - Making structural decisions
 - Reviewing pull requests
@@ -311,9 +311,9 @@ When a transaction spans multiple services, use a saga instead of 2PC:
 - Right to access + right to erasure workflows (delete from prod + backups within SLA).
 - Data residency: EU citizens' data stays in EU-region storage.
 
-### GDPR / the data authority (local)
-- National Data Management Office framework. Data classification (public, internal, confidential, secret).
-- Cross-border transfer restrictions for classified data.
+### Your national data-protection law
+- Map its data classification levels onto your storage tiers.
+- Cross-border transfer restrictions.
 - Breach notification SLAs.
 
 Cross-reference: `/security/security-review` for operational control audit.

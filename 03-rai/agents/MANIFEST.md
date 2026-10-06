@@ -2,7 +2,9 @@
 
 11 agents. All kebab-case. Every agent file sets `model: opus` and `effort: xhigh` in its frontmatter. Invocation drives from the `name:` field in each `.md` file.
 
-Two tiers: **specialists** (user invokes explicitly to take on a role) and **methodology** (applied to any problem, not domain-bound).
+Two tiers: **specialists** (a role taken on for one step) and **methodology** (applied to any problem, not domain-bound).
+
+An agent runs when a workflow step names it ("the `<name>` agent", in `~/helm/11-workflows/`) or when John asks. To see which steps name which agent: `grep -nE 'the .[a-z-]+. agent' ~/helm/11-workflows/[0-9]*.md`. Agent files carry no workflow lists: an agent file becomes that agent's system prompt.
 
 ## Specialists (10)
 
@@ -16,7 +18,7 @@ Each has a distinct persona and scope. Invoke one through the Agent tool with `s
 | `pentester` | Authorized security testing, vulnerability assessment. Requires explicit authorization. |
 | `qa-tester` | Edge case hunting from user perspective. Evidence-based PASS/FAIL. |
 | `reviewer` | Code review, bug catching, security issues. Tests must pass before approval. |
-| `artist` | Image prompt engineering for FLUX, GPT-Image-1. Illustrations, diagrams, visual assets. |
+| `artist` | Image prompt engineering, through his Google subscription (agy). Illustrations, diagrams, visual assets. |
 | `writer` | Prose craftsman. Locked-in voice across Arabic (Lumen north star) + English, anti-AI rules. Prose, not code. |
 | `debugger` | Root-cause specialist. Reproduce, hypothesize, bisect, instrument, prove. Fixes the class, not the symptom. |
 | `sre` | Site reliability. Keeps running systems up, diagnoses failures (timers, sync, schedulers). `/devops` builds; `sre` keeps alive. |

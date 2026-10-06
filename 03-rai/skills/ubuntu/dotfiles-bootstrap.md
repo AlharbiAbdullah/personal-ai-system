@@ -30,7 +30,7 @@ packages/aur.txt        AUR package list
 config/                 -> ~/.config/ (hypr, omarchy, tmux, mise, Code/Cursor, etc.)
 etc/                    -> /etc (sudoers.d, udev rules, polkit rules, systemd overrides)
 systemd/                -> ~/.config/systemd/user/ (news, rai-maintenance, and your own timers)
-theme, theme-render, new-window   -> ~/.local/bin/
+new-window              -> ~/.local/bin/
 starship.toml, .bashrc  -> matching dotfiles
 claude-config.sh        Claude Code symlinks into the vault + MCP registration (e.g. Context7)
 GUIDE.md                fresh-box narrative walkthrough (readable before the vault exists)
@@ -44,7 +44,7 @@ README.md               quickstart
 3. pacman/AUR packages, Ghostty, your password manager, Chrome policy dirs.
 4. configs (bashrc, starship, full `config/` tree, tmux).
 5. fonts.
-6. themes (`common/themes/` -> `~/.config/themes/`, `theme-render`, initial `omarchy theme set`).
+6. themes: stock Omarchy themes and wallpapers.
 7. dev tools (mise for Node/gh/claude, uv + a `common/uv-tools.txt` list of real CLIs).
 8. Claude Code install + `claude-config.sh`.
 9. system units (udev rules, polkit rules, uinput/i2c-dev modules, group memberships, `paccache.timer`, ufw).
@@ -71,7 +71,7 @@ substack.com and medium.com cookies the news collectors read; Obsidian sync re-p
 | Media/brightness keys | wpctl (pipewire), ddcutil (DDC/CI: user must be in `i2c` group) |
 | Terminal | Ghostty (Omarchy default), tmux + starship |
 | Python | uv (via mise), plus `common/uv-tools.txt` real CLIs |
-| Theme system | `~/.local/bin/theme` + `theme-render`, `~/.config/themes/` (from `~/dev-env/common/themes/`): see `/ubuntu -> theme` |
+| Themes | stock Omarchy themes and wallpapers (`/omarchy -> theming`) |
 | Apps | google-chrome, obsidian, code/cursor, gh, your password manager |
 | Vault | `~/helm` + Claude Code symlinks (`claude-config.sh`) |
 
@@ -85,7 +85,7 @@ substack.com and medium.com cookies the news collectors read; Obsidian sync re-p
 
 After running `install.sh` + `restore-backup.sh`:
 - [ ] `omarchy-menu toggle apps` (SUPER+SPACE) opens; Quickshell bar is up
-- [ ] `theme list` shows every theme; switching updates border + Ghostty + Cursor/VS Code + tmux + starship
+- [ ] SUPER+CTRL+T opens Omarchy's theme menu; switching updates border + Ghostty + Cursor/VS Code
 - [ ] SUPER+1..0 snaps between workspaces instantly
 - [ ] Screenshot binds land in the clipboard
 - [ ] SUPER+L locks; volume keys work; brightness keys move the monitor (i2c group active: needs relog)

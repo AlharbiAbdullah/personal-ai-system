@@ -4,7 +4,7 @@ description: >
   Long-form blog essays for johndoe.dev. USE WHEN the user wants to
   publish an engineering writeup, project retrospective, or mental-model
   essay on his personal site. Target: ~500-2500 words. Audience: builders,
-  engineers, the region tech peers. Tone: candid, lived-experience first.
+  engineers, local tech peers. Tone: candid, lived-experience first.
 ---
 
 # Blog
@@ -21,9 +21,11 @@ Three shapes, in order of frequency:
 
 1. **Engineering writeup**: a real project, what broke, what fixed it, what's next. Code or config snippets. ASCII diagrams. The kind of post you'd send to someone debugging the same problem.
 2. **Project retrospective**: post-mortem of a shipped (or failed) project. Honest about what went wrong. Names ownership. Doesn't dramatize.
-3. **Mental model**: observation about how something works (organizations, AI, infra, the region tech market). Anchored in lived experience, not abstract theorizing.
+3. **Mental model**: observation about how something works (organizations, AI, infra, local tech market). Anchored in lived experience, not abstract theorizing.
 
 If a post doesn't fit one of these three, ask before drafting. The site has a shape.
+
+Every post follows the Public posts rule in the router `SKILL.md`: client work stays out without his go.
 
 ## Post anatomy
 
@@ -38,7 +40,7 @@ If a post doesn't fit one of these three, ask before drafting. The site has a sh
 
 ## Process
 
-1. **State the verdict in one sentence.** Not the topic, the verdict. "The Taskflow rewrite stalled because of scope creep, not tech debt." If you can't, the post isn't ready.
+1. **State the verdict in one sentence.** Not the topic, the verdict. "Air-gap projects fail when nobody tests in the real environment." If you can't, the post isn't ready.
 2. **Pick shape**: writeup, retrospective, or mental model. Different scaffolds.
 3. **List the 3-5 concrete moments** that anchor the post. No moments = no post.
 4. **Draft fast**: single sitting if possible. Don't polish mid-draft.
@@ -96,7 +98,7 @@ still an open decision.
 
 ## Examples
 
-- "Write a blog post about why the Taskflow rewrite stalled"
-- "Engineering writeup: how I made the CLI's startup time 4x faster"
-- "Mental model post: why side projects need a hard scope cut"
-- "Retrospective on the Acme proposal: what worked, what didn't"
+- "Write a blog post on quarantining bad rows instead of dropping them"
+- "Engineering writeup: how I made the offline installer 4x faster"
+- "Mental model post: why air-gap projects need real-environment testing"
+- "Retrospective on a finished side project: what worked, what didn't"

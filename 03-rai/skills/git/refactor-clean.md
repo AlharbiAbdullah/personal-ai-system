@@ -9,9 +9,10 @@ Clean out dead code and loose files after a long coding session. Auto-deletes wi
 
 ## Before Starting
 
-1. **Create backup commit**
+1. **Create backup commit.** Stage explicit paths, per the staging rule in `/git → commit`: never `git add -A` or `git add .`.
    ```bash
-   git add -A
+   git status --short                  # list what changed
+   git add <path> <path> ...           # each path by name
    git commit -m "checkpoint: before refactor-clean"
    ```
 2. Note the commit hash for rollback reference

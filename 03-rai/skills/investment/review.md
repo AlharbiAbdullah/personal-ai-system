@@ -25,7 +25,7 @@ cat "$PP/universe.json"
 cat "$PP/portfolio_state.json"
 ```
 
-For each stream (`etf`, `local`, `us_stocks`, `sukuk`), from `nav_history` over the period under review (week or month; ask if unclear): start and end NAV, return %, the peak-to-current drawdown, and current holdings vs its ticker list. Note any missed or failed daily runs (gaps in `nav_history` dates, `failed` in the journal). This is **paper**; numbers are tuition, not money.
+For each stream defined in `universe.json`, from `nav_history` over the period under review (week or month; ask if unclear): start and end NAV, return %, the peak-to-current drawdown, and current holdings vs its ticker list. Note any missed or failed daily runs (gaps in `nav_history` dates, `failed` in the journal). This is **paper**; numbers are tuition, not money.
 
 ### Step 2: Risk check (the 20% drawdown trip-wire)
 

@@ -7,7 +7,7 @@ import pytest
 from conftest import hook_cmd, st
 from sanity_checks import core
 from sanity_checks.core import FAIL, PASS, SKIP, WARN
-from sanity_checks.harness import PI_EDGES
+from sanity_checks.harness import AGY_EDGES, OPENCODE_EDGES, PI_EDGES
 
 SETTINGS_HOOKS = ["session-start", "memory-injection", "turn-capture", "set-question-tab", "question-answered"]
 BRIDGE = "helm/03-rai/harness/pi/rai-bridge.ts"
@@ -96,18 +96,28 @@ MEM="$CLAUDE/projects/{slug}/memory"
 ln -sfn "$RAI/auto-memory" "$MEM"
 ln -sfn "$RAI/AGENTS.md"                "$HOME/.pi/agent/AGENTS.md"
 ln -sfn "$RAI/harness/pi/rai-bridge.ts" "$HOME/.pi/agent/extensions/rai-bridge.ts"
+ln -sfn "$RAI/harness/pi/prompts"      "$HOME/.pi/agent/prompts"
 link_skills "$HOME/.agents/skills"
+ln -sfn "$RAI/AGENTS.md"                "$HOME/.config/opencode/AGENTS.md"
+ln -sfn "$RAI/harness/opencode/rai.ts"  "$HOME/.config/opencode/plugin/rai.ts"
+AGY_PLUGIN="$HOME/.gemini/config/plugins/rai"
+ln -sfn "$RAI/AGENTS.md"                "$HOME/.gemini/GEMINI.md"
+ln -sfn "$RAI/harness/agy/plugin.json"  "$AGY_PLUGIN/plugin.json"
+ln -sfn "$RAI/harness/agy/hooks.json"   "$AGY_PLUGIN/hooks.json"
+ln -sfn "$RAI/skills"                   "$AGY_PLUGIN/skills"
 """
 
 
 def _vault_targets(w):
-    for rel in ("agents", "hooks", "skills", "auto-memory"):
+    for rel in ("agents", "hooks", "skills", "auto-memory", "harness/pi/prompts"):
         w.mkdir(f"helm/03-rai/{rel}")
-    for rel in ("AGENTS.md", "config/settings.json", "harness/pi/rai-bridge.ts", "identity/a.md"):
+    for rel in ("AGENTS.md", "config/settings.json", "harness/pi/rai-bridge.ts", "identity/a.md",
+                "harness/claude-code/user-instructions.md",
+                "harness/opencode/rai.ts", "harness/agy/plugin.json", "harness/agy/hooks.json"):
         w.write(f"helm/03-rai/{rel}", "x")
 
 
-def _boot(w, claude_md="AGENTS.md", drop=None):
+def _boot(w, claude_md="harness/claude-code/user-instructions.md", drop=None):
     text = BOOT.format(claude_md=claude_md, slug=_slug(w))
     if drop:
         text = "\n".join(l for l in text.splitlines() if drop not in l)
@@ -216,3 +226,233 @@ def test_code_1_fault_system_python_missing(w, monkeypatch):
     with pytest.raises(FileNotFoundError):
         core.compile_with(core.SYSTEM_PYTHON, [w.path("helm/03-rai/skills/x/y.py")])
     assert st("CODE-1").status == FAIL  # the runner turns the raise into a FAIL row
+
+
+def test_harn_3_fault_bootstrap_drops_an_adapter_edge(w):
+    _vault_targets(w)
+    _boot(w, drop="plugin/rai.ts")
+    r = st("HARN-3")
+    assert r.status == WARN and ".config/opencode/plugin/rai.ts" in r.evidence
+
+
+# HARN-4 (opencode) and HARN-5 (agy) ─────────────────────────────────────────────
+ADAPTER_HOOKS = ["session-start", "memory-injection", "turn-capture"]
+
+
+def _registered(w):
+    w.settings({"Stop": [hook_cmd(w, h) for h in SETTINGS_HOOKS + ["stop-orchestrator"]]})
+
+
+def _oc(w, hooks=ADAPTER_HOOKS, skip=None):
+    w.write("helm/03-rai/AGENTS.md", "x")
+    w.write("helm/03-rai/harness/opencode/rai.ts", "\n".join(f'runHook("{h}.py", base, opts);' for h in hooks))
+    for rel, target in OPENCODE_EDGES.items():
+        if rel != skip:
+            w.link(rel, w.helm / target)
+    _registered(w)
+
+
+def test_harn_4_ok(w):
+    _oc(w)
+    r = st("HARN-4")
+    assert r.status == PASS, r.evidence
+
+
+def test_harn_4_skips_without_opencode(w):
+    assert st("HARN-4").status == SKIP
+
+
+def test_harn_4_fault_plugin_unmounted(w):
+    _oc(w, skip=".config/opencode/plugin/rai.ts")
+    r = st("HARN-4")
+    assert r.status == FAIL and "plugin/rai.ts: missing" in r.evidence
+
+
+def test_harn_4_fault_new_hook_not_wired(w):
+    _oc(w, hooks=["session-start", "memory-injection"])
+    r = st("HARN-4")
+    assert r.status == WARN and "lacks ['turn-capture']" in r.evidence
+
+
+def _agy(w, hooks=ADAPTER_HOOKS, skip=None, rules=True, drop=None, spill=False, agents=True):
+    w.write("helm/03-rai/AGENTS.md", "x")
+    w.mkdir("helm/03-rai/skills")
+    w.write("helm/03-rai/harness/agy/plugin.json", "{}")
+    w.write("helm/03-rai/harness/agy/hooks.json", "{}")
+    w.write("helm/03-rai/harness/agy/agy-hook.py", "\n".join(f'run("{h}.py", env)' for h in hooks))
+    ident = [w.write("helm/03-rai/identity/a.md", "a"), w.write("helm/02-ana/identity/b.md", "b")]
+    for rel, target in AGY_EDGES.items():
+        if rel != skip:
+            w.link(rel, w.helm / target)
+    w.write("helm/03-rai/agents/reviewer.md", "---\nname: reviewer\ndescription: d\n---\nbody\n")
+    w.write("helm/03-rai/agents/MANIFEST.md", "# agents")
+    if agents:
+        w.write(".gemini/config/plugins/rai/agents/reviewer.md", "---\nname: reviewer\n---\n")
+    if rules:
+        inc = [f for f in ident if f.name != drop]
+        w.write(".gemini/config/plugins/rai/rules/AGENTS.md", "\n".join(f"@[{f.name}]({f})" for f in inc))
+        w.write(".gemini/config/plugins/rai/rules/GEMINI.md",
+                "Identity files that did not fit, read them at the start of a task:\n- /x/c.md\n" if spill else "")
+    _registered(w)
+
+
+def test_harn_5_ok(w):
+    _agy(w)
+    r = st("HARN-5")
+    assert r.status == PASS, r.evidence
+
+
+def test_harn_5_skips_without_agy(w):
+    assert st("HARN-5").status == SKIP
+
+
+def test_harn_5_fault_global_rules_unmounted(w):
+    _agy(w, skip=".gemini/GEMINI.md")
+    r = st("HARN-5")
+    assert r.status == FAIL and ".gemini/GEMINI.md: missing" in r.evidence
+
+
+def test_harn_5_fault_rules_never_rendered(w):
+    _agy(w, rules=False)
+    r = st("HARN-5")
+    assert r.status == WARN and "rules" in r.evidence
+
+
+def test_harn_5_fault_identity_file_not_included(w):
+    _agy(w, drop="b.md")
+    r = st("HARN-5")
+    assert r.status == WARN and "b.md" in r.evidence
+
+
+def test_harn_5_fault_identity_over_the_rules_cap(w):
+    _agy(w, spill=True)
+    r = st("HARN-5")
+    assert r.status == WARN and "cap" in r.evidence
+
+
+def test_harn_5_fault_new_hook_not_wired(w):
+    _agy(w, hooks=["session-start", "turn-capture"])
+    r = st("HARN-5")
+    assert r.status == WARN and "lacks ['memory-injection']" in r.evidence
+
+
+# HARN-6 (adapters keep writing shadows) ───────────────────────────────────────
+def _mount(w, rel, age_h):
+    import os, time
+    w.write("helm/03-rai/x", "x")
+    w.link(rel, w.helm / "03-rai/x")
+    t = time.time() - age_h * 3600
+    os.utime(w.path(rel), (t, t), follow_symlinks=False)
+
+
+def _oc_db(w, age_h):
+    import sqlite3, time
+    db = w.path(".local/share/opencode/opencode.db")
+    db.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(db)
+    con.execute("create table session (id text, parent_id text, time_updated integer)")
+    con.execute("insert into session values ('ses_1', null, ?)", (int((time.time() - age_h * 3600) * 1000),))
+    con.execute("insert into session values ('ses_2', 'ses_1', ?)", (int(time.time() * 1000),))  # a child: ignored
+    con.commit()
+    con.close()
+
+
+def test_harn_6_skips_without_adapters(w):
+    assert st("HARN-6").status == SKIP
+
+
+def test_harn_6_ok(w):
+    _mount(w, ".config/opencode/plugin/rai.ts", 48)
+    _oc_db(w, 2)
+    w.write(".local/share/rai/transcripts/opencode/-h/s.jsonl", "{}", age_h=1)
+    r = st("HARN-6")
+    assert r.status == PASS, r.evidence
+
+
+def test_harn_6_ignores_sessions_from_before_the_mount(w):
+    _mount(w, ".config/opencode/plugin/rai.ts", 1)
+    _oc_db(w, 24)
+    assert st("HARN-6").status == PASS
+
+
+def test_harn_6_fault_opencode_stopped_capturing(w):
+    _mount(w, ".config/opencode/plugin/rai.ts", 72)
+    _oc_db(w, 1)
+    w.write(".local/share/rai/transcripts/opencode/-h/s.jsonl", "{}", age_h=60)
+    r = st("HARN-6")
+    assert r.status == WARN and "opencode" in r.evidence
+
+
+def test_harn_6_fault_agy_never_captured(w):
+    _mount(w, ".gemini/config/plugins/rai/hooks.json", 72)
+    w.write(".gemini/antigravity-cli/brain/c1/.system_generated/logs/transcript_full.jsonl", "{}", age_h=1)
+    r = st("HARN-6")
+    assert r.status == WARN and "agy" in r.evidence
+
+
+def test_harn_5_fault_rules_file_over_agys_cap(w):
+    _agy(w)
+    w.write("helm/03-rai/identity/a.md", "x" * 25000)
+    r = st("HARN-5")
+    assert r.status == WARN and "24,000" in r.evidence
+
+
+def test_harn_5_fault_rules_near_agys_token_budget(w):
+    _agy(w)
+    w.write("helm/03-rai/identity/a.md", "x" * 20000)
+    w.write("helm/02-ana/identity/b.md", "x" * 20000)
+    w.write("helm/03-rai/AGENTS.md", "x" * 22000)  # the global rules file
+    r = st("HARN-5")
+    assert r.status == WARN and "budget" in r.evidence
+
+
+def test_harn_6_skips_a_disabled_agy_plugin(w):
+    _mount(w, ".gemini/config/plugins/rai/hooks.json", 72)
+    w.write(".gemini/antigravity-cli/brain/c1/.system_generated/logs/transcript_full.jsonl", "{}", age_h=1)
+    w.write(".gemini/config/config.json", '{"plugins": {"rai": {"enabled": false}}}')
+    assert st("HARN-6").status == SKIP
+
+
+# HARN-7 (Claude Code loads identity through CLAUDE.md imports) ─────────────────
+def _cc(w, edge=True, listed=("a.md", "b.md"), imports=True):
+    a = w.write("helm/03-rai/identity/a.md", "a")
+    b = w.write("helm/02-ana/identity/b.md", "b")
+    if edge:
+        w.write("helm/03-rai/harness/claude-code/user-instructions.md",
+                "@~/helm/03-rai/AGENTS.md\n@~/helm/03-rai/harness/claude-code/identity-imports.md\n")
+    if imports:
+        paths = {"a.md": "~/helm/03-rai/identity/a.md", "b.md": "~/helm/02-ana/identity/b.md"}
+        w.write("helm/03-rai/harness/claude-code/identity-imports.md",
+                "# Rai identity\n" + "".join(f"@{paths[n]}\n" for n in listed))
+    return a, b
+
+
+def test_harn_7_ok(w):
+    _cc(w)
+    r = st("HARN-7")
+    assert r.status == PASS, r.evidence
+
+
+def test_harn_7_fault_imports_file_missing(w):
+    _cc(w, imports=False)
+    r = st("HARN-7")
+    assert r.status == FAIL and "identity-imports.md" in r.evidence
+
+
+def test_harn_7_fault_edge_does_not_import(w):
+    _cc(w)
+    w.write("helm/03-rai/harness/claude-code/user-instructions.md", "@~/helm/03-rai/AGENTS.md\n")
+    r = st("HARN-7")
+    assert r.status == FAIL and "imports" in r.evidence
+
+
+def test_harn_7_fault_identity_file_not_listed(w):
+    _cc(w, listed=("a.md",))
+    r = st("HARN-7")
+    assert r.status == WARN and "b.md" in r.evidence
+
+
+def test_harn_5_fault_agents_not_rendered(w):
+    _agy(w, agents=False)
+    r = st("HARN-5")
+    assert r.status == WARN and "agents miss ['reviewer']" in r.evidence

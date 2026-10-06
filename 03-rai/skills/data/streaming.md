@@ -142,7 +142,7 @@ If you don't need exactly-once, **at-least-once + idempotent consumer** is the p
 
 ## Examples
 
-- "Design a CDC pipeline from Helios OLTP to Dremio"
+- "Design a CDC pipeline from Helios OLTP to the warehouse"
 - "Which streaming engine for a local telco real-time fraud system?"
 - "Set up Kafka consumer group for event fan-out across 3 microservices"
 - "Event-time vs processing-time for analytics dashboard"

@@ -156,7 +156,8 @@ def extract_json(text: str) -> dict:
 def _call(prompt: str, model: str, sid: str, label: str):
     """One model call -> parsed distill dict, or None (error already printed)."""
     try:
-        out = run_claude(prompt, model=model, timeout=300, effort=None)
+        # isolated calls skip his user settings, so the effort his settings give Opus is explicit
+        out = run_claude(prompt, model=model, timeout=300, effort="xhigh" if model == "opus" else None)
     except subprocess.TimeoutExpired:
         print(f"distill: TIMEOUT {sid} ({label})", file=sys.stderr)
         return None

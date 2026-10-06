@@ -74,17 +74,17 @@ Not "be more productive" — "block the first 90 minutes of Mon/Wed/Fri for deep
 # Weekly Retro — 2026-04-25 (Week 17)
 
 ## 1. Shipped
-- Landed skills reorg Phase A–G (22 top-level entries)
-- Demo'd Helios to Acme Corp leadership on Thu
-- Wrote OpenKit Phase 0 PRD
+- Shipped the Taskflow import feature behind a flag
+- Wrote the Matchbox v2 PRD
+- Finished lesson 3 of the system-design track
 
 ## 2. Blocked
-- Helios prod deploy pending on sec-ops signoff
-- Dataforge work idle (no time)
+- Taskflow release waiting on a dependency upgrade
+- Side project idle (no time)
 
 ## 3. Energy: 7/10
 - High: Wed morning reorg sprint (4h deep work, flow)
-- Low: Fri late-afternoon stakeholder update (40 min, drain)
+- Low: Fri late-afternoon status meeting (40 min, drain)
 - Trend: steady, not exhausted
 
 ## 4. Learning
@@ -95,15 +95,14 @@ we can't detect regressions. Applying to OpenKit.
 Block Mon/Wed/Fri 9–11am as deep-work slots. No meetings, no Slack.
 ```
 
-Save to: `~/helm/02-ana/weekly/YYYY-WW.md` or similar. Cross-link to any journal entries from that week (there may be none).
+Save to: `~/helm/02-ana/weekly/{ISO-week}.md`, named by `date +"%G-W%V"` (for example `2026-W40.md`). The first run creates the folder, as `02-ana/AGENTS.md` says. Cross-link to any journal entries from that week (there may be none).
 
 ## Process
 
 1. Read last week's retro first — did you follow through on the "change"?
 2. Scan the week's journal entries (if any) + commits + calendar
 3. Fill each section — don't skip any
-4. Commit the file
-5. Set reminder to open next Friday
+4. Hand back to [[08-weekly-review]]: the retro is its Reflection step, and the review carries on from there
 
 ## Anti-patterns
 

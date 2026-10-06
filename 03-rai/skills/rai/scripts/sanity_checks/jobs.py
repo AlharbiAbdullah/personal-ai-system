@@ -22,6 +22,7 @@ JOBS = {
 NEWS_RUNS = "03-rai/skills/news-digest/.runs"          # symlink to ~/.local/state/news-digest/runs
 PORTFOLIO_LOG = "02-ana/financial/investment/paper-portfolio/portfolio.log"
 OUTPUT_FRESH_H = 30   # a daily job's output: one day plus a run's slack
+DIGEST_GRACE_H = 2    # the short digest follows its daily within one run's two attempts
 
 
 def timer_health(name: str) -> tuple:
@@ -66,6 +67,9 @@ def _news_outputs() -> tuple:
     newest = daily[-1].stem if daily else "none"
     if core._days_old(newest) > 1:  # 03:00 run: before it lands, yesterday's is current
         hard.append(f"newest daily digest {newest}")
+    if daily and not (P.HELM / "08-bawaba/digest" / daily[-1].name).exists() \
+            and core._age_hours(daily[-1]) > DIGEST_GRACE_H:
+        soft.append(f"no digest for daily {newest}")
     weekly = sorted((P.HELM / "08-bawaba/weekly").glob("????-W??.md"))
     issue = weekly[-1].stem if weekly else "none"
     if issue not in {_iso_label(date.today()), _iso_label(date.today() - timedelta(days=7))}:
@@ -82,14 +86,14 @@ def _news_outputs() -> tuple:
 
 @check("JOB-1", "Jobs", role=PRODUCER)
 def news_jobs():
-    """News: the three timers fire clean, a digest exists from today or yesterday, this or last
-    ISO week's issue exists, and the X passes keep landing dumps."""
+    """News: the three timers fire clean, a daily exists from today or yesterday with its short
+    digest, this or last ISO week's issue exists, and the X passes keep landing dumps."""
     hard, soft = [], []
     for name in ("news-daily", "news-weekly", "news-x-collect"):
         h, s = timer_health(name)
         hard, soft = hard + h, soft + s
     h, s = _news_outputs()
-    return _verdict(hard + h, soft + s, "3 timers clean, digest current, weekly current, X dumps fresh",
+    return _verdict(hard + h, soft + s, "3 timers clean, daily and digest current, weekly current, X dumps fresh",
                     "Playbook 10 (news-digest-recovery); logs in ~/.local/state/news-digest.")
 
 

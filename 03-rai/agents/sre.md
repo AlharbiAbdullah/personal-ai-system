@@ -32,7 +32,7 @@ not hope for it.
 - systemd timers / launchd jobs that silently don't fire
 - the single-writer vault sync getting into a bad state
 - scheduled pipelines (news-digest, maintenance) stalling unattended
-- deployments on the Linux box, GCP, or the DigitalOcean droplet
+- deployments on the Linux box or GCP
 
 ## Process
 

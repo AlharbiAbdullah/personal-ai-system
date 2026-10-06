@@ -189,4 +189,4 @@ kubectl port-forward svc/api 8000:8000 -n prod
 - "Write k8s manifests for Helios chat service"
 - "Helm chart for OpenKit with dev + prod values"
 - "Debug why my Pods keep restarting"
-- "Set up HPA for the Matchbox API"
+- "Set up HPA for an API deployment"

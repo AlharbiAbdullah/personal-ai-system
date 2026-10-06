@@ -68,7 +68,7 @@ Date: YYYY-MM-DD | Horizon: [1–5 years]
 [Table: name, market share if known, positioning]
 
 ## 6. Regulatory environment
-- [Relevant frameworks: the AI authority, the data authority, GDPR, HIPAA, GDPR]
+- [Relevant frameworks: the national data authority, GDPR, HIPAA]
 - [Pending regulation that could shift dynamics]
 
 ## 7. Entry angle
@@ -82,7 +82,7 @@ Date: YYYY-MM-DD | Horizon: [1–5 years]
 ## Sources (ranked by credibility)
 
 1. **Analyst firms** — Gartner, Forrester, IDC, McKinsey, Bain, BCG. Paywalled but often cited for free.
-2. **Government statistics** — the statistics authority for local, BLS for US, Eurostat, OECD
+2. **Government statistics** — the national statistics office, BLS for US, Eurostat, OECD
 3. **Industry associations** — often publish annual reports with sizing
 4. **Company filings** — 10-Ks disclose TAM narratives for public incumbents
 5. **Investor reports** — equity research from Morgan Stanley, Goldman, regional banks
@@ -108,7 +108,7 @@ Triangulate at least two approaches. If they disagree wildly, the market definit
 
 ## Examples
 
-- "Size the local compliance-automation market for Matchbox"
+- "Size the developer-tooling market for project scaffolding"
 - "Market research on data governance software"
-- "TAM for AI-powered BI in the region region"
-- "What's the addressable market for air-gapped AI platforms in regulated industries?"
+- "TAM for self-hosted BI in mid-market healthcare"
+- "What's the addressable market for on-prem AI platforms in regulated industries?"

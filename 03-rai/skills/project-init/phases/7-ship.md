@@ -85,6 +85,7 @@ In Claude Code the human types it with the `!` prefix. If that prefix is denied,
 - The quarantine to delete after you confirm the archive (MIGRATE, printed). First, the files `migrate-transcripts` held back in its `.held/`, each printed with its file and rule: they were never archived.
 - A remote default-branch rename (`master` with a remote, P3).
 - A half-made GitHub repo to delete by hand, if `publish` failed at step 1.
+- The vault steps, when P0 found a kitchen, an `active/` folder or an idea for the project. Rai adds them: after G1, the "Vault, after G1" list in [[21-project-init]] Phase B. When the product is done, its close runs in [[01-project]], the Close step.
 
 ## tipcalc
 

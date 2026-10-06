@@ -1,20 +1,22 @@
 ---
 name: media
 description: >
-  Media creation router. USE WHEN the user wants to generate images, animated
-  videos, or write fiction. Routes between Art (image generation), Remotion
+  Media creation router. USE WHEN the user wants to generate images, draw an
+  architecture or tech stack diagram, make animated videos, or write fiction. Routes
+  between Art (image generation), Diagram (Excalidraw diagrams as code), Remotion
   (programmatic video via React), and WriteStory (layered fiction writing).
 ---
 
 # Media
 
-Three media-creation skills. Pick by the output medium.
+Four media-creation skills. Pick by the output medium.
 
 ## Routing table
 
 | Output | Sub-skill | File to Read |
 |--------|-----------|--------------|
-| Single image (illustration, diagram, thumbnail, comic, icon) | Art | `art.md` |
+| Architecture or tech stack diagram for a repo, README or doc | Diagram | `diagram.md` |
+| Single image (illustration, thumbnail, comic, icon) | Art | `art.md` |
 | Animated video from React components | Remotion | `remotion.md` |
 | Animated explainer / data viz video | Remotion | `remotion.md` |
 | Fiction (story, chapter, character development) | WriteStory | `write-story.md` |
@@ -26,4 +28,4 @@ Three media-creation skills. Pick by the output medium.
 2. `Read` the appropriate file in this directory.
 3. Follow that file's instructions.
 
-Static image (explanation, diagram, thumbnail, comic) → Art. Animation or motion (sequence, tutorial, slideshow, animated explainer) → Remotion. GIFs are usually Remotion.
+A system diagram → Diagram. Other static images (explanation, thumbnail, comic) → Art. Animation or motion (sequence, tutorial, slideshow, animated explainer) → Remotion. GIFs are usually Remotion.

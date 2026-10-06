@@ -2,8 +2,9 @@
 
 Canonical brain entry file. This is the source of truth for how Rai loads. `AGENTS.md` is the
 only instruction filename in the vault: Claude Code 2.1.277+ reads it natively at the root and
-per folder. The one exception is `~/.claude/CLAUDE.md`, a symlink to this file made by
-`setup.sh`, because Claude Code has no user-level `AGENTS.md`. Last updated: 2026-09-28.
+per folder. The user-level mount `~/.claude/CLAUDE.md`, made by `setup.sh`, is a symlink to
+`harness/claude-code/user-instructions.md`, which imports this file and the identity, because
+Claude Code has no user-level `AGENTS.md`. Last updated: 2026-10-06.
 
 ## Folder map
 
@@ -28,7 +29,7 @@ quotes) and `/routine` (daily/weekly rhythm) skills.
 ## Session Memory (Memory v3, hybrid)
 
 The rule: live writes append to TEXT only. The ChromaDB vector store is batch-written by the
-memory pipeline, never during a live turn. Full design in `ARCHITECTURE.md`.
+memory pipeline, never during a live turn. Full design in `MEMORY-ARCHITECTURE.md`.
 
 - **Live capture**: `turn-capture.py` (Stop hook) has a model write observer bullets per turn
   into `semantic-memory/daily/YYYY-MM-DD.md` (interactive sessions only; headless, thin, and
@@ -58,7 +59,9 @@ memory pipeline, never during a live turn. Full design in `ARCHITECTURE.md`.
   conflict the repo wins; `/recall` hits about a repo are hints to verify.
 - **Injection**: SessionStart reads a frozen snapshot: identity `*.md` files plus the
   pre-rendered `memory/state/memory-block.md` plus today's daily-log tail. No ChromaDB call at
-  startup. Identity surface budget: 4KB per file and 44KB total, an advisory warning, never a
+  startup. Claude Code caps a hook's inline output at 10,000 characters, so there the identity
+and the memory block load through `~/.claude/CLAUDE.md` imports (`harness/claude-code/README.md`).
+Identity surface budget: 4KB per file and 44KB total, an advisory warning, never a
   truncation. Per-prompt pointer RAG (`memory-injection.py`) is relevance-floored and
   session-deduped.
 - **Recall**: `/recall` escalates only when needed: T0 (already in context) to T1 (semantic +
@@ -75,7 +78,7 @@ Skills: `/rai process-sessions`, `/recall`, `/remember`, `/rai eval` (manual qua
 In a repo with `.project.toml`: talk = `/grill`, build = `/compile`; both follow the repo's
 own `.claude/skills/sdd`. Elsewhere, `/grill` writes `.agent/decisions.md` and
 `.agent/plan.md`, `/spec-improve` tightens the plan before approval, and `/compile` executes
-it, offering `/orchestrator` for disjoint parallel groups and `/adversarial-review` after.
+it, offering `/orchestrator` for disjoint parallel groups and `/fusion review` after.
 
 ## PRD
 

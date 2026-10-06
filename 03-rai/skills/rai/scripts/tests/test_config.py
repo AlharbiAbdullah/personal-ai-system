@@ -6,7 +6,7 @@ import re
 from conftest import st
 from sanity_checks.core import FAIL, PASS, SKIP, WARN
 
-EDGE = {"agents": "agents", "hooks": "hooks", "skills": "skills", "CLAUDE.md": "AGENTS.md",
+EDGE = {"agents": "agents", "hooks": "hooks", "skills": "skills", "CLAUDE.md": "harness/claude-code/user-instructions.md",
         "settings.json": "config/settings.json"}
 
 
@@ -14,6 +14,7 @@ def _edge(w):
     for rel in ("agents", "hooks", "skills"):
         w.mkdir(f"helm/03-rai/{rel}")
     w.write("helm/03-rai/AGENTS.md", "# Rai")
+    w.write("helm/03-rai/harness/claude-code/user-instructions.md", "@~/helm/03-rai/AGENTS.md")
     w.settings({})
     for name, target in EDGE.items():
         w.link(f".claude/{name}", w.rai / target)

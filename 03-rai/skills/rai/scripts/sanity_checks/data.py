@@ -149,13 +149,13 @@ def gitattributes_union():
     return (WARN, ev, "Re-add the merge=union line — next two-sided merge may clobber entries.") if missing else (PASS, ev, "")
 
 
-BACKUP_WARN_D = 8    # weekly (Saturday 04:00): one missed run
+BACKUP_WARN_D = 8    # weekly: one missed run
 BACKUP_FAIL_D = 15   # two missed runs
 
 
 @check("DATA-5", "Data safety", role=PRODUCER)
 def offsite_backup():
-    """The weekly restic backup of helm and the home folders to Google Drive: the status line its
+    """The weekly offsite backup of the vault and the home folders: the status line its
     runner writes says OK and is recent, and its timer still fires."""
     from .jobs import timer_health
     hard, soft = timer_health("backup-drive")

@@ -80,7 +80,7 @@ Voice anchor: `~/helm/04-work/acme/meeting-prep-q1-planning.md` is the long-form
 
 ## Examples
 
-- "Draft an OpenKit compliance proposal for the central bank"
+- "Draft an OpenKit adoption proposal for an engineering team"
 - "Write an RFP response for Acme Corp data platform consulting"
-- "Prepare a fixed-fee proposal for a 3-month Taskflow analytics pilot"
-- "Proposal for a local govt entity to adopt Matchbox compliance automation"
+- "Prepare a fixed-fee proposal for a 3-month Helios analytics pilot"
+- "Proposal for a mid-size company to standardize its repos on open-kit"

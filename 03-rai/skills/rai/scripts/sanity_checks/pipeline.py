@@ -77,8 +77,8 @@ def scanner_capture():
         return FAIL, "ledger empty", "Scanner ledger holds nothing — seeding failed?"
     cut = time.time() - 86400  # anything quiescent >1 day should long be ledgered (scanner runs 4x/day)
     missed = 0
-    # the scanner reads every root in TRANSCRIPT_ROOTS (Claude Code + pi's shadow transcripts)
-    for root in (r for r in scs.TRANSCRIPT_ROOTS if r.exists()):
+    # the scanner's own root list: Claude Code, pi's shadows, and each harness adapter's shadows
+    for root in scs.transcript_roots():
         for f in root.glob("*/*.jsonl"):
             if not scs.UUID_RE.match(f.stem) or f.stem in seen:
                 continue

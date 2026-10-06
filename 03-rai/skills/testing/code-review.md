@@ -59,6 +59,8 @@ Run through this before requesting reviewers:
 
 Fix everything on this list, then request review.
 
+This checklist is part of [[05-code-review]]. It is a human checklist, not the machine pass over the diff: that is the built-in `/code-review`.
+
 ## Reviewing someone else's PR
 
 ### Step 1: Understand intent

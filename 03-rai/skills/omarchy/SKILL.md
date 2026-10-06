@@ -14,9 +14,9 @@ description: >
 # Omarchy
 
 Omarchy-specific skills for the Linux daily driver (Omarchy 4, Arch + Hyprland,
-migrated 2026-08-25). Sibling of `/ubuntu` (theme switcher, diagnostics,
+migrated 2026-08-25). Sibling of `/ubuntu` (diagnostics,
 bootstrap, tips; its Hyprland sub-skill is now pre-Omarchy reference only) and
-`/mac`. Same theme system across all three.
+`/mac`. Themes on the hub are stock Omarchy.
 
 Sub-skill files are vendored from upstream
 `/usr/share/omarchy/default/agents/skills/` (omarchy 4.0.4-1) so the vault stays
@@ -47,12 +47,11 @@ and copy over what changed. `basics.md` = upstream `SKILL.md` body;
 ## When two could fit
 
 - **omarchy vs ubuntu:** on the Omarchy box, this router wins for desktop/system config. `/ubuntu/hyprland` describes the old waybar/mako/fuzzel stack and is reference only; `/ubuntu/diagnostics` and `/ubuntu/tips` still apply (systemd, journal, hardware).
-- **theming vs /ubuntu/theme:** theming is Omarchy's stock theme mechanics (`omarchy theme`, `colors.toml`, overlays); `/ubuntu/theme` is the shared switcher + app adapters that sit on top of it.
 - **diagnose-crash vs /ubuntu/diagnostics:** diagnose-crash is one dead process from a core dump; diagnostics is the machine (thermal, memory, Wi-Fi, disk).
 - **hooks vs /ubuntu/hyprland automation:** hooks run on Omarchy events; systemd user units / udev / cron stay in `/ubuntu`.
 
 ## Cross-references
 
-- Ubuntu-era Hyprland sibling → `/ubuntu` (theme switcher, diagnostics, dotfiles bootstrap, tips)
+- Ubuntu-era Hyprland sibling → `/ubuntu` (diagnostics, dotfiles bootstrap, tips)
 - macOS sibling → `/mac` (theme system is a 1:1 port; single source of truth, do not fork). Palette reference library and per-theme app mappings live in `/mac → theme`.
-- Omarchy facts from the migration (Lua config, Quickshell, pkg names, refresh clobbers user files) → `03-rai/auto-memory/omarchy-4-facts.md` (the auto-memory store)
+- Omarchy facts from the migration (Lua config, Quickshell, pkg names, refresh clobbers user files) → keep them in Rai's memory

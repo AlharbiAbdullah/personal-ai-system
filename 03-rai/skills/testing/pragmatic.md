@@ -88,7 +88,7 @@ Upgrade by adding tests first for NEW features from that point forward.
 
 ## Examples
 
-- "Test the new Helios entity extractor spike"
+- "Test the new Helios search-ranking spike"
 - "What tests should I add to this prototype?"
 - "I'm migrating legacy code — where do I start with tests?"
 - "Quick and dirty script — what's minimum viable testing?"

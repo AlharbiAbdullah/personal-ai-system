@@ -23,6 +23,7 @@ labeled, readable by humans.
 - Single-PR description → `/git/pr-description`
 - Per-commit message → `/git/commit`
 - Explaining WHY a specific decision was made → `/architecture/adr-writer`
+- `CHANGELOG.md` in a repo with `.project.toml` → never by hand. `mise run merge` adds each line, and `! mise run release` writes the version section ([[21-project-init]] Phase E)
 
 ## Keep a Changelog format
 
@@ -129,5 +130,5 @@ Or write by hand if the project is small.
 
 - "Generate changelog for v1.2.0 to v1.3.0 in Helios"
 - "Write release notes from last 2 weeks of commits"
-- "Summarize what shipped in Matchbox this month"
+- "Summarize what shipped in open-kit this month"
 - "Auto-categorize these commits into Keep-a-Changelog format"

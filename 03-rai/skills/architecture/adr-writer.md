@@ -105,7 +105,7 @@ Chosen: **Option X**, because [2–3 sentences on why].
 
 ## Examples
 
-- "ADR: choose Postgres over MongoDB for Matchbox"
-- "ADR: adopt event-driven arch for Taskflow service-to-service comms"
+- "ADR: move Helios search from Postgres full-text to a dedicated search engine"
+- "ADR: adopt event-driven service-to-service comms"
 - "Write the ADR for picking LangGraph over LangChain for OpenKit agents"
 - "ADR: move Helios from Dagster to Airflow" (or reverse)

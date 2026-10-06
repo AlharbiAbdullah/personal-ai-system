@@ -143,6 +143,6 @@ it doesn't, and common pitfalls.
 ## Examples
 
 - "What's the CQRS pattern and when should I use it?"
-- "Pick a resilience pattern for the Helios-to-Dremio connection"
+- "Pick a resilience pattern for the Helios-to-payments connection"
 - "Explain saga vs 2PC for cross-service transactions"
 - "Is hexagonal architecture worth it for OpenKit?"

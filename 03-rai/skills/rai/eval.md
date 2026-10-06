@@ -22,7 +22,7 @@ nothing auto-applies; flagged preferences are demoted only by John.
 |----|----------|--------|
 | a | retrieval: 80 static golden rows + ~20 RUN-TIME freshness probes (last 48h daily logs) | deterministic hit@k |
 | b | per-prompt injection relevance (20 real prompts replayed) | judged |
-| c | identity adherence (30 outputs: banned-word/em-dash/emoji/Arabic lint + 5 tone) | lint + judged |
+| c | identity adherence (30 outputs: em-dash/emoji/Arabic lint + 5 tone) | lint + judged |
 | d | daily-bullet fidelity (10 bullet-vs-turn pairs) | judged |
 | e | distill fidelity (5 archived sessions vs their rai-semantic rows) | judged |
 | f | self-evolve precision (all ACTIVE + 20 probation) — FLAGS ONLY | judged |

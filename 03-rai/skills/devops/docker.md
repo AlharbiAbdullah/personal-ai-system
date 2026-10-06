@@ -52,12 +52,14 @@ python:3.12-slim   → 145 MB  ✓
 python:3.12-alpine →  48 MB  ✓✓ (if compatible)
 ```
 
-### 2. Non-Root User (REQUIRED)
+### 2. Non-Root User (the default)
 ```dockerfile
 RUN useradd --create-home app
 USER app
 ```
 58% of images run as root. Don't be one of them.
+
+The one exception is John's (2026-09-29). A sealed deployment inside one trust boundary may run a container as root, when its Dockerfile says why in a comment.
 
 ### 3. One Process Per Container
 - ✅ One service = one container

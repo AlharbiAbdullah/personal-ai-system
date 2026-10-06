@@ -28,7 +28,7 @@ where ALT is OPTION. Full table: `~/dev-env/KEYBINDINGS.md`. Live source:
 - `CTRL + 3`: full screenshot → clipboard · `CTRL + 4`: region → clipboard · `Print`: Omarchy's own capture flow
 - `SUPER + CTRL + T`: theme menu · `SUPER + CTRL + SHIFT + T`: next theme · `SUPER + CTRL + W`: background menu · `SUPER + CTRL + SHIFT + W`: next wallpaper
 - `SUPER + H`: focus mode · `SUPER + K`: keybindings cheat sheet
-- `SUPER + L`: lock · `ALT + SHIFT`: us ⇄ ara layout
+- `SUPER + L`: lock · `ALT + SHIFT`: us ⇄ second layout
 - Volume/mute keys: wpctl (work on lock screen) · Brightness keys: ddcutil over DDC/CI (desktop monitor, no kernel backlight)
 
 ## Wayland clipboard from the terminal

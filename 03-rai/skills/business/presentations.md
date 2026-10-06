@@ -74,7 +74,7 @@ Pick one shape; don't mix.
 
 ## Examples
 
-- "Prep a 20-min conference talk on Matchbox for RSA 2026"
+- "Prep a 20-min conference talk on open-kit"
 - "Draft the monthly Helios progress deck for the Acme Corp leadership"
-- "20-slide investor pitch for GeoContext"
+- "20-slide investor pitch for a data startup"
 - "Internal all-hands deck on the Omarchy migration"

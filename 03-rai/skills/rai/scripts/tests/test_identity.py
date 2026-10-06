@@ -85,6 +85,27 @@ def test_id_2_fault_sections_missing(w):
     assert st("ID-2").status == WARN
 
 
+CLAUDE_MODE = ("import os\n"
+               "if os.environ.get('RAI_HARNESS'):\n"
+               "    print('=== Rai Identity Loaded ===\\n## Ai Steering Rules\\n## Memory')\n"
+               "else:\n"
+               "    print('=== Rai session context ===' + 'x' * {n})\n")
+
+
+def test_id_2_ok_claude_mode(w):
+    """In Claude Code the identity comes through the CLAUDE.md imports: the hook's own output is
+    the short dynamic part, and the full snapshot (any other harness) carries the sections."""
+    _session_start(w, CLAUDE_MODE.format(n=3000))
+    r = st("ID-2")
+    assert r.status == PASS and "Claude Code" in r.evidence
+
+
+def test_id_2_fault_claude_mode_over_the_inline_cap(w):
+    _session_start(w, CLAUDE_MODE.format(n=11000))
+    r = st("ID-2")
+    assert r.status == WARN and "10,000" in r.fix
+
+
 # ID-3 ──────────────────────────────────────────────────────────────────────────
 def test_id_3_ok(w):
     _identity(w)

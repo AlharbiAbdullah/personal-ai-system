@@ -22,19 +22,19 @@ Default: the previous calendar month if it is unreviewed, otherwise the trailing
 
 ## Sources (all of them, every run)
 
-1. **Daily observer logs** — `03-rai/semantic-memory/daily/YYYY-MM-DD.md` in the
+1. **Daily observer logs**: `03-rai/semantic-memory/daily/YYYY-MM-DD.md` in the
    window. The richest source: per-session bullets already written through Rai's
    eyes.
-2. **Git history** — `~/helm` log for the window. Separate HUMAN work from
+2. **Git history**: `~/helm` log for the window. Separate HUMAN work from
    AUTOMATED churn (news-digest, memory drains, NAV snapshots, `.obsidian`).
    Volume, hour-of-day patterns, folder ranking by real content churn,
    shipped/abandoned/reverted.
-3. **Life OS** — `02-ana/`: journal entries, todos, financial state changes,
+3. **Life OS**: `02-ana/`, its journal entries, todos, financial state changes,
    shopping decisions, health, family, travel, soul.
-4. **Trajectory** — `06-learning/` progress vs the locked ladder, `09-ideas/`
+4. **Trajectory**: `06-learning/` progress, `09-ideas/`
    status movement, `05-projects/` movement, `04-work/` footprint,
    `07-reading/`, `10-knowledge/` growth.
-5. **Last month's mirror** — `02-ana/monthly/` previous file, if any. Check
+5. **Last month's mirror**: `02-ana/monthly/` previous file, if any. Check
    whether its "one change" actually happened; say so either way.
 
 ## Process
@@ -46,11 +46,14 @@ Default: the previous calendar month if it is unreviewed, otherwise the trailing
    decisions made or re-litigated, mood/energy signals.
 3. Rai synthesizes alone. The judgment and the voice are Rai's, never delegated.
    Anchor the drift check against stated priorities: `02-ana/identity/goals.md`
-   and the locked plans (learning ladder, financial phases, habit streaks).
+   and the locked plans (the locked plans in your goals).
 4. Write the report to `02-ana/monthly/YYYY-MM.md` (the month reviewed, not the
    month of writing). Leave the tree dirty; Linux commits.
 
 ## Report structure
+
+The Short rule in `identity/response-format.md` applies: each section holds only what
+matters, with a date or a number per claim. No fixed length. `2026-09.md` is the model.
 
 ```markdown
 # Monthly Mirror — 2026-07 (written 2026-08-16)
@@ -92,7 +95,7 @@ One. Specific. Testable next mirror.
 - Receipts on every claim: dates, filenames, commit subjects.
 - Not flattering. A slow month is called slow; a tinkering binge is named.
 - Deliberate choices are not drift: occasional journaling, no hard daily
-  targets, passive debt paydown are settled policy. Judge against the policy,
+  targets and any money strategy in your plan are settled policy. Judge against the policy,
   not against productivity culture.
 - Funny is allowed to be at Rai's expense too.
 
@@ -101,7 +104,7 @@ One. Specific. Testable next mirror.
 - Padding the Good to soften the Bad.
 - Drift verdicts without receipts.
 - Delegating synthesis or voice to a subagent.
-- Turning the mirror into a task list — it produces exactly ONE change.
+- Turning the mirror into a task list. It produces exactly ONE change.
 
 ## Examples
 

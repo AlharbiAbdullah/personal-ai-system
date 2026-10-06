@@ -462,7 +462,7 @@ def score_identity(text_lower):
             proj_matched.append(proj_name)
     proj = min(10, len(proj_matched) * 5)
 
-    # local/Arab context
+    # local/regional context
     region_hits = kw_count(text_lower, REGION_SUBSTRINGS) + bounded_count(text_lower, REGION_BOUNDED)
     local = min(8, region_hits * 2.5)
 
@@ -1891,6 +1891,6 @@ for i, e in enumerate(final_pool[:10]):
     if s["identity"]["system_design"] >= 4: ident_dims.append(f"sd={s['identity']['system_design']:.0f}")
     if s["identity"]["devops"] >= 4: ident_dims.append(f"do={s['identity']['devops']:.0f}")
     if s["identity"]["active_project"] >= 4: ident_dims.append(f"proj={s['identity']['active_project']:.0f}")
-    if s["identity"]["region_context"] >= 4: ident_dims.append(f"sa={s['identity']['region_context']:.0f}")
+    if s["identity"]["region_context"] >= 4: ident_dims.append(f"reg={s['identity']['region_context']:.0f}")
     ident_str = ",".join(ident_dims) if ident_dims else "no-id"
     print(f"  #{i+1}: {s['final']:.1f} U={s['universal']['total']:.0f} I={s['identity']['total']:.0f}({ident_str}) E={s['engagement']:.1f} | [{e['src']}] {title}")

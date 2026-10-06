@@ -2,7 +2,7 @@
 
 `~/helm/.vale.ini` runs two styles on every `*.md`. Run `vale sync` once from the vault root after cloning: it downloads the `ai-tells` package into `styles/` (the kit ships only the hand-written `Rai` style).
 
-- `Rai` (this folder, hand-written): the hard rules from `03-rai/identity/response-format.md` and `03-rai/skills/writing/references/voice.md`. Banned words, em dashes, AI-corporate connectors, vague quantities, sentences over 25 words, emoji.
+- `Rai` (this folder, hand-written): the hard rules from `03-rai/identity/response-format.md` and `03-rai/skills/writing/references/voice.md`. Em dashes, AI-corporate connectors, vague quantities, sentences over 25 words, emoji.
 - `ai-tells` (synced from tbhb/vale-ai-tells v1.34.0): 130 AI-fingerprint rules. Advisory. Rules that contradict voice.md are switched off in `.vale.ini` (ColonUsage, EmDashUsage, ParallelStaccato).
 
 Run from anywhere inside the vault:

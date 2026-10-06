@@ -4,8 +4,11 @@ sync_claude_sessions.py — Memory v3 batch scanner: session capture, decoupled 
 hooks.
 
 Scans native transcripts from every harness root — Claude Code (~/.claude/projects/
-**/<uuid>.jsonl) and pi via the rai-bridge shadow (~/.pi/agent/rai-transcripts/
-**/<uuid>.jsonl, same Claude shape) — finds sessions not yet processed, normalizes
+**/<uuid>.jsonl), pi via the rai-bridge shadow (~/.pi/agent/rai-transcripts/
+**/<uuid>.jsonl, same Claude shape), and one folder per other harness adapter under
+$XDG_DATA_HOME/rai/transcripts/<harness>/ (default ~/.local/share; shadows in the same
+shape) — finds sessions
+not yet processed, normalizes
 them to the pending shape (lib/session_extract), classifies via THE one gate
 (lib/session_gate), and routes:
 
@@ -27,6 +30,7 @@ Run: python3 sync_claude_sessions.py [--dry-run]
 
 import argparse
 import json
+import os
 import re
 import sys
 from datetime import datetime
@@ -41,6 +45,8 @@ from lib.session_gate import classify, should_distill, should_archive  # noqa: E
 CLAUDE_PROJECTS = Path.home() / ".claude" / "projects"
 PI_TRANSCRIPTS = Path.home() / ".pi" / "agent" / "rai-transcripts"
 TRANSCRIPT_ROOTS = (CLAUDE_PROJECTS, PI_TRANSCRIPTS)  # each optional; either harness may be absent
+# one folder per harness adapter, under $XDG_DATA_HOME as the adapters write it
+SHADOW_ROOT = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local" / "share") / "rai" / "transcripts"
 PENDING = ROOT / "semantic-memory" / "pending"
 ARCHIVE = Path.home() / "helm" / "13-archive" / "historical-sessions"
 LEDGER = ROOT / "semantic-memory" / "processed-sessions.jsonl"
@@ -114,14 +120,21 @@ def pending_sids() -> set:
     return out
 
 
+def transcript_roots() -> list[Path]:
+    """Every root that exists: Claude Code, pi, then each adapter folder under SHADOW_ROOT."""
+    shadows = sorted(d for d in SHADOW_ROOT.iterdir() if d.is_dir()) if SHADOW_ROOT.is_dir() else []
+    return [r for r in (*TRANSCRIPT_ROOTS, *shadows) if r.exists()]
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args()
 
-    roots = [r for r in TRANSCRIPT_ROOTS if r.exists()]
+    roots = transcript_roots()
     if not roots:
-        log("no transcript roots (~/.claude/projects, ~/.pi/agent/rai-transcripts) — nothing to scan")
+        log("no transcript roots (~/.claude/projects, ~/.pi/agent/rai-transcripts, "
+            "~/.local/share/rai/transcripts/*) — nothing to scan")
         return 0
 
     seen = ledger_sids()

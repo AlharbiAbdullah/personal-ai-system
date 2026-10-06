@@ -94,6 +94,7 @@ def scanner(w, monkeypatch):
     monkeypatch.setattr(scs, "LEDGER", ledger)
     monkeypatch.setattr(scs, "CLAUDE_PROJECTS", projects)
     monkeypatch.setattr(scs, "TRANSCRIPT_ROOTS", (projects, pi))
+    monkeypatch.setattr(scs, "SHADOW_ROOT", w.mkdir(".local/share/rai/transcripts"))
 
     def session(age_h=48, ledgered=True, root=".claude/projects"):
         sid = str(uuid.uuid4())
@@ -115,6 +116,13 @@ def test_scan_1_ok(w, scanner):
 def test_scan_1_fault_slipped_sessions(w, scanner):
     scanner()
     scanner(ledgered=False)
+    r = st("SCAN-1")
+    assert r.status == WARN and "unledgered>1d=1" in r.evidence
+
+
+def test_scan_1_fault_slipped_adapter_shadow(w, scanner):
+    scanner()
+    scanner(ledgered=False, root=".local/share/rai/transcripts/agy")
     r = st("SCAN-1")
     assert r.status == WARN and "unledgered>1d=1" in r.evidence
 

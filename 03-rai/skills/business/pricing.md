@@ -84,7 +84,6 @@ One page, 4 sections:
 
 ## Examples
 
-- "Draft the Matchbox pricing page: 3 tiers, seat-based"
-- "One-pager for OpenKit enterprise sales team"
-- "Should GeoContext charge per API call or per dataset subscription?"
-- "Rewrite the Helios pricing to emphasize air-gap guarantee"
+- "Draft a SaaS pricing page: 3 tiers, seat-based"
+- "A one-pager that sales can hand to enterprise buyers"
+- "Rewrite the Helios pricing to emphasize the uptime guarantee"

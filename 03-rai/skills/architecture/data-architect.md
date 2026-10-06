@@ -31,6 +31,8 @@ Best for:
 - Flexible transformations with dbt
 ```
 
+**Default**: ELT. John's stack rule is ELT over ETL: load first, then transform inside the target store (`02-ana/identity/tech-stack.md`).
+
 ### Batch Processing
 Process data in chunks for efficiency.
 
@@ -316,18 +318,18 @@ class APIConnector(BaseConnector): ...
 - **No idempotency**: Duplicates on retry
 - **No schema evolution**: Breaking changes
 - **Missing watermarks**: Full reloads every time
-- **God table**: One table with 200 columns
+- **God table**: One table with 200 columns. A deliberate One Big Table is the exception: a wide, denormalized silver table is a valid facing layer when it serves every consumer. John ruled one for Helios (2026-05-05).
 - **No data quality checks**: Garbage in, garbage out
 
 ---
 
 ## When to Use This Skill
 
-Invoke /data_architect when:
+Invoke `/architecture → data-architect` when:
 - Designing ETL/ELT pipelines
 - Modeling data warehouses
 - Building ingestion systems
 - Choosing pipeline patterns
 - Setting up data quality
 
-For general software architecture: /solution_architect
+For general software architecture: `/architecture → solution-architect`

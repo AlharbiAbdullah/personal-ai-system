@@ -196,4 +196,4 @@ deploy_prod:
 - "Write a GitHub Actions workflow for a Python+FastAPI project"
 - "GitLab CI to build Docker + deploy to k8s"
 - "Why is my CI failing only on Windows?"
-- "Set up a canary deploy for the Taskflow API"
+- "Set up a canary deploy for an API service"

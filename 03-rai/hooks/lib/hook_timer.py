@@ -1,6 +1,8 @@
-"""Per-hook latency tracker. Append-only jsonl at ~/.local/state/rai/telemetry/hook-perf.jsonl."""
+"""Per-hook latency tracker. Append-only jsonl at ~/.local/state/rai/telemetry/hook-perf.jsonl.
+Each row names the harness that ran the hook: RAI_HARNESS from an adapter, else claude-code."""
 
 import json
+import os
 import time
 from contextlib import contextmanager
 
@@ -23,6 +25,7 @@ def hook_timer(name: str):
                 "hook": name,
                 "ms": round(elapsed_ms, 2),
                 "ts": get_iso_timestamp(),
+                "harness": os.environ.get("RAI_HARNESS") or "claude-code",
             }
             with PERF_LOG.open("a") as f:
                 f.write(json.dumps(entry) + "\n")

@@ -140,8 +140,11 @@ rg --files -g "*.py"
 
 ## Code Safety
 
-- Never commit or push until explicitly told.
+- Code repos and dotfiles: never commit or push until explicitly told. Vault edits follow the commit rule in `~/helm/11-workflows/AGENTS.md`.
 - Check git remote before any push.
+- Every secret lives in your secret manager and loads from the environment. Never write a key into a tracked file.
+- Python runs through uv: PEP 723 scripts, never system python.
+- Sample data and test fixtures use Latin script. Arabic appears only in Arabic-content products.
 - Verify file paths and module names before use.
 - One change at a time when debugging.
 - Test your code. No feature is complete without tests.

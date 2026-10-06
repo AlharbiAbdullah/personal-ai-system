@@ -49,10 +49,11 @@ def json_configs_valid():
 
 @check("CFG-2", "Config")
 def claude_symlinks():
-    """The five ~/.claude links (agents, hooks, skills, CLAUDE.md, settings.json) resolve into 03-rai."""
+    """The five ~/.claude links (agents, hooks, skills, CLAUDE.md, settings.json) resolve into 03-rai.
+    CLAUDE.md is the Claude Code edge file, which imports AGENTS.md and the identity."""
     expect = {
         "agents": P.RAI / "agents", "hooks": P.RAI / "hooks", "skills": P.RAI / "skills",
-        "CLAUDE.md": P.RAI / "AGENTS.md", "settings.json": P.RAI / "config/settings.json",
+        "CLAUDE.md": P.RAI / "harness/claude-code/user-instructions.md", "settings.json": P.RAI / "config/settings.json",
     }
     probs = []
     for name, want in expect.items():

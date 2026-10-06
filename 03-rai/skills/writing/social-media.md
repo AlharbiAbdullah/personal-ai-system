@@ -19,8 +19,8 @@ Read `references/voice.md` first. The 20 banned words are especially lethal here
 
 | Platform | Length | Vibe | Audience |
 |----------|--------|------|----------|
-| **X / Twitter** | ≤ 280 chars per tweet, threads up to 8-12 | Punchy, opinionated, one idea per tweet | Tech / builder audience, the region + global |
-| **LinkedIn** | 100-400 words | Professional context, but not corporate | the region tech professionals, recruiters, future clients |
+| **X / Twitter** | ≤ 280 chars per tweet, threads up to 8-12 | Punchy, opinionated, one idea per tweet | Tech / builder audience, local + global |
+| **LinkedIn** | 100-400 words | Professional context, but not corporate | local tech professionals, recruiters, future clients |
 | **Substack notes** | 50-200 words | Conversational, between tweet and blog | Existing readers of johndoe.substack.com |
 
 If unsure, ask which platform. Don't write platform-agnostic: they're not interchangeable.
@@ -36,7 +36,7 @@ If unsure, ask which platform. Don't write platform-agnostic: they're not interc
 
 **Hooks that work:**
 - Specific number ("3 silent failures cost us 2 days")
-- Strong claim ("The Helios merge wasn't a tech failure")
+- Strong claim ("Never drop a bad row. Quarantine it.")
 - Question that's actually a take ("Why does every air-gap stack reinvent the wheel?")
 
 **Hooks that don't:**
@@ -53,8 +53,8 @@ If unsure, ask which platform. Don't write platform-agnostic: they're not interc
 - No emojis except sparingly (and only if John explicitly opts in).
 - No "agree?" or "thoughts?" closers.
 
-**the region context layer:**
-- Real the region project names land harder than abstract examples (Helios, OpenKit, Matchbox when allowed).
+**Local context layer:**
+- Hooks come from his interest areas, not from client work. The Public posts rule in the router `SKILL.md` holds on every platform.
 - Don't broadcast confidential client info. Sanitize when needed.
 
 **Avoid the LinkedIn-AI tells:**
@@ -100,14 +100,14 @@ Single post text, ready to paste. For threads: numbered tweets separated by blan
 ## Voice anchors
 
 - **X/threads**: existing posts at x.com/johndoe
-- **LinkedIn**: TBD: John, drop 2-3 of your past LinkedIn posts at `~/helm/02-ana/voice-samples/linkedin/` for stronger anchoring
+- **LinkedIn**: no sample corpus yet; anchor on the X/threads and Substack voice below until one exists
 - **Substack notes**: johndoe.substack.com archive
 - **Voice cadence baseline**: `~/helm/02-ana/journal/` (any recent file). His journal entries have the right rhythm for Substack notes.
 
 ## Examples
 
-- "Tweet about the 3 silent failures in Helios pipeline v1/v2 overlap"
+- "Tweet about 3 silent failures when two pipeline versions overlap"
 - "Twitter thread on why proposal-template platforms always fail"
-- "LinkedIn post about the Helios retrospective without naming the client"
-- "Substack note about the Acme Corp data lake thesis, riffing off last week's note"
+- "LinkedIn post on one lesson from building open-kit"
+- "Substack note on why a data platform needs a named owner first, riffing off last week's note"
 - "Tweet promoting today's blog post"

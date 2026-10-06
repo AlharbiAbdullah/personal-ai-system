@@ -17,7 +17,7 @@ Lowercase with dashes: `my-project-name`. Short, descriptive, no spaces.
 ## Lifecycle
 1. Idea graduates from `09-ideas/` (Tree → Graduated).
 2. `/ideas → graduate` scaffolds `kitchen/{name}/specs/` + `research/`; iterate there
-   (`11-workflows/03-kitchen.md`).
+   (the kitchen steps of `11-workflows/01-project.md`).
 3. When ready: `/project-init` in `~/projects/{name}/` reads the kitchen specs into the
    repo. Everything from init on is `11-workflows/21-project-init.md`. After its G1
    merge, move the kitchen's `research/` worth keeping to `active/{name}/research/`,

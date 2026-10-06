@@ -3,7 +3,8 @@ name: news-digest
 description: >
   Personalized news digest from HN, Reddit, X, Substack, Medium, GitHub Trending.
   USE WHEN the user wants a news briefing, asks what's happening, or says /news.
-  Two modes: "day" (last 24h) and "week" (last 7 days).
+  Two modes: "day" (last 24h) and "week" (last 7 days). After each scheduled
+  daily, a short digest is written from it (digest_style.md).
 ---
 
 # news-digest
@@ -74,7 +75,7 @@ Mechanics (budgets in `config.yaml → scheduled_mode`):
 1. **At run start**, record the wall-clock start time and compute
    `collection_deadline = start + run_budget_min − synthesis_reserve_min`.
 2. **Before starting ANY cooldown or retry window**: if `now + cooldown + expected_window_time > collection_deadline`, do NOT wait. Write resume state (`x_foryou_state.json`), mark the source `partial` with its actual yield, and continue with the remaining sources, then synthesis.
-3. **Rule 9 (X dealbreaker) is suspended**: ship with whatever X yield exists and an explicit "reduced X coverage — burned session, resume state saved" note in the source-notes table. Abort only if X yield is literally zero AND no other source collected either.
+3. **Rule 9 (X dealbreaker) is relaxed to zero X**: ship with whatever X yield exists and an explicit "reduced X coverage — burned session, resume state saved" note in the source-notes table. Zero X in the merged pool stops the run, whatever else was collected: write the marker file and ship nothing. No X, no digest, in every run, a manual recovery included (John, 2026-09-29).
 4. **Rule 12 (≥90% or retry) is capped by the deadline**: retries happen only while they fit before `collection_deadline`.
 5. **Synthesis + POST-FILL start no later than `collection_deadline`** and must finish — both `grep -c CLAUDE_FILL` and `grep -c '<!-- raw:'` at 0 — before the watchdog deadline.
 6. Everything else (scoring, dedup, quality bar, humanized scrolling) is unchanged — quality rules cost no wall-clock waits.
@@ -151,7 +152,7 @@ It clones the on-disk Chrome cookies (pruned to substack.com + medium.com — ne
 All dumps land in `~/helm/03-rai/skills/news-digest/.runs/YYYY-MM-DD/` as JSON:
 `x_foryou.json`, `x_following.json`, `substack.json`, `medium.json`, `reddit.json`, `hn.json`, `github.json`.
 
-**Durable dump archive (2026-06-13)**: `.runs/` is the working scratch dir; at the end of every run the day's files are copied to `~/helm/13-archive/news/dumps/YYYY-MM-DD/` (by `present_v5.py` on success, and by the scheduled runner regardless of outcome). That archive is git-tracked and synced Mac↔Ubuntu — every collected item is kept forever, not just the ~100 displayed. **Scratch pruning (2026-07-03)**: the runner then deletes `.runs/` day dirs older than 3 days after checksum-verifying the archive copy. The archive is the single durable home; `.runs/` holds only the live window (before this, every day stayed in both places forever and 132MB of dumps were double-tracked in git).
+**Durable dump archive (2026-06-13)**: `.runs/` is the working scratch dir; at the end of every run the day's files are copied to `~/helm/13-archive/news/dumps/YYYY-MM-DD/` (by `present_v5.py` on success, and by the scheduled runner regardless of outcome). That archive is git-tracked and synced Mac↔Ubuntu — every collected item is kept forever, not just the ~100 displayed. **Scratch pruning (2026-07-03)**: the runner then deletes `.runs/` day dirs older than 3 days after checksum-verifying the archive copy — the archive is the single durable home; `.runs/` holds only the live window (before this, every day stayed in both places forever and 132MB of dumps were double-tracked in git).
 
 ### 1.4. Enrich Substack + Medium (MANDATORY — do not skip)
 
@@ -275,6 +276,8 @@ After the digest is written AND on every abort path (X-strict marker, signed-out
 **Reason**: leaving tabs alive after a digest run consumes memory, leaves credentialed sessions visible in the user's task switcher, and pollutes the next run's tab context. The user explicitly required cleanup as a mandatory post-run step on 2026-05-06.
 
 **This step runs on every exit path — success, partial, or abort. Never leak tabs.**
+
+A run that ends partial or failed, or leaves an abort marker, goes to [[10-news-digest-recovery]] in the next interactive session.
 
 ---
 
@@ -583,7 +586,7 @@ If real-time exceeds these by 2x, the AI MAY check in with the user — but only
   - Last error per attempt
   - Collected count vs target per attempt
   - Timestamp
-  - Suggested remediation (re-login, check extension, try Playwright manually, check x.com rate-limit status)
+  - Suggested remediation (re-login in desktop Chrome, rerun the headless collector and read its exit code, try Playwright manually, check x.com rate-limit status)
   - Highest-count dump location
   
   No digest ships. The marker file is the notification.
@@ -640,7 +643,7 @@ Max `gem_score` = 57.5.
 | 0.7 | career, culture, interviews, claude_code, ai_tools |
 | 0.3 | frontend, mobile, gaming, unrelated |
 
-**Project bonus**: `× 1.2` if item genuinely connects to an active project (Rai, OpenKit, Helios, Taskflow). No bonus for tangential mentions.
+**Project bonus**: `× 1.2` if item genuinely connects to an active project (Rai, OpenKit, Orca). No bonus for tangential mentions.
 
 **Final**:
 
@@ -714,7 +717,7 @@ Single number 0–100 internally; collapsed to a letter for display. Realistic d
 Topic anchors per item, multi-tag allowed. Display: `` `[Tag]` ``.
 
 - **Identity dimensions**: `[AI]` `[Data Eng]` `[System Design]` `[DevOps]` `[local]`
-- **Active projects**: `[Rai]` `[OpenKit]` `[Helios]` `[Taskflow]`
+- **Active projects**: `[Rai]` `[OpenKit]` `[Orca]`
 - **Quality signal**: `[Postmortem]`
 
 If no signal hits, link shows `_none_` rather than blank.
@@ -780,7 +783,7 @@ Used by Hot Topics to cite specific items via inline markdown links: `[hn-3](url
 A hook is ONE claim, not a summary. Every hook must pass all four:
 
 1. **LEAD with the non-obvious thing** — the mechanism, number, failure mode, or contrarian claim inside the item. Not its topic.
-2. **GROUND it in John's interest areas** — data engineering, DevOps, AI, system design — NOT in project names. A project reference (Helios, GeoContext, OpenKit, Rai) is allowed ONLY for a currently-active project with a genuinely real connection; default to the interest-area angle ("steal this pattern for any agent memory design") over the project angle ("for Rai"). Project name-dropping gets stale and narrow fast. General-but-sharp beats project-shoehorned.
+2. **GROUND it in John's interest areas** — data engineering, DevOps, AI, system design — NOT in project names. A project reference (Helios, Orca, open-kit, Rai) is allowed ONLY for a currently-active project with a genuinely real connection; default to the interest-area angle ("steal this pattern for any agent memory design") over the project angle ("for Rai"). Project name-dropping gets stale and narrow fast. General-but-sharp beats project-shoehorned.
 3. **END with a so-what** — what to steal, watch, or decide.
 4. **COVER-THE-TITLE TEST** — hide the title; the hook must still add information. If it reads as a paraphrase of the title, rewrite it.
 
@@ -813,7 +816,7 @@ After running `present_v5.py`, Claude works through this list:
 2. **Hot Topics** — replace `<CLAUDE_FILL_HOT_TOPICS>` with 1–3 themes (or skip entirely on quiet days). Use inline `[r-15](url)` citations referencing the citation IDs printed next to each gem.
 3. **Top Shelf hooks** — replace each `> <CLAUDE_FILL_HOOK>` (1–2 sentences) per the Hook craft spec. Use the `<!-- raw: ... -->` comment as context for what the post says.
 4. **Feed hooks** — same spec, more compact (1 sentence each).
-5. **Wisdom** — fill `**Model:**` (e.g., Compounding, Pain as Signal, First Principles) + `**Insight:**` (2–4 sentences) for each quote.
+5. **Wisdom** — fill `**Model:**` (e.g., Compounding, Inversion, First Principles) + `**Insight:**` (2–4 sentences) for each quote.
 6. **Deep Dive** — fill `### <CLAUDE_FILL_TITLE>` and `<CLAUDE_FILL_ESSAY>`. Override the script's auto-pick if a stronger candidate exists today.
 7. **Hook self-review pass (mandatory)** — re-read EVERY hook (wire briefs + Top Shelf + Feed). Apply the cover-the-title test and the banned list to each. Rewrite every failure in place. Wire briefs are additionally checked for accidental project/interest tie-ins (remove them). Only after this pass, proceed.
 8. **Update section counts** — replace `<CLAUDE_FILL_HT_COUNT>` (actual hot-topic count) and `<CLAUDE_FILL_NW_COUNT>` (kept wire items) in the body's `**Sections:**` line.
@@ -895,6 +898,15 @@ After reading a digest, user enters `/news chat` to discuss items.
 - Deep-read any linked item on request.
 
 ---
+
+## Short Digest (`08-bawaba/digest/`)
+
+The short version of the daily, for a day with no time to read it. A Bottom line, then News Wire, Hot Topics, Gems, Wisdom and Deep Dive as Obsidian callouts. Each item is a topic, an explanation and a takeaway for him, with no sources and no authors.
+
+- The scheduled runner writes it with a second headless run right after a complete daily. `run-news-ubuntu.sh digest` runs it alone and does nothing when today's digest is complete.
+- It heals itself: the coordinator runs `digest` mode at each of its runs while today's daily is on disk.
+- `digest_style.md` is its whole brief: the shape, the picks, the fact rules and the check.
+- Only the runner archives it, to `13-archive/news/digest/`.
 
 ## Weekly Magazine (`/news week`) — Bawaba Weekly
 

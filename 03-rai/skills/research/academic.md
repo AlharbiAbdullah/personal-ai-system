@@ -83,5 +83,5 @@ The paper in the target format. Sections complete, citations formatted, figures 
 
 - "Write a research paper on medallion architecture performance in air-gapped environments"
 - "Academic chapter on prompt injection defense taxonomies"
-- "Thesis proposal: compliance automation for local regulatory frameworks"
+- "Thesis proposal: automated schema-drift detection in data pipelines"
 - "Conference paper draft — RAG for domain-specific legal text"

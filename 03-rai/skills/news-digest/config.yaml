@@ -322,25 +322,12 @@ cross_helm_context:
 
 # ---------------------------------------------------------------
 # Mental models (for Wisdom mapping). Source of truth = 02-ana/identity/mindset.md
-# § Mental Models (16) — this is a cache. Keep in sync when mindset.md evolves.
+# § Mental Models — this is a cache. Fill it from your own mindset.md and keep it in sync.
 # ---------------------------------------------------------------
 mental_models:
   - Compounding
   - First Principles
   - Inversion
-  - Pain as Signal
-  - Invest in Thinking Not Pattern-Matching
-  - Capture-Connect-Build
-  - Human-AI Division of Labor
-  - 1000 Hours Rule
-  - Contribution Loop
-  - Synthesis Model
-  - Build in Public
-  - Verify Don't Assume
-  - Constraint as Strategy
-  - Simplicity First
-  - Dominate Don't Avoid
-  - Abstraction Is Earned
 
 # ---------------------------------------------------------------
 # Weekly magazine (Bawaba Weekly) — SKILL.md § Weekly Magazine.

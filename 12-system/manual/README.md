@@ -25,7 +25,7 @@ This manual is a pointer map. Each topic names the live doc that owns it today. 
 | Config and security | `03-rai/ARCHITECTURE.md` (`config/`), `03-rai/config/settings.json` |
 | Multi-machine sync | `03-rai/SYNC-ARCHITECTURE.md` |
 | Glossary | `02-ana/identity/definitions.md` (your own terms), `03-rai/MEMORY-ARCHITECTURE.md` (memory terms) |
-| Troubleshooting | `03-rai/skills/rai/sanity.md` (brain health), `03-rai/SYNC-ARCHITECTURE.md` (failure modes), `11-workflows/AGENTS.md` (debugging playbooks) |
+| Troubleshooting | `03-rai/skills/rai/sanity.md` (brain health), `03-rai/SYNC-ARCHITECTURE.md` (failure modes), `11-workflows/AGENTS.md` (the debugging, incident, news recovery and brain healthcheck workflows) |
 | Cheatsheet | `AGENTS.md` and `03-rai/AGENTS.md`, both loaded into every session |
 
 Out of scope: code you build in your own project repos (each one's own `AGENTS.md` and `specs/`), the Claude Code harness itself, and any editor-specific config.

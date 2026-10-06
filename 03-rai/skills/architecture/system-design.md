@@ -116,7 +116,7 @@ See `/architecture/patterns` for the pattern library.
 
 ## Examples
 
-- "Design the Helios air-gapped chat service"
-- "Redesign the Taskflow API for multi-tenant isolation"
-- "System design for GeoContext unified API"
-- "Sketch the OpenKit compliance report generator backend"
+- "Design the Helios chat service for multi-tenant isolation"
+- "Redesign a data API for multi-tenant isolation"
+- "System design for the Orca MCP surface"
+- "Sketch the OpenKit plugin registry backend"

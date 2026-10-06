@@ -9,7 +9,7 @@ description: >
 
 # AI
 
-AI-system design. For John's work on Taskflow, OpenKit, Matchbox,
+AI-system design. For John's work on Helios, open-kit,
 Dataforge — anything where the output is an LLM-powered product.
 
 ## Routing table

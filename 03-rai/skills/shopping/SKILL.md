@@ -14,6 +14,8 @@ description: >
 
 Three phases of one thing: money leaving the account for physical goods.
 
+A purchase decision follows [[26-purchase]], which runs these three phases in its order.
+
 ## Routing table
 
 | Task | Sub-skill | File to Read |

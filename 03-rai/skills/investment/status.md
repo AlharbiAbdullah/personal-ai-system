@@ -6,7 +6,7 @@ allowed-tools: Read, Bash
 
 # Investment Status
 
-A tight, one-screen snapshot. **Read-only**: this skill observes; it never starts the service, runs `portfolio.py` or `gold_skim.py`, edits state, or moves real money. Answers "where do I stand?" across strategy posture, the local paper-portfolio, and real holdings.
+A tight, one-screen snapshot. **Read-only**: this skill observes; it never starts the service, runs `portfolio.py`, edits state, or moves real money. Answers "where do I stand?" across strategy posture, the local paper-portfolio, and real holdings.
 
 ## Instructions
 
@@ -50,20 +50,15 @@ If a file is missing or a command fails, say so plainly; don't guess.
 
 ### Step 4: Summarize the per-stream books
 
-From `portfolio_state.json`: one paper book per stream (`etf`, `local`, `us_stocks`, `sukuk`), each seeded with its `init_usd` from `universe.json` and running its own `algo` on its own tickers. For each stream:
+From `portfolio_state.json`: one paper book per stream defined in `universe.json`, each seeded with its `init_usd` from `universe.json` and running its own `algo` on its own tickers. For each stream:
 - Latest `nav_history[].nav_usd`, **P/L vs its seed**, and which tickers it currently **holds**.
 - A `trend` stream moves below-trend names to **cash**, so it may hold fewer than its full list (or sit in cash). That's the algorithm working, not a bug.
-- `sukuk` is a modeled hold (`hold_yield`), no tickers.
-- Sum the four = total paper equity. There is no crypto sleeve; gold is manual.
-
-### Step 4b: Profit->gold skim
-
-The skim harness (`paper-portfolio/gold_skim.py`) has no scheduler and is **not running**. Say so in one line. Do not run it or schedule it; the design lives in `08-practice/gold-buffer-sweep.md`.
+- A modeled-hold stream (`hold_yield`) has no tickers.
+- Sum the streams = total paper equity.
 
 ### Step 5: Real holdings
 
 - **Real holdings**: look for `~/helm/02-ana/financial/investment/holdings.md`. If absent: **"No holdings note: none deployed, paper only."**
-- **Gold**: manual (John buys and holds it himself), not tracked by the paper engine.
 
 ### Step 6: Close with the paper-first reminder (ALWAYS)
 
@@ -71,5 +66,5 @@ The skim harness (`paper-portfolio/gold_skim.py`) has no scheduler and is **not 
 
 ## Rules
 
-- **Read-only.** No `systemctl --user start`, no runs of `portfolio.py` or `gold_skim.py`, no edits to state or `universe.json`. For operating, that's `ops.md`.
+- **Read-only.** No `systemctl --user start`, no runs of `portfolio.py`, no edits to state or `universe.json`. For operating, that's `ops.md`.
 - One screen. Snapshot, not a report. If something can't be confirmed, say so; don't invent numbers.

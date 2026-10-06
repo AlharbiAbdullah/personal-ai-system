@@ -10,6 +10,8 @@ description: >
 
 Vault-capture processing. Two sub-skills for the two capture zones.
 
+The full sweep of both folders is [[13-capture-sweep]]. Where a sub-skill differs from it, the workflow wins.
+
 ## Routing table
 
 | Task | Sub-skill | File to Read |

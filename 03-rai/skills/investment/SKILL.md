@@ -4,15 +4,15 @@ description: >
   Investment router. USE WHEN John wants the status of his investments and the local
   paper-portfolio, a recommendation on what to do (DCA, rebalance, what to screen), a Sharia
   screen on a ticker, a periodic portfolio review, the paper-portfolio runbook, or a Restraint
-  Gate verdict on a proposed decision. Strictly Sharia-compliant (spot, no leverage), paper-first,
+  Gate verdict on a proposed decision. Ships a Sharia screen as its example rule set (spot, no leverage), paper-first,
   local runtime. Strategy + branches live in `~/helm/02-ana/financial/investment/`.
 ---
 
 # Investment
 
-John's investing command center. Strictly Sharia-compliant (spot only, no leverage), paper-first. The runtime is the local paper-portfolio (`paper-portfolio.timer`, a systemd user timer on this box). The master plan is `~/helm/02-ana/financial/investment/strategy.md`; rules are in that folder's `AGENTS.md`.
+John's investing command center. Ships with a Sharia screen as its example rule set (spot only, no leverage), paper-first. The runtime is the local paper-portfolio (`paper-portfolio.timer`, a systemd user timer on this box). The master plan is `~/helm/02-ana/financial/investment/strategy.md`; rules are in that folder's `AGENTS.md`.
 
-Crypto trading and the trading bot were retired 2026-06-14; do not re-propose them.
+The Sharia screen is one example rule set. Replace it with your own screening rules if you follow different ones.
 
 **This subsystem is optional and not shipped.** None of `02-ana/financial/investment/` exists in this kit (no strategy, no paper-portfolio engine, no branch docs). You build it yourself before this skill is usable. Until then, treat every path below as a target to create, not a file that already exists.
 

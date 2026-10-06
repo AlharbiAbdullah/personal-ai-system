@@ -80,8 +80,8 @@ inspect → group → commit → push
 ## Grouping heuristics
 
 - **By layer**: ignores/config → db schema → services → routers/agents → frontend primitives → frontend pages → docs
-- **By feature scope**: chat, kg, geointel, bi, landing, etc.
-- **By dependency**: a shared module (e.g., `llm_gateway.py`) lands before
+- **By feature scope**: auth, api, ui, search, docs, etc.
+- **By dependency**: a shared module (e.g., `http_client.py`) lands before
   files that import it
 - **By risk**: smaller, riskier changes get isolated commits so they can
   be reverted without losing the rest
@@ -139,16 +139,16 @@ revert and bisect:
 
 Bad:
 ```
-update qa service
+update order service
 ```
 
 Good:
 ```
-refactor(qa): route Ollama traffic through async LLM gateway
+refactor(api): route outbound calls through an async HTTP client
 
-QAService now calls services.llm_gateway.LLMGateway.generate instead of
-the sync ollama client. Keeps the chat event loop unblocked and lets the
-gateway warm models via keep_alive. Same change applied to rag_service.
+OrderService now calls services.http.Client.get instead of the sync
+requests session. Keeps the event loop unblocked and lets the client
+reuse connections. Same change applied to the inventory service.
 ```
 
 Bad:
@@ -158,11 +158,10 @@ fix bug
 
 Good:
 ```
-fix(rag): skip embed call for messages under 20 chars
+fix(search): skip the index lookup for queries under 3 chars
 
-Greetings and acks were triggering full pgvector round trips, wasting
-tokens and adding latency. Gated retrieval on _RAG_MIN_MESSAGE_CHARS in
-qa_service._build_chat_prompt.
+Single keystrokes were triggering full index scans and adding latency.
+Gated the lookup on MIN_QUERY_CHARS in search_service.query.
 ```
 
 Always pass the message via HEREDOC so multi-line bodies survive:
@@ -203,17 +202,17 @@ EOF
 ```
 Working tree: 47 files changed.
 Plan (proceeding without approval):
-  1. chore: ignore hammer skill output and add dockerignore
-  2. feat(backend): centralized async LLM gateway
-  3. feat(db): intel v2 medallion schemas (bronze + silver + gold)
-  4. feat(intel): narrative generator, hybrid extractor, embedding, workers
-  5. feat(pipeline): 8-stage ETL v2 with CLI dispatcher
+  1. chore: ignore build output and add dockerignore
+  2. feat(backend): centralized async HTTP client
+  3. feat(db): orders schema v2 (raw + staging + marts)
+  4. feat(search): indexer, query parser and ranking
+  5. feat(pipeline): nightly import with a CLI dispatcher
   6. feat(frontend): shared UI primitives and theme tokens
-  7. feat(landing): warm stone and emerald light theme
-  8. feat(chat): polish on sidebar, model picker, modals, i18n
-  9. feat(geointel): map-primary workspace with floating panels
- 10. feat(kg): dynamic layouts and view registry refinements
- 11. feat(bi): two-tab redesign and route restructuring
+  7. feat(landing): new light theme
+  8. feat(cart): sidebar, checkout modal and i18n polish
+  9. feat(maps): store locator with floating panels
+ 10. feat(admin): dashboard layouts and view registry
+ 11. feat(reports): two-tab redesign and route restructuring
  12. docs: codemap, AGENTS.md, TODO, project memory
 ```
 

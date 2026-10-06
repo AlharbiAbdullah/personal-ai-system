@@ -3,7 +3,7 @@ name: compile
 description: >
   Build step of the pipeline: implement an approved spec test-first, group by group. In a repo
   with .project.toml it follows the repo's .claude/skills/sdd/compile.md, then validate.md, with
-  Rai extras (/orchestrator for 3+ disjoint parallel groups, /adversarial-review after
+  Rai extras (/orchestrator for 3+ disjoint parallel groups, /fusion review after
   validate); `/compile launch <slug>` follows the repo's launch.md with the same review extra;
   elsewhere it executes .agent/plan.md. Idempotent: resumes at the first unfinished group, an
   orchestrator wave cut off mid-run, or where a fast lane stopped. USE WHEN the user types
@@ -14,9 +14,9 @@ description: >
 
 Builds what `/grill` specified. In an SDD repo, progress is derived from test results and git. Elsewhere it lives in the plan's task boxes. Either way a fresh session resumes where the last one stopped.
 
-**Pipeline:** `/grill` → `/spec-improve` (optional) → approval → **`/compile`** (which runs `/adversarial-review`).
+**Pipeline:** `/grill` → `/spec-improve` (optional) → approval → **`/compile`** (which runs `/fusion review`).
 
-**Single-agent mandate:** run inline. Never use the Agent or Workflow tools. The one exception is the lens subagents that the repo's `validate.md` and `launch.md` ask for in Claude Code: they review and never edit.
+**Single-agent mandate:** run inline. Never use the Agent or Workflow tools. The one exception is the lens subagents that the repo's `validate.md` and `launch.md` ask for in Claude Code. Rai extra: spawn each lens as the `reviewer` agent, which has no Write or Edit tools, so it reviews and never edits.
 
 ## 0. Pick the mode
 
@@ -77,21 +77,21 @@ Builds what `/grill` specified. In an SDD repo, progress is derived from test re
    - Where the text says `/sdd compile` (the risk pause), John types `/compile`.
 4. **Validate.** When every group is green, or the fast-lane recipe is done and `mise run verify` is green, read `.claude/skills/sdd/validate.md`. Run its lenses for this lane and give every finding its outcome. Hold its Close until step 5 is done.
 5. **Adversarial review** (Rai extra).
-   - feat: read `~/helm/03-rai/skills/adversarial-review/SKILL.md` and run the panel up to its report. Its findings take validate's outcomes. The Close runs once, at step 6.
+   - feat: read `~/helm/03-rai/skills/fusion/SKILL.md` and `fusion/review.md`, and run the panel up to its report. Its findings take validate's outcomes. The Close runs once, at step 6.
    - Other lanes: offer it. (Recommended: skip, unless the diff touches money, security or stored data.)
-   - Without `OPENROUTER_API_KEY`, skip it and say so.
+   - A harness missing on this machine drops its voices; with no voice left, skip it and say so.
 6. **Close.** Run validate's Close: the lesson check, the proof captures, `mise run status -- --merge`, the report and the hand-over line. In a linked worktree, such as a hotfix's, `git rev-parse --path-format=absolute --git-dir --git-common-dir` prints two different paths. There the hand-over names the branch, as `sdd/SKILL.md` says: `! mise run merge -- --branch <branch>`, plus any flags the preview names, typed in the main checkout. That checkout is the first path `git worktree list` prints. Merge then removes this worktree. A plain merge typed here leaves it checked out on `<default>`. Stop. Never run `approve`, `merge`, `abandon` or `release`.
 
 When a breaker finding is hard to see, `/visual debug` replays the failing run step by step.
 
-**Launch.** `/compile launch <slug>`, on the default branch with no change open: read `.claude/skills/sdd/launch.md` and follow it. Rai extra: after its four lenses, run the `/adversarial-review` panel over the same audited diff, as in step 5; its findings take launch's outcomes. The fix lanes and the launch lane it opens are ordinary lanes: `/compile` builds each one from step 1.
+**Launch.** `/compile launch <slug>`, on the default branch with no change open: read `.claude/skills/sdd/launch.md` and follow it. Rai extra: after its four lenses, run the `/fusion review` panel over the same audited diff, as in step 5; its findings take launch's outcomes. The fix lanes and the launch lane it opens are ordinary lanes: `/compile` builds each one from step 1.
 
 ## 2. Plan mode (`.agent/plan.md`)
 
 1. **Resume point.**
    - The plan is the file `/grill` named: `.agent/plan.md`, or `.agent/plan-<slug>.md` when the user passes a slug. Its header names its decisions file.
    - No such file: list the candidates, the `.agent/plan-*.md` files that still have an unticked box (`grep -l '^- \[ \]' .agent/plan-*.md`), each with its `# Plan:` title and `Date:`. Say "run `/compile <slug>`" for the one to build, and stop. No candidate either: point to `/grill` and stop.
-   - Every box ticked: re-run each `Verify:` and acceptance criterion, report, offer `/adversarial-review`, stop.
+   - Every box ticked: re-run each `Verify:` and acceptance criterion, report, offer `/fusion review`, stop.
    - Otherwise read the decisions file once, then go to step 2.
 2. **Parallel check,** before every group. Skip it in helm, where the orchestrator never runs, and outside a git repo. Elsewhere, run the leftover check of SDD step 2 first, over `refs/heads/<branch>--*` for the current branch, with the last of `ls -d .agent/orchestrator/*/` as the run dir. Then apply the wave rule of SDD step 2 to the plan file: the next group is the first one with an unticked task. On a wave of 3 or more groups with disjoint `Files:`, ask the same question.
    - Option 1 needs a clean tree with the groups done so far committed, because workers branch from the committed tip.
@@ -110,7 +110,7 @@ When a breaker finding is hard to see, `/visual debug` replays the failing run s
    - The plan is materially wrong: wrong behaviour, a missing requirement, contradicting decisions, or a dependency nobody decided on. Stop, say exactly what broke, and let John decide. Never replan on your own.
    - A choice the plan left open: take the simplest option that honours the decisions file, and name it in the report.
    - The Ousterhout lens carries into code: deep modules, hidden sequencing and policy, fewer concepts, complexity pulled downward.
-5. **Done.** Every box is ticked and every acceptance criterion is green by its command. Report what shipped, the evidence, and each choice made in flight. When an orchestrator wave created `feat/<slug>` off the default branch, name that branch in the report: landing it is John's call. Offer `/adversarial-review`. Stop.
+5. **Done.** Every box is ticked and every acceptance criterion is green by its command. Report what shipped, the evidence, and each choice made in flight. When an orchestrator wave created `feat/<slug>` off the default branch, name that branch in the report: landing it is John's call. Offer `/fusion review`. Stop. The Verify, Review and Merge steps of [[02-task]] follow.
 
 Stopping early is safe: the unticked boxes are the resume point. Say what blocks.
 

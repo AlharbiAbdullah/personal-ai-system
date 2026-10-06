@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Bash, AskUserQuestion
 
 # Graduate
 
-Moves a Tree idea into project preparation. It creates `05-projects/kitchen/{name}/` in the shape of a repo's `specs/`, so `/project-init` later reads it as the first source of its talk. The kitchen playbook is `11-workflows/03-kitchen.md`. The init and build playbook is `11-workflows/21-project-init.md`.
+Moves a Tree idea into project preparation. It creates `05-projects/kitchen/{name}/` in the shape of a repo's `specs/`, so `/project-init` later reads it as the first source of its talk. The kitchen playbook is [[01-project]]. The init and build playbook is `11-workflows/21-project-init.md`.
 
 ```text
 05-projects/kitchen/{name}/
@@ -124,7 +124,7 @@ grep -rc 'NEEDS CLARIFICATION' specs/*.md     # the open mission and tech-stack 
 sed -n '/^## Gates/,$p' specs/roadmap.md      # the open phase questions
 ```
 
-Report: "Graduated `{slug}` to `05-projects/kitchen/{name}/`: `specs/` (mission, tech-stack, roadmap, {n} backlog items) and `research/`. Open: {m} markers, {g} Gates. Next: work the kitchen (`11-workflows/03-kitchen.md`), or run `/project-init` in `~/projects/{name}/` (`11-workflows/21-project-init.md`)."
+Report: "Graduated `{slug}` to `05-projects/kitchen/{name}/`: `specs/` (mission, tech-stack, roadmap, {n} backlog items) and `research/`. Open: {m} markers, {g} Gates. Next: work the kitchen (`11-workflows/01-project.md`), or run `/project-init` in `~/projects/{name}/` (`11-workflows/21-project-init.md`)."
 
 ## Rules
 
@@ -132,4 +132,4 @@ Report: "Graduated `{slug}` to `05-projects/kitchen/{name}/`: `specs/` (mission,
 - Never delete the idea file on graduation, and never move it out of `09-ideas/`. Lineage stays.
 - `specs/` holds the template shape only: no frontmatter added, no links, no vault paths.
 - The kitchen specs are deliberately rough. The kitchen or the init talk refines them, not graduation.
-- Vault edits stay local for the coordinator.
+- Vault edits follow the commit rule in `~/helm/11-workflows/AGENTS.md`.

@@ -128,6 +128,6 @@ export default function() {
 ## Examples
 
 - "Load test the Helios chat API at 500 RPS"
-- "Find the breaking point for the Matchbox scan endpoint"
-- "Soak test the Taskflow ingestion pipeline over 24h"
+- "Find the breaking point for a scan endpoint"
+- "Soak test the Helios ingestion pipeline over 24h"
 - "Spike test: can we handle 10× traffic at launch?"

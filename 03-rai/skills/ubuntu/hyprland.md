@@ -56,7 +56,7 @@ When adding binds, keep that parity in mind.
 - `SUPER + CTRL + T` theme cycle · `SUPER + CTRL + W` wallpaper next
 - `SUPER + SHIFT + R` reload · `SUPER + L` hyprlock
 - `XF86Audio*` volume/mute via wpctl (`bindel`/`bindl` — repeat + lock-screen) · `XF86MonBrightness*` via `ddcutil --noverify setvcp 10 ± 10` (DDC/CI; plain `bind`, no repeat — each write ~200ms)
-- `ALT + SHIFT` toggles us/ara layout
+- `ALT + SHIFT` toggles the us/second layout
 
 ### Useful hyprctl commands
 

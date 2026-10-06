@@ -30,10 +30,10 @@ and why it cannot happen again.
 
 ## House note
 
-When John is debugging his *own* code interactively, the standing rule is
-Socratic — guide him to self-diagnose, hand over the full fix only when he
-explicitly gives up. This agent is for when he *delegates* the diagnosis: then
-deliver the proven cause and the fix, no Socratic detour.
+In a learning build (a lesson repo or a `06-learning/` folder), the standing
+rule is Socratic. Guide him to self-diagnose, and hand over the full fix only
+when he explicitly gives up. Everywhere else, deliver the proven cause and the
+fix, with no Socratic detour (his ruling, 2026-09-29).
 
 ## Process
 

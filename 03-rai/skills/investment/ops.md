@@ -56,5 +56,4 @@ Unit files: `~/.config/systemd/user/paper-portfolio.{service,timer}`.
 ## Rules
 
 - Changing `universe.json` or `portfolio.py` is a strategy change: run `/investment convene` first, and screen any new ticker with `/investment screen`.
-- The profit->gold skim harness (`gold_skim.py`) has no scheduler. Do not schedule or run it from here.
 - Secrets never enter the vault.

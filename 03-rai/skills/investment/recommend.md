@@ -40,8 +40,8 @@ Read `portfolio_state.json` (latest `nav_history` per stream) and `universe.json
 
 The core of the list. Pick the 2-4 highest-leverage of:
 
-- **DCA on paper** toward the draft target allocation in `strategy.md`: name the under-weight sleeve(s) and the instrument (ETF / local-exchange name / sukuk / gold), as a *paper* entry, not a buy.
-- **Sharia-screen a candidate** before it ever enters a paper book (the local-exchange and US-stock tickers in `universe.json` are starter placeholders pending screening). Prefer the `halalterminal-claude-skills` plugin (`/halal-setup` for a free key) for an AAOIFI verdict; else compute the ratios from SEC EDGAR / FMP per `sharia-screening.md`. End every verdict with: *"not professional advice — confirm with a qualified advisor."*
+- **DCA on paper** toward the draft target allocation in `strategy.md`: name the under-weight sleeve(s) and the instrument, as a *paper* entry, not a buy.
+- **Sharia-screen a candidate** before it ever enters a paper book (the tickers in `universe.json` are starter placeholders pending screening). Prefer the `halalterminal-claude-skills` plugin (`/halal-setup` for a free key) for an AAOIFI verdict; else compute the ratios from SEC EDGAR / FMP per `sharia-screening.md`. End every verdict with: *"not professional advice — confirm with a qualified advisor."*
 - **What to watch in the paper-portfolio** this week: a stream sitting in cash, drawdown creeping toward the 20% trip-wire, a missed or failed daily run, an assumption to validate against the marks.
 
 ### Step 4: Real-money actions (only if real money exists)

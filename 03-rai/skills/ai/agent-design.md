@@ -57,14 +57,16 @@ Supervisor routes to one of N specialized agents.
 
 ## Frameworks
 
-- **LangGraph** — state-machine-style agent graphs. Declarative. Good default.
+- **LangGraph** — state-machine-style agent graphs. Declarative.
 - **LangChain** — broader framework; includes agents but now heavier than needed for most cases
 - **LlamaIndex** — retrieval-focused, has agent layer
 - **AutoGen** — multi-agent conversations
 - **CrewAI** — role-based agent teams
 - **Vanilla Python + Claude SDK** — Often simplest for single-agent ReAct
 
-John uses LangGraph + ChromaDB + FastAPI frequently.
+John's principle is readable, auditable control flow, and the framework choice follows from it.
+- Prefer no agent framework on top: a layer small enough to read in an afternoon.
+- Pick a framework only when its explicit state transitions make the flow easier to audit than plain code.
 
 ## Design doc checklist
 
@@ -162,7 +164,7 @@ Author: [Name] | Date: YYYY-MM-DD
 
 ## Examples
 
-- "Design the OpenKit compliance-scan agent"
-- "Taskflow chat agent — add tool use for Dremio + Superset"
-- "Multi-agent system for Matchbox: scan + classify + report"
+- "Design the OpenKit release-notes agent"
+- "Helios support agent: add tool use for the orders API and the CRM"
+- "Multi-agent system for open-kit: scaffold + test + publish"
 - "Critique-generator loop for PRD drafting"

@@ -143,4 +143,4 @@ sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total
 - "Instrument the OpenKit API with OpenTelemetry"
 - "Set up SLO alerts for 99.9% availability on Helios chat"
 - "Why is latency high — what to look at?"
-- "Create Grafana dashboard for Matchbox compliance pipelines"
+- "Create a Grafana dashboard for the ingestion pipelines"

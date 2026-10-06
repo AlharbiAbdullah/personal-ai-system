@@ -27,6 +27,7 @@ specializations, see `competitor.md`, `literature.md`, `market.md` and `academic
 - Flag conflicting information explicitly.
 - Note confidence level (high/medium/low) for each claim.
 - List sources at the end.
+- When the ask is a written, verified answer that lives in the vault, carry the output into [[18-deep-research-to-home]] at step 3. From there it checks the claims and decides the home.
 
 ## Examples
 

@@ -7,7 +7,7 @@ RAI_HEADLESS env (belt to session_gate's sdk-cli suspender — the memory system
 never ingest its own plumbing), stdin piping, timeout.
 
 Used by: the eval harness judge (skills/rai/scripts/eval.py), the distill chunk-reduce
-(distill_session.py), and turn-capture.py (effort_args only — its call stays its own).
+(distill_session.py), and turn-capture.py (claude_bin and effort_args — its call stays its own).
 """
 
 import json
@@ -19,6 +19,25 @@ from pathlib import Path
 from .paths import get_runtime_dir
 
 FLAG_CACHE = get_runtime_dir() / "claude-cli-flags.json"
+
+
+# A pipeline call is a machine call with a self-contained prompt. It loads none of his setup:
+# no user hooks or settings, no CLAUDE.md (which imports the whole identity), no auto-memory,
+# no MCP servers, no saved transcript, and no project settings (a neutral folder).
+ISOLATION_ARGS = ["--setting-sources", "project", "--strict-mcp-config", "--no-session-persistence"]
+ISOLATION_ENV = {"RAI_HEADLESS": "1", "CLAUDE_CODE_DISABLE_CLAUDE_MDS": "1", "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}
+
+
+def isolated_env() -> dict:
+    env = {**os.environ, **ISOLATION_ENV}
+    env.pop("RAI_HARNESS", None)  # its hooks would run in Claude Code, whichever harness asked
+    return env
+
+
+def neutral_cwd() -> str:
+    d = get_runtime_dir() / "claude-p"
+    d.mkdir(parents=True, exist_ok=True)
+    return str(d)
 
 
 def claude_bin() -> str:
@@ -54,19 +73,21 @@ def effort_args(level: str = "high") -> list:
 
 
 def run_claude(prompt: str, model: str = "opus", timeout: int = 300,
-               effort: str = None, cwd: str = None) -> str:
+               effort: str = None, cwd: str = None, isolate: bool = True) -> str:
     """Run `claude -p` headless, prompt on stdin; return stdout.
 
     `effort=None` keeps the CLI default; pass "high"/"xhigh" to raise it.
-    `cwd` sets the project context (skills/AGENTS.md resolution) for the child.
+    The call is isolated (ISOLATION_ARGS, isolated_env); `cwd` defaults to a neutral folder.
+    `isolate=False` is for a call that must see his real setup (the eval's /recall smokes):
+    his settings, skills, CLAUDE.md and hooks, from `cwd`.
     Raises subprocess.TimeoutExpired or CalledProcessError — callers decide retry policy.
     """
-    env = dict(os.environ, RAI_HEADLESS="1")
     extra = effort_args(effort) if effort else []
-    r = subprocess.run(
-        [claude_bin(), "-p", "--model", model, *extra],
-        input=prompt, capture_output=True, text=True, timeout=timeout, env=env, cwd=cwd,
-    )
+    if isolate:
+        argv, env, cwd = [claude_bin(), "-p", "--model", model, *extra, *ISOLATION_ARGS], isolated_env(), cwd or neutral_cwd()
+    else:
+        argv, env = [claude_bin(), "-p", "--model", model, *extra], dict(os.environ, RAI_HEADLESS="1")
+    r = subprocess.run(argv, input=prompt, capture_output=True, text=True, timeout=timeout, env=env, cwd=cwd)
     if r.returncode != 0:
         raise subprocess.CalledProcessError(r.returncode, "claude -p", r.stdout, r.stderr)
     return r.stdout

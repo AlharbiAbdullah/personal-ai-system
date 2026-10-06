@@ -15,7 +15,7 @@ Philosophy: "I don't have time to read books. So I read them through you."
 The `/reading` skill group (`03-rai/skills/reading/`) drives all book work:
 - `start-book` — scaffold curriculum + progress.md + tier plan
 - `teach` — generate a lesson in the right type (Chapter / Law / Practice / Synthesis)
-- `audit-coverage` — verify full book coverage before declaring done
+- `audit-coverage`: check a book's coverage when he asks. It is never a closing gate.
 
 Teaching rules — lesson shapes, pacing, named-framework preservation, stories-sacred,
 per-chapter treatment standard, quality bar — all live INSIDE the `teach` skill.

@@ -2,10 +2,11 @@
 name: rai
 description: >
   Rai brain maintenance router. USE WHEN the user wants to healthcheck
-  the brain, eval memory quality, ingest sessions to memory, compose
-  specialized agents, create or validate skills, or extract upgrade
-  opportunities. Routes between sanity, eval, process-sessions,
-  compose-agents, create-skill, upgrade.
+  the brain, eval memory quality, benchmark models or harnesses on his
+  own work, ingest sessions to memory, compose specialized agents, create
+  or validate skills, or extract upgrade opportunities. Routes between
+  sanity, eval, benchmark, process-sessions, compose-agents, create-skill,
+  upgrade.
 ---
 
 # Rai
@@ -19,6 +20,7 @@ structure (skills, memory, agents, config).
 |------|-----------|--------------|
 | End-to-end healthcheck (memory, pipeline, hooks, jobs, harness edges, skills, vault, doc drift) | sanity | `sanity.md` |
 | Memory QUALITY certification (golden-set eval, judged sections), manual only | eval | `eval.md` |
+| Score models or harnesses on his own work (Rai tasks + coding), leaderboard, manual only | benchmark | `benchmark.md` |
 | Drain `semantic-memory/pending/` into ChromaDB | process-sessions | `process-sessions.md` |
 | Spawn specialized custom agents; orchestrate parallel runs | compose-agents | `compose-agents.md` |
 | Create a new skill (naming, folder layout, SKILL.md validation) | create-skill | `create-skill.md` |
@@ -32,9 +34,10 @@ structure (skills, memory, agents, config).
 
 ## When two could fit
 
+- **sanity vs eval:** sanity certifies FUNCTION (subsystems produce fresh output); eval certifies QUALITY (memory retrieves the RIGHT things). Sanity runs every cycle; eval only when John asks.
+- **eval vs benchmark:** eval scores Rai's MEMORY: does recall return the right facts. Benchmark scores a MODEL or HARNESS doing his work with Rai loaded.
 - **sanity vs create-skill:** sanity verifies the whole brain is healthy; create-skill validates ONE skill's structure.
 - **sanity vs process-sessions:** sanity reports on state; process-sessions changes state (writes to memory).
-- **sanity vs eval:** sanity certifies FUNCTION (subsystems produce fresh output); eval certifies QUALITY (memory retrieves the RIGHT things). Sanity runs every cycle; eval only when John asks.
 - **compose-agents vs create-skill:** agents are persona+capability specs; skills are workflow definitions.
 - **upgrade vs sanity:** upgrade identifies what to improve; sanity identifies what is broken.
 

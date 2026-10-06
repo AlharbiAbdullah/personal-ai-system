@@ -5,17 +5,12 @@ to `~/Downloads/` before any other action.
 
 ## Models
 
-| Model | Best For |
-|-------|----------|
-| FLUX | Photorealistic images, detailed scenes, portraits |
-| GPT-Image-1 | Illustrations, diagrams, text-in-image, stylized art |
-
-FLUX is preferred for photorealistic output; GPT-Image-1 is more reliable when the image must contain readable text.
+Image generation goes through a Google subscription, never a pay-per-use route. agy (the Antigravity CLI) and pi's `generate_image` tool both sign in to the Google account and run the Gemini image models.
 
 ## Content types
 
 - **Illustrations:** concept art, editorial, explainer visuals.
-- **Diagrams:** architecture diagrams, flowcharts, system maps. For flowcharts, consider D2/ASCII in code first — image is a fallback when the diagram must be visually polished.
+- **Diagrams:** flowcharts and concept sketches. For flowcharts, consider D2 or ASCII in code first. An architecture or tech stack diagram goes to `/media → diagram`.
 - **Thumbnails:** YouTube, blog, social media thumbnails.
 - **Comics:** multi-panel strips, character-driven narratives.
 - **Icons/Logos:** simple iconography, brand marks.
@@ -34,7 +29,6 @@ FLUX is preferred for photorealistic output; GPT-Image-1 is more reliable when t
 - Be specific about composition, lighting, color palette.
 - Include style references: "in the style of watercolor", "flat design".
 - Specify what to exclude with negative prompts.
-- For text in images, use GPT-Image-1.
 - State aspect ratio: square (1:1), landscape (16:9), portrait (9:16).
 
 ## Output format

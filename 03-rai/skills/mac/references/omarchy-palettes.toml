@@ -1,6 +1,6 @@
 # Canonical Omarchy palettes. Source of truth for /mac-theme audit.
 # LOCAL POLICY (2026-08-12): selection colors deviate from upstream on purpose.
-# Bright selection fills (fg-as-selection, orange, lilac) hurt John's eyes
+# Bright selection fills (fg-as-selection, orange, lilac) read as too loud
 # and hide selected text. Rule: selection_bg = a dim neutral from the theme's
 # OWN palette (typically ansi[0]), selection_fg = normal foreground. Applied to
 # gruvbox + everforest below; do NOT revert these on refresh-palettes.

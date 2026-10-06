@@ -9,6 +9,8 @@
 # wake refresh. Neither touches origin, so the single-writer model is intact.
 #
 # Pipeline (headless `claude -p` for the two intelligent steps):
+#   pre. news digest catch-up          today's daily with no complete short digest →
+#                                      the news runner's `digest` mode writes it.
 #   0. git fetch + merge --ff-only    (do_pull) defence + transition catch-up;
 #                                      steady-state no-op since nobody else pushes origin.
 #   1. capture_mac                     ssh mac → snapshot its churn into a commit,
@@ -76,6 +78,16 @@ for unit in news-daily.service news-weekly.service; do
     echo "News run in progress ($unit activating) — skipping."; exit 0
   fi
 done
+
+# News digest catch-up: the short digest heals here. While today's daily is on disk,
+# run the news runner's `digest` mode. It does nothing when today's digest is
+# complete, and writes it when both of the daily run's attempts failed or the daily
+# came from an interactive run. The commit step picks the new file up. RECOVERY=1
+# skips the runner's own git pull, since this run owns git.
+if [ "${SYNC_ONLY:-0}" != "1" ] && [ -s "$HELM/08-bawaba/daily/$(date +%Y-%m-%d).md" ]; then
+  RECOVERY=1 DIGEST_QUIET_FAIL=1 "$HELM/03-rai/skills/news-digest/scheduled/run-news-ubuntu.sh" digest \
+    || echo "WARN: news digest catch-up failed; the next run tries again."
+fi
 
 # ── git self-healing (unattended — every recoverable state recovers HERE) ──────
 # Unchanged from the two-writer era except the integration SOURCE: step 1 now
@@ -164,6 +176,24 @@ heal_autostash_conflicts() {
 do_pull() {
   git -C "$HELM" fetch origin main || return 1
   git -C "$HELM" merge --ff-only FETCH_HEAD
+}
+
+# brain_broken: 17's STOP gate (workflow 17-brain-healthcheck, ruling R7). Draining sessions
+# into a brain the last harness run called BROKEN can turn a recoverable fault into lost
+# memory, so the drain waits a cycle; pending/ keeps every session until sanity is green.
+# The runner's own early-abort verdict (COORD-0, below) is about the coordinator, not the
+# stores, so it never holds the drain.
+brain_broken() {
+  python3 - "$HELM" <<'PY' 2>/dev/null
+import json, pathlib, sys
+p = pathlib.Path(sys.argv[1]) / "03-rai/memory/learning/system/sanity-last.json"
+try:
+    s = json.loads(p.read_text())
+except Exception:
+    sys.exit(1)
+fails = [f for f in s.get("fails", []) if f.get("subsystem") != "Coordinator"]
+sys.exit(0 if s.get("verdict") == "BROKEN" and fails else 1)
+PY
 }
 
 # write_abort_status: an early abort (step 0/1) never reaches the sanity step, so the
@@ -367,14 +397,14 @@ capture_mac() {
     if ! resolve_merge_by_policy; then
       echo "ERROR: unresolved paths survived the merge policy — aborting the Mac merge."
       git -C "$HELM" merge --abort 2>/dev/null || true
-      notify-send -a rai-maintenance -u critical "Rai maintenance" "Mac merge aborted — see $LOG" 2>/dev/null || true
+      notify-send -a rai-maintenance -u critical "Rai maintenance" "Mac merge aborted. Workflow 25 (~/helm/11-workflows/25-incident.md). Log: $LOG" 2>/dev/null || true
       return 1
     fi
     git -C "$HELM" commit --no-edit -q 2>&1 || true
   fi
   if ! heal_autostash_conflicts; then
     echo "ERROR: Mac merge left unmerged paths after 3 heal passes."
-    notify-send -a rai-maintenance -u critical "Rai maintenance" "Mac merge conflict unresolved — see $LOG" 2>/dev/null || true
+    notify-send -a rai-maintenance -u critical "Rai maintenance" "Mac merge conflict unresolved. Workflow 25 (~/helm/11-workflows/25-incident.md). Log: $LOG" 2>/dev/null || true
     return 1
   fi
   untrack_ignored_paths   # the merge (SSH or $MAC_INBOX) is done; runs before any commit step
@@ -446,14 +476,14 @@ if ! do_pull; then
   if ! do_pull; then
     echo "ERROR: origin ff-only pull failed twice, needs a human. Aborting run."
     write_abort_status "origin pull failed twice (auth, network or a diverged origin)"
-    notify-send -a rai-maintenance -u critical "Rai maintenance FAILED" "origin ff-only pull failed twice, see $LOG" 2>/dev/null || true
+    notify-send -a rai-maintenance -u critical "Rai maintenance FAILED" "origin ff-only pull failed twice. Workflow 25 (~/helm/11-workflows/25-incident.md). Log: $LOG" 2>/dev/null || true
     exit 1
   fi
 fi
 if ! heal_autostash_conflicts; then
   echo "ERROR: unmerged files remain — refusing to run steps on a conflicted tree."
   write_abort_status "unmerged files remain after autostash healing"
-  notify-send -a rai-maintenance -u critical "Rai maintenance FAILED" "autostash conflicts unresolved — see $LOG" 2>/dev/null || true
+  notify-send -a rai-maintenance -u critical "Rai maintenance FAILED" "autostash conflicts unresolved. Workflow 25 (~/helm/11-workflows/25-incident.md). Log: $LOG" 2>/dev/null || true
   exit 1
 fi
 
@@ -503,12 +533,17 @@ echo "──── STEP sync-claude-sessions end $(date '+%T') rc=$RCS2 ──�
 
 # ── Step 3 — drain pending sessions (this box is the sole ChromaDB writer) ─────
 P1="Read ~/helm/03-rai/skills/rai/process-sessions.md and execute it exactly as written, fully unattended — never ask for confirmation. If there are no pending sessions, say so and stop. CRITICAL (headless claude -p): you MUST run the drain IN-TURN and wait for it to finish — never launch it with run_in_background or shell '&'. When your turn ends this process is reaped and every background child dies with it (this exact bug silently killed the drain for weeks). If it is long, poll in-turn until DONE."
-run_step "process-sessions" 30 "$P1" \
-  "Bash(~/helm/03-rai/semantic-memory/scripts/py-chroma.sh *)" \
-  "Bash(python3 *)" "Bash(ls *)" "Bash(mv *)" "Bash(grep *)" "Bash(wc *)" \
-  "Read" "Write" "Edit" "Glob" "Grep"
-RC1=$?
-[ "$RC1" -ne 0 ] && echo "WARN: process-sessions rc=$RC1 — continuing to commit step anyway."
+if brain_broken; then
+  echo "SKIP: process-sessions held: the last sanity verdict is BROKEN (workflow 17). pending/ keeps every session."
+  RC1=0
+else
+  run_step "process-sessions" 30 "$P1" \
+    "Bash(~/helm/03-rai/semantic-memory/scripts/py-chroma.sh *)" \
+    "Bash(python3 *)" "Bash(ls *)" "Bash(mv *)" "Bash(grep *)" "Bash(wc *)" \
+    "Read" "Write" "Edit" "Glob" "Grep"
+  RC1=$?
+  [ "$RC1" -ne 0 ] && echo "WARN: process-sessions rc=$RC1 — continuing to commit step anyway."
+fi
 
 # ── Step 3.2 — weekly self-evolve curation ("dreaming", Sundays) ───────────────
 # Deterministic merge/decay/promote over learned-candidates.jsonl + re-renders
@@ -549,7 +584,7 @@ if [ "$RCS" -ge 1 ]; then
   # DEGRADED popup every cycle stacks on the desktop until dismissed by hand and trains you to
   # ignore the one that matters. BROKEN / TIMED-OUT stay sticky; DEGRADED expires on its own.
   URG=critical; [ "$RCS" -eq 1 ] && URG=normal
-  notify-send -a rai-maintenance -u "$URG" "Rai brain sanity: $VERD" "Post-maintenance sanity rc=$RCS — see $SANITY_LOG" 2>/dev/null || true
+  notify-send -a rai-maintenance -u "$URG" "Rai brain sanity: $VERD" "Post-maintenance sanity rc=$RCS. Workflow 17 (~/helm/11-workflows/17-brain-healthcheck.md). Log: $SANITY_LOG" 2>/dev/null || true
 fi
 
 # ── Step 4 — commit + push (sole writer to origin) ─────────────────────────────

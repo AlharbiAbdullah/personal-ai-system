@@ -43,6 +43,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from lib.daily_log import blocks_for_session
 from lib.hook_errors import log_error
+from lib.headless import invoked_from_headless
 from lib.hook_timer import hook_timer
 from lib.paths import get_runtime_dir
 from lib.sdd_repo import (
@@ -102,57 +103,6 @@ def route_bullets(bullets: list[str], repo: str, pointer_done: bool = False,
     if pointer_done:
         return rest
     return ["- " + pointer_line(repo, pointers[0] if pointers else "", leaks)] + rest
-
-
-def _proc_cmdline(pid: int) -> list[str]:
-    """Command tokens for a pid. /proc on Linux, ps fallback on macOS."""
-    try:
-        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
-        return [t for t in raw.decode(errors="replace").split("\0") if t]
-    except OSError:
-        try:
-            out = subprocess.run(
-                ["ps", "-o", "command=", "-p", str(pid)],
-                capture_output=True, text=True, timeout=2,
-            ).stdout.strip()
-            return out.split() if out else []
-        except Exception:
-            return []
-
-
-def _proc_ppid(pid: int) -> int:
-    try:
-        stat = Path(f"/proc/{pid}/stat").read_text()
-        return int(stat.rsplit(")", 1)[1].split()[1])
-    except OSError:
-        try:
-            out = subprocess.run(
-                ["ps", "-o", "ppid=", "-p", str(pid)],
-                capture_output=True, text=True, timeout=2,
-            ).stdout.strip()
-            return int(out) if out else 0
-        except Exception:
-            return 0
-
-
-def invoked_from_headless() -> bool:
-    """True when this hook fired inside a `claude -p` run (never capture those:
-    they are Rai's own plumbing — news, maintenance, distill, observer calls)."""
-    if os.environ.get("RAI_HEADLESS"):
-        return True
-    pid = os.getppid()
-    for _ in range(8):
-        if pid <= 1:
-            return False
-        tokens = _proc_cmdline(pid)
-        if tokens and "claude" in Path(tokens[0]).name.lower() or any(
-            Path(t).name.lower() == "claude" for t in tokens[:2]
-        ):
-            if "-p" in tokens or "--print" in tokens:
-                return True
-            return False  # the owning claude is interactive — capture
-        pid = _proc_ppid(pid)
-    return False
 
 
 def message_text(entry: dict) -> str:
@@ -235,17 +185,18 @@ def capture(transcript_path: str, session_id: str, cwd: str = ""):
     root = sdd_root(cwd)  # H27: None outside a project-init repo -> today's behaviour
     repo = repo_name(root) if root else ""
 
-    env = dict(os.environ, RAI_HEADLESS="1")  # our own claude call must never capture itself
     try:
-        from lib.claude_cli import effort_args  # detection lives in the lib (M4)
-        extra = effort_args("high")
+        # binary, flags and isolation live in the lib (M4): claude_bin() still finds claude when a
+        # harness starts hooks with a PATH that lacks it, and the call loads none of his setup
+        from lib.claude_cli import ISOLATION_ARGS, claude_bin, effort_args, isolated_env, neutral_cwd
+        cmd, extra, env, cwd = claude_bin(), [*effort_args("high"), *ISOLATION_ARGS], isolated_env(), neutral_cwd()
     except Exception:
-        extra = []
+        cmd, extra, env, cwd = "claude", [], dict(os.environ, RAI_HEADLESS="1"), None
     try:
         r = subprocess.run(
-            ["claude", "-p", "--model", CAPTURE_MODEL, *extra],
+            [cmd, "-p", "--model", CAPTURE_MODEL, *extra],
             input=build_prompt(turn, repo),
-            capture_output=True, text=True, timeout=CLAUDE_TIMEOUT, env=env,
+            capture_output=True, text=True, timeout=CLAUDE_TIMEOUT, env=env, cwd=cwd,
         )
     except subprocess.TimeoutExpired:
         return

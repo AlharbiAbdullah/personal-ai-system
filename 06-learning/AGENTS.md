@@ -23,7 +23,7 @@ Learning work is driven by the `/learning` skill group (`03-rai/skills/learning/
 - `start-topic` — create topic + progress.md
 - `teach` — generate mode-aware lesson
 - `quiz` — retrieval practice on recent lessons
-- `audit-coverage` — verify topic has full coverage before declaring done
+- `audit-coverage`: check a topic's coverage when he asks. It is never a closing gate: a stage closes on his word.
 
 Lesson shape, mode definitions, writing rules, and anti-patterns live inside the
 `teach` skill, not here.

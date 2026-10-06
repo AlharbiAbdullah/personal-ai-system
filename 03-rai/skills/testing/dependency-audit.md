@@ -173,7 +173,7 @@ Not every outdated dep needs immediate action. Prioritize:
 
 ## Examples
 
-- "Audit dependencies on the Matchbox repo"
+- "Audit dependencies on the open-kit repo"
 - "What CVEs exist in our Python deps?"
 - "Which packages can we delete?"
 - "Upgrade plan for the OpenKit Node stack"

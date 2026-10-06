@@ -15,7 +15,7 @@ The craft of producing prose. Document-type and language are routed; voice and a
 
 | Task | Sub-skill | File |
 |------|-----------|------|
-| Arabic prose: the region business correspondence, Arabic LinkedIn, internal Arabic docs | Arabic | `arabic.md` |
+| Arabic prose: regional business correspondence, Arabic LinkedIn, internal Arabic docs | Arabic | `arabic.md` |
 | Client proposals, RFP responses, grant proposals, scoped pitches | Proposals | `proposals.md` |
 | Requirements document for someone else (work, a client): features, scope, success metrics. John's own products use /grill and the SDD templates | PRDs | `prds.md` |
 | Short-form posts: X threads, LinkedIn, Substack notes | Social media | `social-media.md` |
@@ -49,7 +49,7 @@ The craft of producing prose. Document-type and language are routed; voice and a
 
 Every sub-skill output goes through the gate in `references/voice.md`:
 
-1. Banned words check (20 words, hard ban)
+1. Banned words check (20 words from `voice.md`, checked by hand)
 2. No em dashes
 3. Sentence length distribution
 4. Lead with the answer
@@ -60,13 +60,21 @@ When the draft is a file inside the vault, run the mechanical half first: `vale 
 
 If output fails the gate, rewrite. Don't ship.
 
+## Public posts
+
+Any post on X, LinkedIn, Substack or johndoe.dev, in English or Arabic:
+
+- Never names client work without his explicit go. Confidentiality comes first (`04-work/AGENTS.md`).
+- Takes its hook from his interest areas: data engineering, DevOps, AI, system design. Not from project names, which go stale fast.
+- Names a side project only when it is active and the link is real.
+
 ## Examples
 
-- "Draft an Arabic email to the central bank compliance team about Matchbox" → arabic
-- "Write a proposal for a 3-month Taskflow pilot for an Acme entity" → proposals
-- "PRD for the sync engine" → prds
+- "Draft an Arabic email to a partner company's engineering team about open-kit" → arabic
+- "Write a proposal for a 3-month Helios pilot for an Acme entity" → proposals
+- "PRD for the bulk import flow" → prds
 - "Turn these 5 bullet points into an X thread" → social-media
-- "Write a blog post about why the Taskflow rewrite stalled" → blog
+- "Write a blog post on why a deploy recreates containers instead of restarting them" → blog
 
 ## Files in this folder
 
