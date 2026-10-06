@@ -7,7 +7,7 @@ A tour of what the kit can do, by skill. `03-rai/skills/MANIFEST.md` lists every
   standard. It writes a `specs/` constitution from a real conversation. It adds git gates that
   keep `main` behind a human merge, a proof bundle per change, and a launch review per roadmap
   item. Then `/grill` talks a feature into a spec and `/compile` builds it test-first, with an
-  optional panel of outside models (`/adversarial-review`) reviewing the result.
+  optional panel of outside models (`/fusion review`) reviewing the result.
 - **Specialize on demand.** Type `/architecture`, `/research`, `/writing`, `/testing`,
   `/security`, `/devops` and more. Each routes to focused skills and expert agents.
 - **Remember.** Memory v3 pairs file memory with a vector index (four ChromaDB collections) so

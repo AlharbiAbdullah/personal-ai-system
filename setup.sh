@@ -30,7 +30,7 @@ red()   { printf '  \033[31m✗\033[0m %s\n' "$1"; }
 
 # source-under-03-rai  →  name-under-~/.claude
 LINKS=(
-  "03-rai/AGENTS.md|CLAUDE.md"
+  "03-rai/harness/claude-code/user-instructions.md|CLAUDE.md"
   "03-rai/hooks|hooks"
   "03-rai/skills|skills"
   "03-rai/agents|agents"

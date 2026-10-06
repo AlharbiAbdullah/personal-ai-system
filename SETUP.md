@@ -15,7 +15,7 @@ Install these first:
 | Tool | Why | Check |
 |------|-----|-------|
 | [Claude Code](https://claude.com/claude-code) | The host this runs inside. Needs 2.1.277+, the first version that reads `AGENTS.md` natively | `claude --version` |
-| Python 3.9+ | The hooks are Python (mostly stdlib) | `python3 --version` |
+| Python 3.10+ | The hooks are Python (mostly stdlib) | `python3 --version` |
 | [uv](https://github.com/astral-sh/uv) | Runs the vector-memory step in an isolated env | `uv --version` |
 | git | Clone and track your vault | `git --version` |
 
@@ -35,7 +35,8 @@ cd ~/helm
 > Want a different folder name? `03-rai/config/settings.json` and every hook under
 > `03-rai/hooks/` hardcode `~/helm` (there is no environment variable to override it).
 > If you use another path, you'll need to edit every `$HOME/helm/...` path in
-> `settings.json` and in the hook scripts yourself. For a first run, `~/helm` is the
+> `settings.json`, the hook scripts and `03-rai/harness/claude-code/user-instructions.md`
+> yourself, or identity will silently fail to load. For a first run, `~/helm` is the
 > path of least resistance and the only path this kit is tested against.
 
 ---
@@ -65,7 +66,7 @@ changing anything, run `./setup.sh --check`.
 mkdir -p ~/.claude
 
 # Link the brain into Claude Code (force-replaces only these specific entries)
-ln -sfn  ~/helm/03-rai/AGENTS.md            ~/.claude/CLAUDE.md
+ln -sfn  ~/helm/03-rai/harness/claude-code/user-instructions.md ~/.claude/CLAUDE.md
 ln -sfn  ~/helm/03-rai/hooks                ~/.claude/hooks
 ln -sfn  ~/helm/03-rai/skills               ~/.claude/skills
 ln -sfn  ~/helm/03-rai/agents               ~/.claude/agents
@@ -160,14 +161,21 @@ the auto-load is working and you're live. Try a skill next: `/research`, `/archi
   Single machine? Ignore it.
 - **Publishing your own fork publicly** uncomment the `02-ana/` and `03-rai/memory/` lines in
   `.gitignore` so your private life and accumulated memory stay out of the public repo.
-- **Brain healthcheck** run `/rai sanity --baseline` once after your first real session, so
-  later runs of `/rai sanity` compare against your own counts instead of warning "no baseline".
+- **Brain healthcheck** run `/map-updater` once (it builds the vault index), then
+  `/rai process-sessions` after a few real sessions, then `/rai sanity --baseline`. Before that,
+  expect red: [`03-rai/skills/rai/sanity.md`](./03-rai/skills/rai/sanity.md) "On a fresh kit"
+  lists what fails and why.
+- **Multi-model panel** `/fusion` (and the review step of `/compile`) runs six voices across
+  agy, opencode, pi and Claude Code, each inside `bwrap`, in `tmux`, on your own
+  subscriptions. Install the harnesses you have; a missing one is skipped. Name only `opus`
+  for a Claude-only panel. Image generation (`/media → art`) uses agy on a Google account.
 
 ---
 
 ## Troubleshooting
 
-- **Identity didn't load** confirm `~/.claude/CLAUDE.md` resolves to `~/helm/03-rai/AGENTS.md`
+- **Identity didn't load** confirm `~/.claude/CLAUDE.md` resolves to
+  `~/helm/03-rai/harness/claude-code/user-instructions.md`
   and that `02-ana/identity/` has your `.md` files.
 - **A hook errored on start** run it directly: `python3 ~/helm/03-rai/hooks/session-start.py`.
 - **chromadb step fails** make sure `uv` is installed. The wrapper is

@@ -23,8 +23,8 @@ This is John's vault root. Each subfolder owns its own rules in its own `AGENTS.
 | `08-bawaba/`    | News digest output (`/news-digest`). LIVE: never delete `daily/` files. | `08-bawaba/AGENTS.md`    |
 | `09-ideas/`     | Seed -> Plant -> Tree -> Graduated. Flat, status in frontmatter.        | `09-ideas/AGENTS.md`     |
 | `10-knowledge/` | Topic notes, MOCs, Insights. Simplicity Theorem on every note.          | `10-knowledge/AGENTS.md` |
-| `11-workflows/` | Repeatable playbooks (independent from skills).                         | `11-workflows/AGENTS.md` |
-| `12-system/`    | Templates (`templates/`), diagrams, media. `12-system/manual/README.md` maps each topic to its live doc. | `12-system/AGENTS.md`    |
+| `11-workflows/` | Your way of doing each kind of work. Rai follows the match.         | `11-workflows/AGENTS.md` |
+| `12-system/`    | Templates (`templates/`), tools, dev notes, diagrams, media. `12-system/manual/README.md` maps each topic to its live doc. | `12-system/AGENTS.md`    |
 | `13-archive/`   | Session JSONs + standing exceptions (`news/`, `learning/`, `shopping/`, `audits/`). See its AGENTS.md. | `13-archive/AGENTS.md`   |
 
 ## Root items

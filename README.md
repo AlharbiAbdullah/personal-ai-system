@@ -18,9 +18,10 @@ The assistant is called Rai; [SETUP.md](SETUP.md) shows how to rename it.
 1. **You.** Fill in the blank templates in `02-ana/identity/` once, then send prompts to
    Claude Code each turn.
 2. **Vault.** Plain Markdown, browsable in Obsidian: your identity, Rai's rules, the skills
-   and agents (46 and 11 as of 2026-10-06), notes and workflows.
-3. **Session.** `session-start.py` loads identity and the memory snapshot; `memory-injection.py`
-   adds pointers per prompt; `turn-capture.py` appends notes on each turn to a daily log.
+   and agents (44 and 11 as of 2026-10-06), notes and 31 workflows.
+3. **Session.** Claude Code loads identity and the memory snapshot through `~/.claude/CLAUDE.md`
+   imports, which `session-start.py` keeps current; `memory-injection.py` adds pointers per
+   prompt; `turn-capture.py` appends notes on each turn to a daily log.
 4. **Model.** The Claude models answer in the session. The batch calls them through
    `claude -p` to distill past sessions.
 5. **Batch.** `/rai process-sessions` scans transcripts, classifies them, distills the worthy
@@ -50,7 +51,7 @@ The assistant is called Rai; [SETUP.md](SETUP.md) shows how to rename it.
 
 ## Run it
 
-Needs [Claude Code](https://claude.com/claude-code) 2.1.277+, Python 3.9+,
+Needs [Claude Code](https://claude.com/claude-code) 2.1.277+, Python 3.10+,
 [uv](https://github.com/astral-sh/uv) and git. Clone to the path [SETUP.md](SETUP.md) names
 (the hooks expect it), then from the repo root:
 
@@ -68,11 +69,11 @@ claude               # ask: "Who am I, and what am I working on?"
 ./setup.sh --check    # every Claude Code link points at this repo
 uv run --offline --python 3.12 --with chromadb --with pytest \
   python3 -m pytest 03-rai/skills/rai/scripts/tests -q -p no:cacheprovider   # each sanity check fires on its fault
-uv run --offline --with pytest pytest 03-rai/hooks/tests/test_sdd_routing.py -q -p no:cacheprovider   # repo facts stay out of memory
-vale --filter='.Name matches "^Rai"' draft.md   # the blocking prose set is empty
+uv run --offline --with pytest pytest 03-rai/hooks/tests -q -p no:cacheprovider   # hooks and memory routing
+vale sync && vale --filter='.Name matches "^Rai"' draft.md   # the blocking prose set is empty
 ```
 
-No CI: run these by hand. On 2026-10-06 the two test suites passed 313 and 39 tests.
+No CI: run these by hand. On 2026-10-06 the two test suites passed 366 and 81 tests.
 
 ## Layout
 
@@ -84,7 +85,7 @@ No CI: run these by hand. On 2026-10-06 the two test suites passed 313 and 39 te
 05-projects/    project plans; code lives in its own repos
 09-ideas/       ideas from seed to graduated project
 10-knowledge/   topic notes and maps of content
-11-workflows/   repeatable playbooks
+11-workflows/   your way of doing each kind of work
 12-system/      templates and the kit manual
 docs/           README diagrams, feature tour
 ```
