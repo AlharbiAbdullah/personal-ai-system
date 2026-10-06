@@ -1,23 +1,15 @@
 # Quarterly Financial Review
 
-**Triggered by:** "quarterly review" / "run the Q review" / "90-day statement review"
-**Cadence:** Quarterly, first week of the month after a calendar quarter closes — next runs: Oct 2026 (2026-Q3), Jan 2027 (2026-Q4), Apr 2027 (2027-Q1). Schedule: `02-ana/financial/review-calendar.md`.
-**Done when:** `reviews/YYYY-qN.md` is written, any operating bucket that drifted >10% is propagated to `budget.md` / `plan.md` / `cash-flow.md`, and the open watchlist is carried forward with progress noted.
+**Use when:** the 90-day bank-statement review, once a calendar quarter closes: the trend layer above the monthly close.
+**Not for:** 09 monthly money close, for payday.
+**Done when:** `reviews/YYYY-qN.md` is written, and any operating bucket that drifted >10% is propagated to `budget.md` and `plan.md`. The open watchlist is carried forward with progress noted.
+**Cadence:** Quarterly, first week of the month after a calendar quarter closes. Schedule: `02-ana/financial/review-calendar.md`.
 
-The 90-day trend layer above the monthly close. The baseline ran once (May 2026); five
-quarters now sit "pending". The steps that get skipped are the back half — drift
-propagation and the watchlist carry — so this playbook front-loads the gates that make
-the review actually change a number, not just describe one. The pull-and-write is the
-mechanical part; the gates are the value.
+The 90-day trend layer above the monthly close. The steps that get skipped are the back half: drift propagation and the watchlist carry. So this playbook front-loads the gates that make the review actually change a number, not just describe one. The pull-and-write is the mechanical part; the gates are the value. Every number lives in your own files under `02-ana/financial/`, never in this workflow.
 
 ```
-Pull statements → Append raw block → Write review → Drift gate → Propagate → Carry watchlist → Leave for coordinator
+Pull statements → Append raw block → Write review → Drift gate → Propagate → Carry watchlist → Sync
 ```
-
-> **Survival-phase frame (until ~Apr 2027):** defensive, debt-first. A drift that grows
-> the credit-card balance ([your balance] USD @ ~30–36% APR) is the failure mode this review exists to
-> catch — those cards are a guaranteed return no investment beats. Sources:
-> `02-ana/financial/debt-plan.md`, `investment/07-tools/advisory-council.md`.
 
 ---
 
@@ -25,11 +17,8 @@ Pull statements → Append raw block → Write review → Drift gate → Propaga
 
 ### 1. Pull the statements
 
-- [ ] Download **Main + Daily** account PDFs covering the **full quarter** (Q3 = Jul 1 → Sep 30)
-      to `~/Downloads/`.
-- [ ] Confirm the quarter's lumpy event(s) landed before reviewing — they skew the averages:
-      Q3 = end-July school payment (−[your tuition half-payment]); Q4 = mid-Nov rent (−[your rent half-payment]); Q1 = Jan bonus
-      (+[your annual bonus]) + end-Jan school (−[your tuition half-payment]). Source: `review-calendar.md` lumpy-events table.
+- [ ] Download the statements for every account covering the **full quarter** to `~/Downloads/`.
+- [ ] Confirm the quarter's lumpy events landed before reviewing, since they skew the averages. List them once in `review-calendar.md` (for example an insurance renewal or a tax payment).
 
 ### 2. Append the raw block to transactions.md
 
@@ -39,71 +28,56 @@ Pull statements → Append raw block → Write review → Drift gate → Propaga
 
 ### 3. Write the review file
 
-- [ ] Create `02-ana/financial/reviews/YYYY-qN.md`, mirroring the structure of
-      `reviews/2026-05-baseline.md`. Compute every bucket as a **delta vs the prior
-      quarter**, not just an absolute.
+- [ ] Create `02-ana/financial/reviews/YYYY-qN.md`, mirroring the structure of the
+      previous review. Compute every bucket as a **delta vs the prior quarter**, not just
+      an absolute.
 
 > **Decision Point**: the review file is the artifact, but a review that only describes
-> is half-done. Steps 4–6 are where it earns its keep. Do not call the run finished at
+> is half-done. Steps 4 to 6 are where it earns its keep. Do not call the run finished at
 > step 3.
 
-### 4. DRIFT GATE — the propagation that gets skipped
+### 4. DRIFT GATE: the propagation that gets skipped
 
-- [ ] For each operating bucket, check it against its 10% trigger in `review-calendar.md`
-      ("What a drift > 10% looks like"). Key triggers:
-      savings deposit below [your savings floor] (target [your savings]), weekly variable above [your variable cap]
-      (target [your weekly variable target]), card auto-draw above [your card cap] (target [your card target]),
-      surplus→cards below [your surplus floor].
-- [ ] **Any bucket past its trigger → PROPAGATE the new number** into `budget.md`,
-      `plan.md`, and/or `cash-flow.md`. A drift noted in the review but not written into
-      the operating files is the exact step that has been missed every quarter.
-- [ ] Ask **"what changed?"** for each drift — new subscription, new person supported,
-      lifestyle creep, or a one-off skewing the average. Below-target → capture what worked.
+- [ ] Check each operating bucket against its 10% trigger in `review-calendar.md`.
+- [ ] **Any bucket past its trigger → PROPAGATE the new number** into `budget.md` and
+      `plan.md`. A drift noted in the review but not written into the operating files is
+      the step that gets missed.
+- [ ] Ask **"what changed?"** for each drift: a new subscription, a new commitment,
+      lifestyle creep, or a one-off skewing the average. Below target → capture what worked.
 
 ### 5. Reconcile the lumpy events
 
-- [ ] Tie the quarter's big movements to `cash-flow.md`: rent (−[your rent half-payment]), school
-      (−[your tuition half-payment]), household allowances, bonus deployment ([your bonus split]).
-      Confirm savings draws match the single-purpose rule (rent + school only).
+- [ ] Tie the quarter's big movements to the plan, and confirm any draw on savings matches
+      the purpose those savings are for.
 
-### 6. Visa tripwire + watchlist carry
+### 6. Debt tripwire + watchlist carry
 
-- [ ] Read the **Visa total carrying balance** trend across the quarter. Target: DOWN.
-- [ ] **UP for 2 consecutive months → STOP and re-decide the passive-paydown strategy**
-      (source: `debt-plan.md:46`). This overrides the rest of the review.
-- [ ] Carry forward the **open watchlist** (W1–W8 in `review-calendar.md`) into the new
-      review file, resolve where the quarter's data now allows (e.g. label IPS recipients,
-      confirm the recurring family transfers), and leave the rest open with a progress note.
-      Nothing is dropped — open items carry until closed.
+- [ ] Read the revolving-balance trend across the quarter, if you carry one. Target: down.
+- [ ] **Up for 2 consecutive months → stop and re-decide the strategy.** This overrides the rest of the review.
+- [ ] Carry the **open watchlist** in `review-calendar.md` into the new review file.
+      Resolve what the quarter's data now allows, and leave the rest open with a progress
+      note. Nothing is dropped: open items carry until closed.
 
-### 7. Sync (leave for the coordinator)
+### 7. Sync
 
-- [ ] All vault edits (transactions block, review file, propagated budget/plan/cash-flow
-      numbers) stay **local**. The Linux coordinator commits + pushes at its next
-      maintenance run (04/10/16/22:00 local time).
-- [ ] **Do not `git push` from the Mac** — single-writer rule, `03-rai/SYNC-ARCHITECTURE.md`.
+- [ ] Vault edits follow the commit rule in `11-workflows/AGENTS.md`.
 
 ---
 
-## Gating facts (verified, sourced)
+## Gating facts
 
-| Fact | Value | Source |
-|------|-------|--------|
-| Savings lock | [your savings] USD/mo (drift below [your savings floor]) | `plan.md:43`, `review-calendar.md` |
-| Weekly / monthly cap | [your weekly cap] / [your monthly cap] USD | `review-calendar.md` |
-| Month-end surplus → your loan | ~[your surplus] USD | `plan.md:13,46` |
-| credit-card balance | [your balance] USD | `debt-plan.md` |
-| Visa tripwire | up 2 months → re-decide | `debt-plan.md:46` |
-| Drift gate | any operating bucket >10% → propagate | `review-calendar.md` |
-| Survival phase ends | ~Apr 2027 | `advisory-council.md` |
+| Fact | Where it lives |
+|------|----------------|
+| Caps and savings commitment | `02-ana/financial/plan.md` |
+| Drift triggers, lumpy events, watchlist | `02-ana/financial/review-calendar.md` |
+| Debt balances and tripwire | `02-ana/financial/debt-plan.md` |
+| Drift gate | any operating bucket >10% → propagate |
 
 ---
 
 ## Connections
 
-- Schedule + drift table + watchlist: `02-ana/financial/review-calendar.md`
-- Baseline to mirror: `02-ana/financial/reviews/2026-05-baseline.md`
+- Schedule, drift table and watchlist: `02-ana/financial/review-calendar.md`
 - Monthly spine that feeds the quarters: [[09-monthly-money-close]]
-- Portfolio read (paper-only, survival phase): `/investment → status`
-- Real-money gate (separate, rare): [[19-bot-go-live-readiness]]
-- Single-writer sync: `03-rai/SYNC-ARCHITECTURE.md`
+- Portfolio read (paper-first): `/investment → status`
+- Commit rule: `11-workflows/AGENTS.md`

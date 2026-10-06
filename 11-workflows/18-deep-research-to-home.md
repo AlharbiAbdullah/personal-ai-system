@@ -1,87 +1,76 @@
-# Deep Research → Home
+# Research to Home
 
-**Triggered by:** "research {X} properly and write it up" / "deep research on {X}"
-**Cadence:** Weekly / ad-hoc
-**Done when:** a verified, cited report has landed in a permanent vault home AND been indexed by `/map-updater`.
+**Use when:** a question deserves a verified, written answer that lives in the vault. That covers a concept, a comparison of options, a survey of a field, or the research behind an idea or a work decision. It also covers a capture item that needs a full write-up.
+**Not for:** 26 purchase, for the research behind a buy: its plan in `02-ana/shopping/` is the home. 07 evaluate a technology, for adopting a tool. 30 architecture decision, for a design decision and its paper.
+**Done when:** a verified, cited report sits in one permanent home, with every load-bearing claim re-checked, and the helm index lists it.
 
-Every deep-research run today is ephemeral — it fans out, synthesizes, scrolls past,
-and dies. This playbook closes the loop: question → verified report → permanent home →
-indexed. The harness does the research; the gates here decide whether the question is
-worth running and where the output lives.
+A research run that ends in the transcript is lost. This workflow takes a sharp question to a verified, cited report in a permanent home, then indexes it. The two gates, scope and route, carry the value.
 
 ```
-Scope gate → Deep research → Route decision → Land it → Index → Leave for coordinator
+Scope gate → Research → Verify the claims → Route → Land it → Index → Sync
 ```
 
-> **The output is worthless if it dies in the transcript.** A run that ends without
-> a routed, indexed home is an incomplete run. The two gates (scope + route) are the
-> whole value — everything between them is delegated.
+> **The output is worthless if it dies in the transcript.** A run that ends without a routed, indexed home is not finished.
 
 ---
 
 ## Steps
 
-### 1. Scope gate (before you run anything)
+### 1. Scope gate
 
-- [ ] Read the question. **Is it specific enough to research directly?**
-- [ ] **Underspecified** (e.g. "what laptop to buy", "best vector DB") → STOP. Ask
-      **2–3 clarifying questions** first: budget, use-case, region, constraints,
-      time horizon — whatever narrows it.
-- [ ] Weave the answers back into a single refined question. Do not run on the vague one.
+- [ ] Read the question. Is it specific enough to research as it stands?
+- [ ] Underspecified, such as "best vector DB": stop. Ask 2 or 3 clarifying questions first: the use case, the constraints, the region, the time horizon, whatever narrows it.
+- [ ] Weave the answers into one refined question. Never run on the vague one.
+- [ ] A question about what to buy is purchase research: [[26-purchase]] step 1 takes it.
 
-> **Decision Point**: a vague question produces a vague report that earns no home.
-> Sharp question in, or no run. If the user resists narrowing, name the tradeoff
-> ("broad query → shallow survey") and let them choose.
+> **Decision Point**: a vague question gives a vague report, and that report earns no home.
+> - Sharp question in, or no run.
+> - He resists narrowing: name the trade-off, a broad query gives a shallow survey, and let him choose.
 
-### 2. Run the deep-research harness
+### 2. Research
 
-- [ ] Run **`/deep-research`** with the refined question as args. It fans out web
-      searches, fetches sources, adversarially verifies claims, and synthesizes a
-      cited report.
-- [ ] Do not re-implement any of this by hand. The harness owns fan-out, verification,
-      and citation — your job is the question in and the routing out.
+- [ ] Run `/deep-research` with the refined question. It fans out the searches, fetches the sources, checks the claims and writes a cited report.
+- [ ] `/deep-research` is not available in this session: hand the question to the `researcher` agent. Inputs: the refined question, its constraints and today's date. Returns: a cited report, with a confidence level per claim and the date of each source. It cannot write files or run Bash.
+- [ ] Never redo the fan-out by hand.
 
-### 3. Route-decision gate (where does it belong?)
+### 3. Verify the load-bearing claims
 
-- [ ] The report exists but is still ephemeral. **Pick exactly one permanent home:**
+- [ ] Before anything lands, Rai re-checks every load-bearing claim: each number, name, version and date a decision would rest on. Open the cited source and confirm it says so.
+- [ ] A claim that fails is fixed or cut, never landed.
+- [ ] A contested claim gets a second model's view through `/fusion → ask`.
 
-> **Decision Point**: route by what the report *is*, not what it's *about*.
-> - **Durable concept / mental model** → **`/knowledge → new-topic-note`**
->   (`10-knowledge/`, Simplicity Theorem note from the `Topic Note.md` template).
-> - **Scholarly / literature survey** → **`/research → literature`**.
-> - **It sparked an idea, not just a fact** → **`/ideas → start-seed`**
->   (`09-ideas/`, status `seed` in frontmatter — ideas never die).
-> - **Work-relevant to a live engagement** → land under `04-work/{engagement}/`.
-> - **None fit cleanly?** Default to `/knowledge → new-topic-note` — durable concept
->   is the safest permanent home. Never leave it in the transcript.
+### 4. Route: pick one home
 
-### 4. Land the report in its home
+- [ ] Route by what the report is, not by what it is about. The homes and their scaffold skills are the routing table at [[13-capture-sweep]] step 4. Where this list and that table differ, the table wins.
 
-- [ ] Run the chosen sub-skill from step 3 to scaffold + write the verified report
-      into that location. Carry the citations through — an uncited landing loses the
-      whole point of the verification pass.
-- [ ] No "archive" verbs for knowledge/ideas text. Git log is the archive; ideas never
-      die.
+> **Decision Point**: what is the report?
+> - A durable concept or mental model: a topic note in `10-knowledge/<domain>/`, through `/knowledge → new-topic-note`.
+> - A survey of a field, such as a literature review done with `/research → literature`: a topic note in `10-knowledge/<domain>/`. A survey that serves one project goes in that project's `research/` folder.
+> - Research for a purchase: the item's plan in `02-ana/shopping/`, at [[26-purchase]] step 5. Never `10-knowledge/`.
+> - It sparked an idea, not just a fact: a Seed in `09-ideas/`, through `/ideas → start-seed`.
+> - Work for a live engagement: `04-work/<engagement>/`, under that folder's house rules.
+> - Nothing fits cleanly: a topic note is the default home. Never leave it in the transcript.
 
-### 5. Index it
+### 5. Land it
 
-- [ ] Run **`/map-updater`** to refresh the vault index
-      (`.helm-index/helm-index.md`) so the new report is discoverable. An unindexed
-      report is a buried report.
+- [ ] Run the chosen home's scaffold skill, or move the report whole where the table says so.
+- [ ] Carry the citations through. An uncited landing throws away the verification.
+- [ ] No archive verbs. Git log is the archive, and ideas never die.
 
-### 6. Sync (leave for the coordinator)
+### 6. Index it
 
-- [ ] Vault edits (the new note/seed/work file, the index) stay **local**. The Linux
-      coordinator commits + pushes at its next maintenance run (04/10/16/22:00 local time).
-- [ ] **Do not `git push` from the Mac** — single-writer rule, `03-rai/SYNC-ARCHITECTURE.md`.
+- [ ] Run `/map-updater`, so the helm index lists the new report. An unindexed report is a buried report.
+
+### 7. Sync
+
+- [ ] Vault edits follow the commit rule in `11-workflows/AGENTS.md`.
 
 ---
 
 ## Connections
 
-- Research harness: `/deep-research`
-- Permanent homes: `/knowledge → new-topic-note`, `/research → literature`, `/ideas → start-seed`, `04-work/{engagement}/`
-- Indexing: `/map-updater` → `.helm-index/helm-index.md`
-- Second-opinion model on a contested claim: `/ask-model`
-- Inbound capture that feeds research queues: `/triage → process-inbox`
-- Single-writer sync: `03-rai/SYNC-ARCHITECTURE.md`
+- Research: `/deep-research`, with the `researcher` agent as the fallback at step 2.
+- Homes: `/knowledge → new-topic-note`, `/ideas → start-seed`, the routing table at [[13-capture-sweep]] step 4, and [[26-purchase]] for a buy.
+- A second opinion on a contested claim: `/fusion → ask`.
+- Index: `/map-updater`.
+- Sent here by [[13-capture-sweep]] and [[08-weekly-review]], for an item that deserves a write-up.

@@ -1,96 +1,119 @@
-# 11-workflows/: Repeatable Playbooks
+# 11-workflows/: John's workflows
 
-## Purpose
+## What a workflow is
 
-Step-by-step playbooks for recurring work. A **playbook** is the ordering, decision
-gates, and stop-conditions across 2 or more skills that no single skill owns. It
-**delegates** to skills (`/router → sub-skill`). It never re-implements them.
+**A workflow is John's way of doing one kind of work:** the steps, their order, the gates and the checklists. A skill is a capability Rai calls along the way. An agent is a specialist Rai hands one step to.
 
-## How a playbook gets invoked
+- **Not a list of skills.** Never slim a workflow to its skill order, and never cut its steps as "general advice".
+- **His way belongs here.** A way of working that lives only in memory rulings, or in one repo's docs, is a missing workflow.
+- **Need follows who he is.** His profession and interests decide which kinds of work get a workflow, never recent usage. Stale means factually wrong today, not unused.
 
-1. **Via the router (preferred):** the `/workflow` skill (`03-rai/skills/workflow/SKILL.md`)
-   maps a natural-language trigger → the right file here, then reads it. This is the
-   discovery surface.
-2. **By name:** "do a weekly review", "close the month", "ship this".
-3. Every playbook starts with a `**Triggered by:**` line so a plain grep also matches a
-   complaint straight to a file.
+Judge a workflow by two questions. Does it say how John does this kind of work? Does Rai work that way when the work comes up?
 
-## Playbooks
+## What Rai does
 
-### Coding & shipping
-| # | Name | When |
-|---|------|------|
-| 01 | project | Vault side of a new project: idea, kitchen, init, retrospective |
-| 02 | task | One unit of work; routes SDD repos to 21 |
-| 03 | kitchen | Draft `specs/` in `05-projects/kitchen/` before a repo exists |
-| 04 | debugging | Diagnosing a bug or system issue |
-| 05 | code-review | Self-review gate before merge |
-| 06 | shipping | Releasing / deploying |
-| 07 | learning-tech | Evaluating + adopting a new technology |
-| 21 | project-init | `/project-init` a repo, then the feature loop, replan, release |
+- In interactive work, when the work matches a workflow, Rai reads it before starting, follows it, and names it: "Following 04 debugging."
+- Rai asks only when two workflows fit. Rai skips one only when John says so.
+- A step that does not fit the moment gets a proposed adaptation, never a silent skip.
+- In a learning build (a lesson repo or a `06-learning/` folder), the Socratic rule in `/learning` wins over 04.
+- Headless and scheduled runs follow their own prompts.
+- A step that drifted (a moved path, a retired skill) gets flagged with a proposed fix.
 
-### Life & money
-| # | Name | When |
-|---|------|------|
-| 09 | monthly-money-close | Payday: bills, savings lock, surplus, Visa tripwire |
-| 14 | quarterly-financial-review | 90-day statement review + drift propagation |
-| 19 | bot-go-live-readiness | Real-money gate for a trading bot; dormant, no live engine exists (rare) |
+## Two kinds of workflow
 
-### Work
-| # | Name | When |
-|---|------|------|
-| 11 | meeting-to-followthrough | Prep → debrief → owned, dated actions |
+- **Delivery workflows** move a change from idea to shipped: 01, 02, 05, 06, 21.
+- **Method workflows** say how one kind of problem gets solved: 04, 07, 27 to 31, 34, 35.
 
-### Knowledge & vault
-| # | Name | When |
-|---|------|------|
-| 08 | weekly-review | Saturday processing + reflection |
-| 12 | harvest-curriculum | Bridge a finished book/course into `10-knowledge/` |
-| 13 | capture-sweep | Empty `00-landing/` + `01-inbox/` |
-| 18 | deep-research-to-home | Verified research report → permanent vault home |
-| 20 | arabic-piece-pipeline | Arabic prose for the site (trio-synth, locked voice) |
+A method workflow runs inside a delivery workflow. In a repo with `.project.toml` it fills 21's slots: the talk questions, the plan groups, the proof rows, the rollback line and the launch. In any other repo it runs through 02.
 
-### Operations (machines & the brain)
-| # | Name | When |
-|---|------|------|
-| 10 | news-digest-recovery | The scheduled digest failed or shipped placeholders |
-| 15 | theme-rollout | Roll a theme out, verify each adapter |
-| 16 | cross-machine-parity | Mirror a tool/config across OS adapters (Mac ↔ Ubuntu) |
-| 17 | brain-healthcheck | `/rai` sanity → ingest → upgrade, in the safe order |
+## File shape
 
-## Rules
+1. `# Title`, the kind of work in his words.
+2. The header lines:
+   - `**Use when:**` the kinds of work and situations, in plain words, not trigger phrases.
+   - `**Not for:**` the neighbour workflows, as `NN name`, and what goes to each.
+   - `**Done when:**` an observable end state.
+   - `**Cadence:**` only when the work recurs on a rhythm.
+3. One or two sentences on what it is, then the flow as a D2 fence or a one-line flow.
+4. `## Steps`: numbered `###` steps, `- [ ]` items, and `> **Decision Point**:` blocks.
+5. Reference tables when the work needs them: gating facts, adapter maps.
+6. `## Connections`: the skills, agents and workflows it calls.
 
-- **Playbooks are stable.** Update only when the workflow itself changes, not for one-off
-  variations.
-- **Each playbook is self-contained.** No cross-references that force the reader to chase
-  another playbook to understand this one. The exception is a hand-off between the project
-  playbooks, so each procedure is written once. 01, 02 and 03 keep their triggers and pass
-  everything from `/project-init` on to 21. 21 passes the kitchen to 03 and a repo with no
-  `specs/` to 02. 04, 05 and 06 pass the fix, the merge and the release of a repo with
-  `.project.toml` to 21.
-- **Numbered prefix is fixed.** When adding a new playbook, give it the next number.
-- **Reference skills as `/router → sub-skill`** (e.g. `/git → commit`, `/architecture →
-  solution-architect`), never the bare or under_scored token. This is the convention that
-  stops references from rotting.
-- **Vault playbooks leave changes for the coordinator.** Anything that edits `~/helm` ends
-  with a Sync step: changes stay local, and the hub (the Linux coordinator) commits +
-  pushes. Every other machine is a passive replica and never pushes
-  (`03-rai/SYNC-ARCHITECTURE.md`). Only code-project playbooks (`~/projects/`) call
-  `/git → commit`.
-- **Ideas never die; delete over archive.** No "archive the idea" steps. Sessions are the
-  only thing archived.
+## Conventions
 
-## What Claude should do
+- **Skills** appear as `/router → sub-skill`, for example `/git → commit`. Never the bare or underscored name.
+- **Agents** appear as "the `<name>` agent" at the step that uses it. A one-line brief goes with it: the inputs, the shape of the return, and whether it writes.
+  - Never at a human gate.
+  - Never inside a skill that forbids agents: `/grill`, `/compile`, `/spec-improve`, `/fusion`, `/orchestrator`.
+  - Rai re-checks every load-bearing claim an agent returns.
+- **Hand-offs** appear as `[[NN-name]]` plus the step handed to. A workflow names the workflow it hands to and never restates it, so each procedure is written once.
+- **No line citations.** Name a file, never `file.md:NN`. Line numbers rot.
+- **Diagrams** are D2 fences. Never Mermaid.
+- **Prose** passes the Vale gate: `vale --filter='.Name matches "^Rai"' <file>` prints nothing.
+- **Numbers are fixed.** A new workflow takes the next free number. A retired number is never reused.
+- **Vault edits.** On the hub, commit each finished unit of vault work: fetch and check the behind count first, stage explicit paths, no AI attribution. A replica machine leaves vault edits for the coordinator and never pushes (`03-rai/SYNC-ARCHITECTURE.md`).
+- **Code repos** commit through their own flow: 21's gates in a repo with `.project.toml`, `/git → commit` elsewhere.
+- **Ideas never die; delete over archive.** No "archive the idea" steps. Sessions are the only thing archived.
 
-When the user invokes a workflow by name or trigger:
-1. Read the relevant playbook (the router will route you, or match the `Triggered by:` line).
-2. Follow it step by step; run the skills it delegates to.
-3. If a step needs adapting to the current context, **propose** the adaptation rather than
-   silently skipping.
+## The workflows
 
-When the user is mid-work and the situation matches a playbook, suggest it by name. Do not
-auto-invoke without confirmation.
+### Delivery: how a change moves
+| # | Workflow | Use when |
+|---|---|---|
+| 01 | project | A product from idea to done, vault side: the idea, the kitchen, the hand-off to a repo, the close |
+| 02 | task | One change in a repo without `specs/`: helm, a script, a work repo |
+| 05 | code review | Reviewing a diff before it merges |
+| 06 | shipping | Releasing or deploying |
+| 21 | project-init | A repo on the spec-driven standard: init, the feature loop, launch, replan, release |
 
-If a playbook drifts (a step references a deleted skill or moved path), flag it and propose
-an update. `/rai → sanity` checks folder structure and template frontmatter, not playbook
-reference integrity. That is caught by reading, not by an automated check.
+### Engineering method: how a kind of problem is solved
+| # | Workflow | Use when |
+|---|---|---|
+| 04 | debugging | A bug in code |
+| 07 | evaluate a technology | Deciding whether to adopt a tool or a technology |
+| 27 | data pipeline | Building or changing a pipeline: a new source, ETL or ELT, an incremental load, a backfill |
+| 28 | data platform | Designing, assessing or upgrading a warehouse, lake or lakehouse, modeling included |
+| 29 | air-gapped delivery | Shipping into a sealed or offline network |
+| 30 | architecture decision | Framing and deciding a design, and writing the decision paper |
+| 31 | AI system build | Building or changing an AI feature or product: model choice, harness, evals |
+| 34 | diagrams | Drawing a system's architecture and tech stack diagrams for a README or a doc |
+| 35 | readme | Writing or rewriting a repo's README to the standard |
+
+### Work and career
+| # | Workflow | Use when |
+|---|---|---|
+| 11 | meeting follow-through | A work meeting: prep, debrief, owned and dated actions |
+| 32 | work engagement | A work engagement from the directive to the close-out |
+| 33 | career | A proof piece, the profile, an application, a consulting inquiry |
+
+### His machines and Rai
+| # | Workflow | Use when |
+|---|---|---|
+| 10 | news recovery | The scheduled news digest failed or shipped placeholders |
+| 16 | machines | Changing, mirroring or standing up a machine |
+| 17 | brain healthcheck | A sanity alarm, or after a structural change to Rai |
+| 23 | audit | Auditing a vault, a machine, a repo or an architecture |
+| 24 | changing Rai | Building or changing a skill, hook, agent, memory path or scheduled job |
+| 25 | incident | Something broken on a machine: a job, a timer, sync, the disk, an app |
+
+### Growth and knowledge
+| # | Workflow | Use when |
+|---|---|---|
+| 08 | weekly review | The weekly ritual |
+| 12 | learning stage | A learning topic, from open to close |
+| 13 | capture sweep | Emptying `00-landing/` and `01-inbox/` |
+| 18 | research to home | A question that deserves a verified, written answer in the vault |
+| 20 | Arabic writing | Serious Arabic prose, for any destination |
+
+### Life and money
+| # | Workflow | Use when |
+|---|---|---|
+| 09 | monthly money close | Payday |
+| 14 | quarterly money review | The 90-day statement review |
+| 26 | purchase | Buying hardware or goods, or fighting a vendor over an order |
+
+Retired numbers: 03 (merged into 01), 15, 19. 22 is not shipped in this kit.
+
+## Checks
+
+`/rai → sanity` runs the `Workflows` subsystem, FLOW-1 to FLOW-7. It checks that skills resolve, agents exist and `[[links]]` resolve. It also checks that every workflow sits in this table and in the helm index. No file may cite line numbers, and every header must be complete. A failure makes the verdict DEGRADED, never BROKEN.

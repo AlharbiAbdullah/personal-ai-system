@@ -1,102 +1,96 @@
-# Arabic Piece Pipeline
+# Arabic Writing
 
-**Triggered by:** "write an Arabic post" / "اكتب مقال بالعربي" / "Arabic piece for the site"
-**Cadence:** Per piece
-**Done when:** one approved Arabic piece in John's locked-in voice exists in the site repo, and any steering signals from his edits are captured into the rule files.
+**Use when:** serious Arabic prose, for any destination: a letter, a memo, a brief, a decision paper, an intro document or a LinkedIn post. That includes the Arabic version of an English source, written natively.
+**Not for:** English pieces, including anything for his site, which is English only: 33 career. A quick informal reply, such as WhatsApp, Slack or a peer note: `/writing → arabic` alone, with no panel.
+**Done when:** he approved the final, and it went out only on his explicit go. Every steering signal from his edits is written into the rule files.
 
-The Arabic writing spine. The system is LOCKED IN (approved 2026-05-16) — this playbook
-SEQUENCES it, it does not re-litigate it. The two gates that quietly get skipped and
-carry all the value are **context-first** (front) and **steering-capture** (back).
+The Arabic system is locked in, approved on 2026-05-16. This workflow sequences it and never re-opens the rules mid-piece. The two gates that get skipped carry the value: the context brief at the front, and the steering capture at the back.
 
 ```
-Context gate → Anchor read → (research?) → Trio-synth → Voice-check gate → User reads final → Steering-capture gate → Apply to repo → Leave for coordinator
+Context brief → Anchor read → (research) → Panel → Voice check → He reads the final → Steering capture → Deliver on his go → Sync
 ```
 
-> **Locked system, north star = Lumen.** `example.com/articles` is the golden
-> standard; serious prose uses trio-synth. Do NOT re-open the rules mid-piece — sequence
-> them. The voice rules live in `/writing → arabic` (`references/voice.md`).
+> **Locked system, north star Lumen.** Lumen is the golden standard, and serious prose runs the panel. The rules live in `/writing → arabic`, its `references/voice.md` and its dictionary.
 
 ---
 
 ## Steps
 
-### 1. Context gate (mandatory — write the brief FIRST)
+### 1. Context brief first
 
-- [ ] No drafting until the context brief exists. Write it down: **audience**, **intent**,
-      **key references**.
-- [ ] State explicitly: the English source (if any) is **INTENT, not text** — express the
-      idea natively in Arabic, never word-for-word.
+- [ ] No drafting until the brief exists. Write it: the audience, the intent and the key references.
+- [ ] Add the target file or section, its current state, the English source if any, the length and markup limits, and any locked phrasing.
+- [ ] The English source is intent, not text. Express the idea natively in Arabic, never word for word.
+- [ ] Pick the register: formal for serious prose. Unsure: ask him.
+- [ ] List what must not appear, such as a sensitive capability he rules out.
+- [ ] Output for `04-work/`: no AI mentions, a formal tone, and every name, amount and date checked with him.
 
-> **Decision Point**: brief missing or vague?
-> - STOP. A piece written without context drifts off John's voice and burns the run.
-> - Do not let "it's a short post" excuse skipping this. The brief is the cheapest gate.
+> **Decision Point**: is the brief missing or vague?
+> - Stop. A piece written without context drifts off his voice and burns the run.
+> - "It is a short post" never excuses skipping it. The brief is the cheapest gate.
 
-### 2. Re-load the target voice (anchor read)
+### 2. Anchor read
 
-- [ ] Read the Lumen anchor (`example.com/articles`) to re-load the target cadence
-      before any words get written. The north star is a read, not a memory.
+- [ ] Read at least one local Lumen anchor, a `formal--lumen-*.md` file in `02-ana/voice-samples/arabic/`, before any words get written.
+- [ ] Match its shape: sentence length, paragraph length, how the opener works and how the close lands. Never copy its lines.
+- [ ] Add a second-tier anchor only when the piece sits in its niche. The niches: politics, a tech executive's voice, a personal reflection, a literary essay.
+- [ ] A technical domain: open the dictionary, `03-rai/skills/writing/references/arabic-dictionary.md`.
 
-### 3. (Optional) research for substance
+### 3. Research, only for facts
 
-- [ ] If the piece needs facts/sources, run **`/research → web-research`** first. Skip for
-      pure-opinion or reflective pieces.
+- [ ] The piece needs facts or sources: run `/research → web-research` first.
+- [ ] Skip it for an opinion or a reflective piece.
 
-### 4. Trio-synth (parallel drafts → ONE synthesis)
+### 4. The panel: parallel drafts, one synthesis
 
-- [ ] **`/ask-model`** Gemini and **`/ask-model`** GPT draft **in parallel** from the same
-      brief — two independent angles, not a relay.
-- [ ] Claude synthesizes **ONE final** via **`/writing → arabic`**. Never ship a model's
-      raw draft; the value is the synthesis.
+- [ ] Put the brief into the run's ask file. Frame the task as a tech writer at Lumen telling the story in Arabic for the first time. The English is source notes, never text to translate.
+- [ ] `/fusion → write-arabic`: every panel voice drafts from the same brief, then scores the others' drafts against the Arabic rules, and the coordinator synthesizes one version.
+- [ ] Hand the panel run, the synthesis and the voice check to the `writer` agent. Inputs: the brief. It runs `/fusion → write-arabic` as the coordinator, fixes the synthesis until step 5 passes, and returns one final with its checklist. It writes the final draft file only.
+- [ ] Rai re-checks the checklist and every fact in the final against the brief.
+- [ ] Never ship a model's raw draft. The value is the synthesis.
 
-### 5. Voice-check gate
+> **Decision Point**: the panel cannot run, for example because a harness is signed out or the Ollama credits ran out?
+> - Tell him. He signs in, or picks the voices that still work.
 
-- [ ] Anti-AI voice rules pass (`/writing → arabic`, `references/voice.md`).
-- [ ] Inline English tokens wrapped in **«guillemets»**; **max 2–3 «English» tokens per
-      short clause**.
-- [ ] **الـ** prefix on definite/categorical English nouns.
-- [ ] Hedging qualifiers dropped; diacritics dropped.
-- [ ] Reads as meaning, not translation — no word-for-word seams.
+### 5. Voice check: the gate
 
-> **Decision Point**: any rule fails?
-> - Iterate the synthesis. Do NOT hand a half-checked draft to John — that wastes his
->   read and pollutes the steering signal in step 7.
+- [ ] The anti-AI voice rules pass: `03-rai/skills/writing/references/voice.md`.
+- [ ] Inline English tokens sit in «guillemets», at most 2 or 3 in a short clause.
+- [ ] The Arabic definite article goes before a definite or categorical English noun.
+- [ ] Hedging qualifiers and diacritics are gone.
+- [ ] It reads as meaning, not translation: no word-for-word seams.
 
-### 6. John reads ONLY the final
+> **Decision Point**: does any rule fail?
+> - Fix the synthesis and check again. Never hand him a half-checked draft: it wastes his read and pollutes the steering signal.
 
-- [ ] Present the single synthesized piece. **Do not show the Gemini/GPT drafts** — he
-      judges the final only.
+### 6. He reads only the final
 
-### 7. Steering-capture gate (the back-end value)
+- [ ] Show him the one final piece. Never the Gemini or GPT drafts: he judges the final only.
+- [ ] Write it to a file and give him the path. He opens it himself: the terminal cannot shape Arabic, and Rai never opens a window.
 
-- [ ] Capture any edit signals from his feedback. Curate them into the Arabic rule files +
-      dictionary via **`/writing → arabic`** so the system **compounds**.
-- [ ] One-off phrasing → leave it. A repeatable preference → write the rule.
+### 7. Steering capture: the gate
 
-> **Decision Point**: he edited something and you moved on without capturing it?
-> - That is the failure mode. Every uncaptured signal is a rule the system relearns next
->   time. This gate is why the voice keeps improving.
+- [ ] Capture every signal from his edits. A forbidden translation goes to `arabic-dictionary.md`. A preferred pattern goes to `voice.md`. A preference about him goes to memory.
+- [ ] A one-off phrasing: leave it. A repeatable preference: write the rule. Rai curates the rule files, and he never edits them by hand.
 
-### 8. Apply to the live site repo
+> **Decision Point**: did he edit something, and Rai moved on without capturing it?
+> - That is the failure mode. Every signal left uncaptured is a rule the system relearns next time.
 
-- [ ] Place the approved piece into the **johndoe.dev** site repo (code project,
-      under `~/projects/`). Commit there via **`/git → commit`** — that is a code repo, not
-      the vault.
+### 8. Deliver on his go
 
-### 9. Sync (leave the vault churn for the coordinator)
+- [ ] Approving the words is not a go to publish or send. Nothing goes out without his explicit go.
+- [ ] Rai prepares; he publishes or sends it himself, whether a post, a letter or a memo.
+- [ ] A piece that lives in a code repo commits through that repo's own flow: 21's gates in a repo with `.project.toml`, `/git → commit` elsewhere. A push waits for his go.
 
-- [ ] Any **vault** edits (rule files, dictionary) stay **local**. The Linux coordinator
-      commits + pushes at its next maintenance run (04/10/16/22:00).
-- [ ] **Do not `git push` the vault from the Mac** — single-writer rule,
-      `03-rai/SYNC-ARCHITECTURE.md`. (The site repo in step 8 is separate and may be pushed
-      on its own terms.)
+### 9. Sync
+
+- [ ] Vault edits follow the commit rule in `11-workflows/AGENTS.md`.
 
 ---
 
 ## Connections
 
-- Synthesis + voice rules: `/writing → arabic` (`references/voice.md`)
-- Parallel external drafts: `/ask-model` (Gemini + GPT)
-- Substance gathering: `/research → web-research`
-- Site-repo commit: `/git → commit`
-- Single-writer vault sync: `03-rai/SYNC-ARCHITECTURE.md`
-- Adjacent content playbooks: [[05-code-review]] (for the site repo), [[06-shipping]] (site deploy)
+- Voice rules and the synthesis: `/writing → arabic`. Parallel drafts: `/fusion → write-arabic`.
+- Facts: `/research → web-research`. A repo commit: `/git → commit`.
+- Agents: `writer` (steps 4 and 5).
+- Sent here by [[30-architecture-decision]] step 7 and [[32-work-engagement]] step 2, for an Arabic paper. English public pieces go to [[33-career]].

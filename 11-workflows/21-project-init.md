@@ -1,7 +1,7 @@
 # Project Init and Build
 
-**Triggered by:** "init this project" / "set up a new project" / "adopt {repo}" / "upgrade {repo} to v3" / "audit {repo}". In a set-up repo: "add a feature to {repo}" / "replan {repo}" / "launch {item}".
-**Cadence:** Once per repo for init. After that, once per feature, per launch, per replan and per release.
+**Use when:** a repo is on the spec-driven, test-driven standard, or joins it. Setting up a new folder or an existing repo with `/project-init`: a new project, adopting a repo, upgrading or migrating one. Checking a repo against the project-init standard. In a set-up repo: a feature, a fix, a replan, a launch or a release.
+**Not for:** 01 project, for the idea, the kitchen and the close of a product. 02 task, for a repo without `.project.toml`: the helm vault, a script, and every repo today. 23 audit, for a repo's architecture or code health. 06 shipping, for the deploy itself. 29 air-gapped delivery, for a sealed target.
 **Done when:** the run reached its human gate and the human passed it. Init: G1 merged, `mise run verify` green, punch list read. Feature: G3 merged, next roadmap item printed. Launch: the item's roadmap line ends `(launched <date>)`. Replan: its `plan/` branch merged. Release: the tag exists.
 
 One playbook from an empty folder or an existing repo to a spec-driven, test-driven build. `/project-init` sets the repo up once. After that, every change runs one loop with human gates. The repo's own `specs/README.md` is the rulebook for lanes, formats and gates. This playbook orders the skills around it and never restates its tables.
@@ -14,12 +14,13 @@ One playbook from an empty folder or an existing repo to a spec-driven, test-dri
 
 | You have | Start at |
 |---|---|
-| an idea in `09-ideas/`, no repo yet | Phase A |
-| a kitchen folder in `05-projects/kitchen/<name>/` | the [[03-kitchen]] exit check, then Phase B |
+| an idea in `09-ideas/`, no repo yet | Phase A: [[01-project]], then Phase B |
+| a kitchen folder in `05-projects/kitchen/<name>/` | the exit check in [[01-project]], then Phase B |
 | an empty folder, or a repo with no `.project.toml` | Phase B |
 | a repo on project-init v2 (`Standard: project-init v2` in `project_memory/README.md`) | Phase B (upgrade) |
-| a repo with `.project.toml`, to audit it against the current standard or fix drift (EXTEND) | Phase B |
+| a repo with `.project.toml`, to check it against the project-init standard or fix drift (EXTEND) | Phase B |
 | a repo with `.project.toml` | Phase C for a change, F for a launch, D for a replan, E for a release |
+| a product whose work is done | the close in [[01-project]] |
 
 Not for the helm vault or a one-off script. Those have no `specs/` and take the plain route in [[02-task]]: `/grill` writes a decisions and plan pair under `.agent/`, and `/compile` carries the plan out. In a code repo that doesn't track `.agent/`, the pair is scratch that `/grill` keeps out of git. In helm, `.agent/` files are tracked records: never exclude or delete them.
 
@@ -69,20 +70,23 @@ A `!` command is a human gate. You type it yourself: in Claude Code with the `!`
 
 ---
 
+## Domain methods
+
+A method workflow runs inside this loop and never copies its mechanics. [[27-data-pipeline]] and [[31-ai-system-build]] supply the talk questions, the plan groups and the proof rows. Each lists its slots in its own file.
+
+---
+
 ## Phase A: before init (the kitchen, optional)
 
-The kitchen drafts the constitution in the vault before a repo exists. It has the shape of a repo's `specs/`, so `/project-init` copies it instead of asking again. [[03-kitchen]] is the kitchen procedure: `/ideas → graduate` scaffolds it, and 03 fills it and runs its exit check.
+The idea, the kitchen and the choice between a kitchen and a straight init live in [[01-project]] steps 1 to 8. The kitchen has the shape of a repo's `specs/`, so `/project-init` copies it instead of asking again.
 
-- [ ] Look for a kitchen: `ls ~/helm/05-projects/kitchen/<name>/specs/`. One that passes the 03 exit check goes straight to Phase B.
-
-> **Decision Point**: kitchen or straight to init?
-> - The product needs research, architecture or a long think before code: work the kitchen with [[03-kitchen]], then come back at Phase B.
-> - The idea is small, or the code already exists: skip it. The init talk builds the constitution from the idea, the repo and your answers.
+- [ ] Look for a kitchen: `ls ~/helm/05-projects/kitchen/<name>/specs/`. One that passes the exit check in [[01-project]] goes straight to Phase B.
 
 ---
 
 ## Phase B: /project-init
 
+- [ ] An existing repo joins the standard only on his go, given for each repo.
 - [ ] For a new product, `mkdir ~/projects/<name>` first. Then `cd` into the folder or repo. Never copy kitchen files in by hand: the init talk reads, copies and cleans them.
 - [ ] On an existing repo, `/project-init --plan` first is safe: preflight and probe only, a report, no writes.
 - [ ] Run `/project-init`. It detects the mode and never asks for it. The Modes table in the `/project-init` skill is the authority. The short form, in its detection order (the first match is the mode):
@@ -127,7 +131,7 @@ It ends with a punch list of what only a human can do.
   - `active/<name>/` holds non-code work only: research, meeting notes. Never mission, roadmap or architecture.
   - An older `active/<name>/` with vision, roadmap or architecture files was a talk source. Check that the merged `specs/` holds what they say, then delete them. A later `/project-init` audit flags any that remain.
   - Add the project to `05-projects/projects-moc.md` and point the idea's `spawned:` link at its new home.
-  - These vault edits stay local for the coordinator.
+  - These vault edits follow the commit rule in `11-workflows/AGENTS.md`.
 
 ---
 
@@ -149,13 +153,13 @@ One change at a time. `mise run change` refuses a second one while one is open, 
 - [ ] **Build.** `/compile`. Per plan group: tagged tests, `mise run tdd -- red <ids>` (must fail for the right reason), minimal code, `tdd green`, refactor, `mise run verify`, one commit on green.
   - A `risk: high` group pauses compile. Review `git diff <group-start>..HEAD`, its trunk files first, then `/compile` again to continue.
   - A group whose change shows (output, a page, a terminal session) gets its `## Proof` row captured after its commit: `mise run proof -- <verb> <id> ...`, one commit per capture.
-  - 3 or more disjoint groups marked `parallel: yes`: `/compile` offers `/orchestrator`. Workers merge into `feat/<slug>`, never into `main`.
-- [ ] **Validate.** `/compile` runs the lenses for the lane after the last group: conformance, breaker and test honesty for feat, breaker only for chg and fix. It captures every `## Proof` row still missing, a confidence line per group and the test proof, and renders `.agent/proof/<date>-<slug>.html` (`mise run proof -- show`). It ends with `mise run status -- --merge`, the full Definition of Done preview. Rai extra: `/adversarial-review`, a panel of other models on the branch diff. Its out-of-scope findings go to the backlog.
+  - 3 or more disjoint groups marked `parallel: yes`: `/compile` offers `/orchestrator`. Workers merge into `feat/<slug>`, never into `main`. Its tmux workers need his explicit permission rule first: without one, the classifier blocks them.
+- [ ] **Validate.** `/compile` runs the lenses for the lane after the last group, each as the `reviewer` agent. The lenses: conformance, breaker and test honesty for feat, breaker only for chg and fix. It captures every `## Proof` row still missing, a confidence line per group and the test proof, and renders `.agent/proof/<date>-<slug>.html` (`mise run proof -- show`). It ends with `mise run status -- --merge`, the full Definition of Done preview. Rai extra: `/fusion → review`, a panel of other models on the branch diff. Its out-of-scope findings go to the backlog.
 - [ ] **G3.** Open the proof page first, low confidence lines at the top. Then type the command on the last line of the merge preview (`mise run status -- --merge`). Plain `! mise run merge` needs no flag. `--read-trunk` says you read the trunk diff, which the preview prints in full: read it line by line, and skim the rest against the proof. `--attest` confirms Human checks or `Test-Harness:` diffs, because the `!` path has no TTY: in your own terminal, `mise run merge` asks each check, and the trunk diff, y/N instead. `--gate-change` accepts a gate-file diff or a Trunk entry removed or changed. `--reapprove` accepts an approved Human check, Run-it row or Proof row that changed since G2. Merge runs verify and prove-red, checks the proof, ticks the roadmap, regenerates `CHANGELOG.md`, squashes onto `main` and prints the next item with "still right?". With a remote, the PR body shows the proof inline. A `flag:` change also leaves the launch item in the backlog.
 - [ ] `/clear`. Next item: back to the top of this phase. "Still right?" is no: Phase D. A roadmap item whose work has all merged is launched in Phase F.
 
 **Other lanes:**
-- **fix, chg, chore, refactor:** no change folder and no G2. The talk opens the lane branch. `/compile` runs red first where behaviour moves, then the lane's lenses (breaker for fix and chg, none for chore and refactor). G3 merges.
+- **fix, chg, chore, refactor:** no change folder and no G2. The talk opens the lane branch. `/compile` runs red first where behaviour moves, then the lane's lenses (breaker for fix and chg, none for chore and refactor). G3 merges. A fix lane's diagnosis follows [[04-debugging]] steps 1 to 4 before the talk.
 - **Spike** (you want an answer, not code): `mise run backlog -- <topic> --spike`. It gives a scratch worktree; only the findings land, as a backlog file.
 - **Hotfix while a feature is open:** `mise run change -- <slug> --lane fix --hotfix` opens a sibling worktree off `main`. Land it with `! mise run merge -- --branch fix/<slug>`, then `git merge main` on the feature branch.
 - **Abandon:** `! mise run abandon -- "<why>"`. The branch is tagged `abandoned/<slug>` and a backlog report lands on `main`.
@@ -202,10 +206,14 @@ Only for a distributable product. The `## Distribution` line in `specs/tech-stac
   - `pypi`: builds and publishes, with the token from 1Password.
   - `git`: no publish; `gh release create` when a remote exists.
   - `service`: tag and changelog only. The deploy is the next step.
-- [ ] `service` only: deploy with the repo's `deploy` skill, which init generates when it finds a deploy signal.
-  - Before the deploy, write the rollback: the previous tag to redeploy and any data migration to undo.
-  - After it, verify live: `/testing → e2e` against the live environment, the logs of the first 10 minutes (`/devops → monitoring`), and the core user flows by hand.
+- [ ] `service` only: deploy with the repo's `deploy` skill. Init generates one only for a wrangler config.
+  - A compose service, or any target with no `deploy` skill: deploy with [[06-shipping]] step 4.
+  - A sealed or offline target: hand the deploy to [[29-air-gapped-delivery]].
+  - Before the deploy, write the rollback: [[06-shipping]] step 7.
+  - After it, verify live: [[06-shipping]] step 5.
   - Something wrong: a minor fault is a hotfix (Phase C), a major one runs the rollback.
+- [ ] An offline bundle stays `service` in `## Distribution`: there is no separate bundle value.
+
 - [ ] Never bump a version, tag or edit `CHANGELOG.md` by hand: `! mise run release` does all three. The gates refuse a hand-staged `CHANGELOG.md` (I2).
 
 ---
@@ -217,7 +225,7 @@ Merge-ready is not launch-ready. Each change passed its own review; the launch r
 **When:** `mise run status` on `main`, with no change open, lists the merged items not launched yet, those with a live flag first, and names the next `/sdd launch <slug>`. `mise run doctor` also warns about a flag older than 30 days.
 
 - [ ] On `main`, no open change: `/compile launch <slug>`. Teammates and other harnesses use `/sdd launch <slug>`: the same text without the Rai extra.
-  - It collects the item's squash commits and diffs them as one, then runs four lenses as fresh subagents: performance, security, conformance and simplicity. Rai extra: `/adversarial-review` over the same diff.
+  - It collects the item's squash commits and diffs them as one, then runs four lenses as fresh `reviewer` agents: performance, security, conformance and simplicity. Rai extra: `/fusion → review` over the same diff.
   - Every finding gets an outcome: fix it now in a lane of its own, park it in the backlog, or dismiss it with a reason. The launch file `specs/backlog/<date>-launch-<slug>.md` records each one.
 - [ ] Each fix lane runs Phase C from the build step and ends at its own G3. After each merge, `/compile launch <slug>` again resumes at the next open finding.
 - [ ] **Your checklist.** The launch file holds one for you. Use the feature end to end, with its flag on where one guards it. Open each change's proof, and write down what felt wrong. What you list gets an outcome the same way.
@@ -254,4 +262,17 @@ The one-line answer: **new feature: mission no, roadmap ticked by the tool at me
 ## Sync
 
 - Code repos: `main` moves only through `! mise run merge`, abandon, release or a sync from origin. `/compile` commits on lane branches. Never `/git → commit` onto `main`.
-- Vault edits (kitchen, `active/`, the MOC, the idea) stay local for the coordinator.
+- Vault edits (kitchen, `active/`, the MOC, the idea) follow the commit rule in `11-workflows/AGENTS.md`.
+
+---
+
+## Connections
+
+- The idea, the kitchen and the close: [[01-project]]
+- A repo without `.project.toml`: [[02-task]]
+- A fix lane's diagnosis: [[04-debugging]] steps 1 to 4
+- A service deploy, its rollback and live checks: [[06-shipping]] steps 4, 5 and 7
+- A sealed target: [[29-air-gapped-delivery]]
+- Domain methods: [[27-data-pipeline]], [[31-ai-system-build]]
+- Skills: `/project-init`, `/grill`, `/spec-improve`, `/visual → plan`, `/compile`, `/fusion → review`, `/orchestrator`
+- The rulebook in each repo: `specs/README.md`, rendered from `03-rai/skills/project-init/templates/specs-README.md`

@@ -1,97 +1,75 @@
-# Weekly Review Workflow
+# Weekly Review
 
-**Triggered by:** "weekly review" / "Saturday processing" / "process the week"
-**Cadence:** Weekly (Saturday)
-**Done when:** sessions processed, inbox empty, projects + ideas reviewed, next week's ONE priority chosen, changes left for the coordinator.
+**Use when:** closing the week. That means clearing the capture folders, checking the open learning topic, reflecting on the week, skimming its news, and choosing next week's one priority.
+**Not for:** 13 capture sweep, when only the folders need emptying. 12 learning stage, for opening, running or closing a stage. 09 monthly money close, for payday. The month look-back is `/routine → monthly-mirror`.
+**Done when:** both capture folders hold only the items he keeps for later. The week's retro is written, and he has named one priority for next week.
+**Cadence:** Weekly, in your fixed weekly slot.
 
-Saturday processing ritual. Process the week, maintain the vault, plan the next week.
+His weekly ritual, kept lean. The machines already drain the sessions and archive the news, so the review keeps only the parts that need him.
 
 ```
-Sessions → Inbox → This Week's News → Projects → Ideas → Vault → Plan → Sync
+Capture sweep → Learning check → Reflection → News skim → Projects → Ideas → One priority → Sync
 ```
 
 ---
 
 ## Steps
 
-### 1. Process Sessions
+### 1. Capture sweep
 
-- [ ] Run `/rai → process-sessions` — drain pending transcripts from `03-rai/semantic-memory/pending/`
-- [ ] Review summaries saved to ChromaDB
-- [ ] Flag any sessions that produced knowledge worth capturing as notes
+- [ ] Run [[13-capture-sweep]] from step 1. It leaves `00-landing/` and `01-inbox/` holding only what he keeps for later.
 
-### 2. Process Inbox
+### 2. Learning check
 
-- [ ] Run the [[13-capture-sweep]] playbook (process-landing → process-inbox → route).
-- [ ] Inbox is empty when done.
+- [ ] Where does the open topic stand? Its `progress.md` in `06-learning/` says.
+- [ ] Its lessons are all done: offer the close at [[12-learning-stage]] step 7. He closes it on his word.
 
-> **Decision Point**: Item doesn't fit anywhere?
-> - If interesting → `09-ideas/` as a Seed (`/ideas → start-seed`)
-> - If not → delete it. Not everything deserves a note. (Git log is the archive.)
+### 3. Reflection
 
-### 3. Review This Week's News
+- [ ] Run `/routine → weekly-retro`. Its five questions: what shipped, what blocked, the week's energy from 1 to 10, one learning, and one change for next week.
+- [ ] Rai drafts Shipped and Blocked from the week's record: the daily logs in `03-rai/semantic-memory/daily/`, the commits, and `/recall → history`. He answers the rest.
+- [ ] The retro is saved in `02-ana/weekly/`.
+- [ ] Never nudge him toward a daily journal, and never frame a gap between entries as a lapse.
 
-- [ ] Skim this week's daily digests in `08-bawaba/daily/` (and the Saturday `weekly/` issue if it landed)
-- [ ] For anything that stuck: deep-read the content, discuss relevance
-- [ ] Decide per item:
-  - **Done** — interesting but no action needed (the news skill archives digests to `13-archive/news/`)
-  - **Promote** — create a Seed in `09-ideas/` or a capture in `01-inbox/`
-- [ ] Worth a full write-up? → [[18-deep-research-to-home]]
+### 4. News skim
 
-### 4. Review Active Projects
+- [ ] Skim the Saturday issue in `08-bawaba/weekly/`. It already sums up the week. The week's dailies are in `13-archive/news/daily/`, and today's is in `08-bawaba/daily/`.
+- [ ] Each item that stuck is done, or gets promoted. A spark becomes a Seed with `/ideas → start-seed`. A question worth a full write-up goes to [[18-deep-research-to-home]] step 1.
+- [ ] Review the week's X likes and GitHub stars with him. What matters goes into `00-landing/`, and then he clears the likes.
 
-- [ ] Open `05-projects/projects-moc.md` — the project inventory
-- [ ] For each active project:
-  - [ ] Is it still active? If it stalled for more than 2 weeks, consider pausing it. A repo with `.project.toml` records the pause in its `specs/roadmap.md` through a replan (`/grill "replan the roadmap"` in the repo), never in the vault.
-  - [ ] Where it stands: `mise run status` in a repo with `.project.toml` (the open change, the next roadmap item). `active/{name}/` keeps research and meeting notes, never a status copy.
-  - [ ] Check priorities: still correct? If not, the repo is due a replan.
-- [ ] Any blocked projects? Identify the blocker.
+### 5. Projects
 
-### 5. Review Ideas Pipeline
+- [ ] Open `05-projects/projects-moc.md`, the project inventory.
+- [ ] Where does each active project stand? In a repo with `.project.toml`, `mise run status` shows the open change and the next roadmap item.
+- [ ] `05-projects/active/<name>/` keeps research and meeting notes, never a status copy.
+- [ ] Stalled for more than two weeks: propose a pause. A repo with `.project.toml` records it in `specs/roadmap.md` through a replan, [[21-project-init]] Phase D, never in the vault.
+- [ ] Its priorities are no longer right: the repo is due a replan.
+- [ ] A blocked project: name the blocker.
 
-- [ ] Scan `09-ideas/` — any seeds ready to become plants? plants → trees? trees → graduate?
-- [ ] Advance the ready ones with `/ideas → promote` / `graduate`.
-- [ ] **No pruning.** Ideas never die (`09-ideas/AGENTS.md`); low-energy ones stay and seed future ideas via lineage.
+### 6. Ideas
 
-> **Decision Point**: Promote an idea?
-> - Yes → `/ideas → promote` (or `graduate` if it's a ripe Tree)
-> - Not ready → leave it, check next week
+- [ ] Scan `09-ideas/` for a Seed ready to be a Plant, a Plant ready to be a Tree, and a Tree ready to graduate.
+- [ ] Never prune. Ideas never die: a quiet one stays and seeds later ideas.
+- [ ] Two notes that connect in a new way: propose an Insight Note with `/knowledge → insight`. Create it only on his yes.
 
-### 6. Update Vault
+> **Decision Point**: promote an idea?
+> - Yes: `/ideas → promote`, or `/ideas → graduate` for a ripe Tree.
+> - Not ready: leave it, and check next week.
 
-- [ ] Create any new knowledge notes from the week's learnings (`/knowledge → new-topic-note`)
-- [ ] Update existing notes with new insights
-- [ ] Check for emergent connections (`/knowledge → find-connections`) — create an [[Insight Note]] if found
-- [ ] Run `/map-updater` to refresh `.helm-index/helm-index.md`
+### 7. One priority
 
-### 7. Plan Next Week
-
-- [ ] Choose ONE priority for the week (not three, one)
-- [ ] Block time for deep work on that priority
-- [ ] Identify dependencies or blockers ahead of time
-- [ ] Write the priority in the journal: `/routine → tomorrow-prep` or `02-ana/journal/[date].md`
+- [ ] Choose one priority for next week. One, not three.
+- [ ] Name what could block it.
+- [ ] Write it as a "Priority" line at the end of the week's retro file in `02-ana/weekly/`.
 
 ### 8. Sync
 
-- [ ] Verify nothing was accidentally deleted or overwritten.
-- [ ] Vault edits stay **local** — the Linux coordinator commits + pushes at its next maintenance run. **Do not `git push` from the Mac** (single-writer — `03-rai/SYNC-ARCHITECTURE.md`).
-
----
-
-## Cadence
-
-| Frequency | Action |
-|-----------|--------|
-| Weekly (Saturday) | Full workflow above |
-| Daily (optional) | Quick inbox scan, journal entry (`/routine`) |
-| Monthly | Money close ([[09-monthly-money-close]]), review MOCs, brain healthcheck ([[17-brain-healthcheck]]) |
+- [ ] Vault edits follow the commit rule in `11-workflows/AGENTS.md`.
 
 ---
 
 ## Connections
 
-- Session processing: `/rai → process-sessions`
-- Capture triage: [[13-capture-sweep]]
-- Idea lifecycle: `/ideas` skill group
-- Project tracking: `05-projects/projects-moc.md`
-- Journal: `/routine → journal`
+- Workflows: [[13-capture-sweep]] runs as step 1. [[12-learning-stage]] runs the topic. [[18-deep-research-to-home]] takes a write-up. [[21-project-init]] Phase D runs a replan.
+- Skills: `/routine → weekly-retro`, `/recall → history`, `/ideas → start-seed`, `/ideas → promote`, `/ideas → graduate`, `/knowledge → insight`, `/routine → monthly-mirror`.
+- Agents: none. Every step needs him.
